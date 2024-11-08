@@ -1,4 +1,4 @@
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from langchain.prompts.chat import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 import json
@@ -22,10 +22,9 @@ Response:
 
 class Rephraser:
 
-    def __init__(self, openai_key) -> None:
+    def __init__(self) -> None:
         self.prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        self.model = ChatOpenAI(model="gpt-4-turbo",
-                                api_key=openai_key,
+        self.model = ChatOllama(model="llama3.2",
                                 temperature=1)
         self.output_parser = StrOutputParser()
 
@@ -37,8 +36,7 @@ class Rephraser:
     
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    rephraser = Rephraser(OPENAI_API_KEY)
+    rephraser = Rephraser()
     queries_json = json.load(open("../queries_pipelines.json"))
     n_repr = 20
     result = {}

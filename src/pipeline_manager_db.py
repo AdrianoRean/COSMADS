@@ -1,6 +1,6 @@
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 import importlib.util
 import os
 import dotenv
@@ -62,9 +62,9 @@ class PipelineStore():
 
 class PipelineManagerDB:
 
-    def __init__(self, openai_key):
+    def __init__(self):
         self.pipeline_store = PipelineStore()
-        embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=openai_key)
+        embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
         self.pipeline_store.embed_docs(embedding_function)
 
     def command_line(self):
@@ -79,7 +79,6 @@ class PipelineManagerDB:
 
 if __name__ == '__main__':
     dotenv.load_dotenv()
-    openai_key = os.getenv('OPENAI_API_KEY')
 
-    tools_manager = PipelineManagerDB(openai_key=openai_key)
+    tools_manager = PipelineManagerDB()
     tools_manager.command_line()

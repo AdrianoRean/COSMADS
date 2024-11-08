@@ -1,6 +1,6 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 
 
 TEMPLATE_WITH_DOCUMENT = """
@@ -121,7 +121,7 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, openai_key, mode = "standard"):
+    def __init__(self, mode = "standard"):
         """Initialize the agent."""
         # define the prompt
         if mode == "standard":
@@ -134,8 +134,7 @@ class PipelineGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        self.llm = ChatOpenAI(model="gpt-4-turbo",
-                              api_key=openai_key,
+        self.llm = ChatOllama(model="llama3.2",
                               temperature=0.0)
         # define the output parser
         self.output_parser = CustomOutputParser()

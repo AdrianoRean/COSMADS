@@ -21,13 +21,12 @@ INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 class LLMAgent:
     def __init__(self, mode = "standard"):
         dotenv.load_dotenv()
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         print(mode)
 
-        self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
+        self.pipeline_manager = PipelineManagerDB()
         self.document_manager = DocumentManagerDB()
 
-        self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode)
+        self.generator = PipelineGeneratorAgent(mode=mode)
         self.runner = PipelineRunner()
 
         self.ds_directory = "data_services"
