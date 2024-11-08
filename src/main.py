@@ -6,6 +6,7 @@ import os
 import ast
 import glob
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough
+from code_helper import classesInNamespace
 
 # append the path to the parent directory to the system path
 import sys
@@ -113,12 +114,19 @@ class LLMAgent:
     def save_intermediate_result_to_json(self, pipeline, data_services) -> str:
         file_to_save = ""
 
-        for data_service in data_services:
-            module = data_service['module']
-            class_name = data_service['class_name']
-            file_to_save += f"from {self.ds_directory}.{module} import {class_name}\n"
+        clean_pipeline = ""
+        for line in pipeline.split("\n"):
+            if "from data_services" in line:
+                continue
+            else:
+                line += "\n"
+                clean_pipeline += line 
+
+        import_text, modules = classesInNamespace("data_services")
+
+        file_to_save += f"{import_text}\n"
         
-        file_to_save += f"{pipeline}\n"
+        file_to_save += f"{clean_pipeline}\n"
 
         main_function = f"""
 if __name__ == "__main__":
