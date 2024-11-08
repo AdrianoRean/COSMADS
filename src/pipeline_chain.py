@@ -121,7 +121,8 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, mode = "standard"):
+    def __init__(self, model, mode = "standard"):
+        self.model = model
         """Initialize the agent."""
         # define the prompt
         if mode == "standard":

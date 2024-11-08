@@ -22,9 +22,10 @@ Response:
 
 class Rephraser:
 
-    def __init__(self) -> None:
+    def __init__(self, model) -> None:
+        self.model = model
         self.prompt_template = ChatPromptTemplate.from_template(PROMPT_TEMPLATE)
-        self.model = ChatOllama(model="llama3.2",
+        self.model = ChatOllama(model=self.model,
                                 temperature=1)
         self.output_parser = StrOutputParser()
 
@@ -36,7 +37,9 @@ class Rephraser:
     
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    rephraser = Rephraser()
+    #model = "llama3.2"
+    model = "mistral"
+    rephraser = Rephraser(model)
     queries_json = json.load(open("../queries_pipelines.json"))
     n_repr = 20
     result = {}

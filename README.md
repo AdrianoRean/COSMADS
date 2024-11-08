@@ -13,6 +13,7 @@ conda create -n pyllm python=3.9
 conda activate pyllm
 pip install -r requirements.txt
 ollama pull llama3.2
+ollama pull mistral
 ```
 
 
@@ -36,6 +37,8 @@ ollama pull llama3.2
         ...
     ```
 
+- In the [main](src/main.py?plain=1#L295) file, specify the `<model>` to be called.
+
 - Run the LLM:
     ```bash
     cd src
@@ -52,6 +55,9 @@ Given the **Example**, the LLM will generate a schema as follows.
     +----+--------------------+---------------------+
     ```
 
+## Rephrase
+
+In the [rephrase](src/evaluation/rephrase.py?plain=1#L43) file, specify the `<model>` to be called.
 
 ## How to replicate the experiments
 

@@ -19,14 +19,16 @@ from document_manager_db import DocumentManagerDB
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
 class LLMAgent:
-    def __init__(self, mode = "standard"):
+    def __init__(self, model, mode = "standard"):
         dotenv.load_dotenv()
         print(mode)
 
-        self.pipeline_manager = PipelineManagerDB()
+        self.model = model
+
+        self.pipeline_manager = PipelineManagerDB(self.model)
         self.document_manager = DocumentManagerDB()
 
-        self.generator = PipelineGeneratorAgent(mode=mode)
+        self.generator = PipelineGeneratorAgent(self.model, mode=mode)
         self.runner = PipelineRunner()
 
         self.ds_directory = "data_services"
@@ -290,7 +292,9 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     q = "q3"
-    llm = LLMAgent()
+    #model = "llama3.2"
+    model = "mistral"
+    llm = LLMAgent(model)
     with open("queries_pipelines.json", "r") as f:
         queries = json.load(f)
     query = queries[q]["query"]

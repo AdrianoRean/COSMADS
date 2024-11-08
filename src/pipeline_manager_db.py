@@ -1,6 +1,6 @@
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_core.documents import Document
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_ollama import OllamaEmbeddings
 import importlib.util
 import os
 import dotenv
@@ -62,9 +62,12 @@ class PipelineStore():
 
 class PipelineManagerDB:
 
-    def __init__(self):
+    def __init__(self, model):
+        self.model = model
         self.pipeline_store = PipelineStore()
-        embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+        embedding_function = OllamaEmbeddings(
+            model=model
+        )
         self.pipeline_store.embed_docs(embedding_function)
 
     def command_line(self):
