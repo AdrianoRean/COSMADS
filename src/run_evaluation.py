@@ -5,8 +5,8 @@ import os
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 
-def run_evaluation(mode):
-    llm = LLMAgent(mode)
+def run_evaluation(model, mode):
+    llm = LLMAgent(model, mode)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
@@ -87,9 +87,12 @@ def evaluate_results(mode):
     return
 
 if __name__ == "__main__":
+    
     modes = ["standard", "wo_pipeline", "wrong"]
+    model = "llama3.2"
+    #model = "mistral"
     for mode in modes:
-        run_evaluation(mode)
+        run_evaluation(model, mode)
         evaluate_results(mode)
     
     evaluate_results("copilot")

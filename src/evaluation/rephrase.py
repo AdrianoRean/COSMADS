@@ -37,8 +37,8 @@ class Rephraser:
     
 if __name__ == "__main__":
     dotenv.load_dotenv()
-    #model = "llama3.2"
-    model = "mistral"
+    model = "llama3.2"
+    #model = "mistral"
     rephraser = Rephraser(model)
     queries_json = json.load(open("../queries_pipelines.json"))
     n_repr = 20

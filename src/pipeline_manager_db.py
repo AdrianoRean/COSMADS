@@ -1,6 +1,7 @@
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 import importlib.util
 import os
 import dotenv
@@ -65,9 +66,13 @@ class PipelineManagerDB:
     def __init__(self, model):
         self.model = model
         self.pipeline_store = PipelineStore()
-        embedding_function = OllamaEmbeddings(
-            model=model
-        )
+        if model == 'mistral':
+            embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+        else:
+            embedding_function = OllamaEmbeddings(
+                model=self.model
+            )
+            embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
         self.pipeline_store.embed_docs(embedding_function)
 
     def command_line(self):

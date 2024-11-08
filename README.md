@@ -61,6 +61,8 @@ In the [rephrase](src/evaluation/rephrase.py?plain=1#L43) file, specify the `<mo
 
 ## How to replicate the experiments
 
+In the [rephrase](src/run_evaluation.py?plain=1#L90) file, specify the `<model>` to be called.
+
 To run the experiments, execute the following command:
 ```bash
 cd src

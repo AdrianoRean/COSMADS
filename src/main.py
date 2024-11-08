@@ -138,6 +138,7 @@ if __name__ == "__main__":
             f.write(file_to_save)
 
     def get_chain(self) -> Runnable:
+
         generator_chain = self.generator.get_chain()
         runner_chain = self.runner.get_chain()
 
@@ -292,8 +293,8 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     q = "q3"
-    #model = "llama3.2"
-    model = "mistral"
+    model = "llama3.2"
+    #model = "mistral"
     llm = LLMAgent(model)
     with open("queries_pipelines.json", "r") as f:
         queries = json.load(f)
