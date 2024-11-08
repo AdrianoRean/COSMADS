@@ -4,7 +4,6 @@ This repository contains code for replicating the experiments in *"Composing SMA
 
 ## Prerequisites
 - [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
-- [OpenAI API Key](https://platform.openai.com)
 
 
 ## Setup
@@ -13,11 +12,9 @@ This repository contains code for replicating the experiments in *"Composing SMA
 conda create -n pyllm python=3.9
 conda activate pyllm
 pip install -r requirements.txt
+ollama pull llama3.2
 ```
-- Create a `.env` file in the root directory of the project and add the following line
-```
-OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
-```
+
 
 
 ## Usage
