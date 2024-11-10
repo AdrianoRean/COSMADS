@@ -89,8 +89,8 @@ def evaluate_results(mode):
 if __name__ == "__main__":
     
     modes = ["standard", "wo_pipeline", "wrong"]
-    model = "llama3.2"
-    #model = "mistral"
+    #model = "llama3.2"
+    model = "mistral"
     for mode in modes:
         run_evaluation(model, mode)
         evaluate_results(mode)

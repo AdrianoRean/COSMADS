@@ -197,7 +197,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -426,7 +426,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -655,7 +655,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -884,7 +884,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -1113,7 +1113,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -1342,7 +1342,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -1571,7 +1571,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -1800,7 +1800,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -2029,7 +2029,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -2258,7 +2258,7 @@ def pipeline_function():
 
     threading.Thread(target=process_results, args=(results,)).start()
 
-    return results",The pipeline did not run successfully,"[{'diecutter_id': 60494, 'serial_camera1': 659422, 'serial_camera2': 228852}, {'diecutter_id': 65125, 'serial_camera1': 452726, 'serial_camera2': 169015}, {'diecutter_id': 15306, 'serial_camera1': 762265, 'serial_camera2': 217913}, {'diecutter_id': 43936, 'serial_camera1': 120083, 'serial_camera2': 855200}, {'diecutter_id': 77013, 'serial_camera1': 284217, 'serial_camera2': 681195}, {'diecutter_id': 73691, 'serial_camera1': 622256, 'serial_camera2': 483483}]",Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
+    return results",The pipeline did not run successfully,[],Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.,"from data_services.database import GetSerialCamera1IdFromDiecutterId
 from data_services.database import GetSerialCamera2IdFromDiecutterId
 from data_services.database import GetDiecuttersIdOfFactory
 
@@ -2475,8 +2475,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:07:43 | 2024-11-08 19:08:43 |               12.8673 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:07:43', 'end_timestamp': '2024-11-08 19:08:43', 'average_temperature': 12.867283950617283}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:32:46 | 2024-11-10 16:33:46 |               12.8242 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:32:46', 'end_timestamp': '2024-11-10 16:33:46', 'average_temperature': 12.824198552223372}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -2685,8 +2685,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:08:50 | 2024-11-08 19:09:50 |               12.8978 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:08:50', 'end_timestamp': '2024-11-08 19:09:50', 'average_temperature': 12.897832817337461}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:33:52 | 2024-11-10 16:34:52 |               12.8264 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:33:52', 'end_timestamp': '2024-11-10 16:34:52', 'average_temperature': 12.826446280991735}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -2895,8 +2895,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:09:56 | 2024-11-08 19:10:56 |               12.8589 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:09:56', 'end_timestamp': '2024-11-08 19:10:56', 'average_temperature': 12.858908341915551}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:34:59 | 2024-11-10 16:35:59 |               12.8264 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:34:59', 'end_timestamp': '2024-11-10 16:35:59', 'average_temperature': 12.826446280991735}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -3099,37 +3099,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:11:01 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:11:02 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:11:03 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:11:01', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:02', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:11:03', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:36:05 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:36:06 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:36:06 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:36:07 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:36:07 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:36:07 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:36:07 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:36:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -3366,8 +3366,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:11:09 | 2024-11-08 19:12:09 |               12.8421 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:11:09', 'end_timestamp': '2024-11-08 19:12:09', 'average_temperature': 12.842105263157896}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:36:13 | 2024-11-10 16:37:13 |               12.8512 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:36:13', 'end_timestamp': '2024-11-10 16:37:13', 'average_temperature': 12.851239669421487}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -3576,8 +3576,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:12:15 | 2024-11-08 19:13:15 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:12:15', 'end_timestamp': '2024-11-08 19:13:15', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:37:20 | 2024-11-10 16:38:20 |               12.8345 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:37:20', 'end_timestamp': '2024-11-10 16:38:20', 'average_temperature': 12.83453981385729}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -3786,8 +3786,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:13:21 | 2024-11-08 19:14:21 |               12.8421 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:13:21', 'end_timestamp': '2024-11-08 19:14:21', 'average_temperature': 12.842105263157896}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:38:26 | 2024-11-10 16:39:26 |               12.8264 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:38:26', 'end_timestamp': '2024-11-10 16:39:26', 'average_temperature': 12.826446280991735}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -3996,8 +3996,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:14:28 | 2024-11-08 19:15:28 |               12.8471 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:14:28', 'end_timestamp': '2024-11-08 19:15:28', 'average_temperature': 12.847107438016529}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:39:33 | 2024-11-10 16:40:33 |               12.8149 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:39:33', 'end_timestamp': '2024-11-10 16:40:33', 'average_temperature': 12.814891416752843}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -4206,8 +4206,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:15:34 | 2024-11-08 19:16:34 |               12.8421 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:15:34', 'end_timestamp': '2024-11-08 19:16:34', 'average_temperature': 12.842105263157896}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:40:40 | 2024-11-10 16:41:40 |               12.8108 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:40:40', 'end_timestamp': '2024-11-10 16:41:40', 'average_temperature': 12.810754912099275}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -4416,8 +4416,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:16:40 | 2024-11-08 19:17:40 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:16:40', 'end_timestamp': '2024-11-08 19:17:40', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:41:46 | 2024-11-10 16:42:46 |               12.8139 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:41:46', 'end_timestamp': '2024-11-10 16:42:46', 'average_temperature': 12.813857290589452}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -4642,10 +4642,10 @@ def pipeline_function():
     return results","+----+----------+-------------+-----------------------+---------------------+---------------------+
 |    |   window |   rotations |   average_temperature | start_timestamp     | end_timestamp       |
 |----+----------+-------------+-----------------------+---------------------+---------------------|
-|  0 |        1 |        1158 |               15.5172 | 2024-11-08 19:17:49 | 2024-11-08 19:18:20 |
-|  1 |        2 |        2464 |               10.7241 | 2024-11-08 19:18:20 | 2024-11-08 19:18:51 |
-|  2 |        3 |        3855 |               13.8276 | 2024-11-08 19:18:51 | 2024-11-08 19:19:22 |
-+----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-08 19:17:49', 'end_timestamp': '2024-11-08 19:18:20'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-08 19:18:20', 'end_timestamp': '2024-11-08 19:18:51'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-08 19:18:51', 'end_timestamp': '2024-11-08 19:19:22'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 |        1 |        1158 |               15.5172 | 2024-11-10 16:42:56 | 2024-11-10 16:43:27 |
+|  1 |        2 |        2464 |               10.7241 | 2024-11-10 16:43:27 | 2024-11-10 16:43:58 |
+|  2 |        3 |        3855 |               13.8276 | 2024-11-10 16:43:58 | 2024-11-10 16:44:29 |
++----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-10 16:42:56', 'end_timestamp': '2024-11-10 16:43:27'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-10 16:43:27', 'end_timestamp': '2024-11-10 16:43:58'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-10 16:43:58', 'end_timestamp': '2024-11-10 16:44:29'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -4861,8 +4861,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:19:28 | 2024-11-08 19:20:28 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:19:28', 'end_timestamp': '2024-11-08 19:20:28', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:44:36 | 2024-11-10 16:45:36 |               12.8366 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:44:36', 'end_timestamp': '2024-11-10 16:45:36', 'average_temperature': 12.836608066184075}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -5071,8 +5071,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:20:34 | 2024-11-08 19:21:34 |               12.8421 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:20:34', 'end_timestamp': '2024-11-08 19:21:34', 'average_temperature': 12.842105263157896}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:45:43 | 2024-11-10 16:46:43 |               12.8589 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:45:43', 'end_timestamp': '2024-11-10 16:46:43', 'average_temperature': 12.858908341915551}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -5281,8 +5281,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:21:41 | 2024-11-08 19:22:41 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:21:41', 'end_timestamp': '2024-11-08 19:22:41', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:46:49 | 2024-11-10 16:47:49 |                12.849 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:46:49', 'end_timestamp': '2024-11-10 16:47:49', 'average_temperature': 12.849017580144778}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -5491,8 +5491,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:22:47 | 2024-11-08 19:23:47 |               12.8589 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:22:47', 'end_timestamp': '2024-11-08 19:23:47', 'average_temperature': 12.858908341915551}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:47:56 | 2024-11-10 16:48:56 |               12.8397 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:47:56', 'end_timestamp': '2024-11-10 16:48:56', 'average_temperature': 12.83971044467425}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -5701,8 +5701,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:23:53 | 2024-11-08 19:24:53 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:23:53', 'end_timestamp': '2024-11-08 19:24:53', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:49:03 | 2024-11-10 16:50:03 |               12.8108 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:49:03', 'end_timestamp': '2024-11-10 16:50:03', 'average_temperature': 12.810754912099275}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -5911,8 +5911,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:24:59 | 2024-11-08 19:25:59 |               12.8505 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:24:59', 'end_timestamp': '2024-11-08 19:25:59', 'average_temperature': 12.850515463917526}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:50:09 | 2024-11-10 16:51:09 |               12.8128 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:50:09', 'end_timestamp': '2024-11-10 16:51:09', 'average_temperature': 12.81282316442606}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -6137,10 +6137,10 @@ def pipeline_function():
     return results","+----+----------+-------------+-----------------------+---------------------+---------------------+
 |    |   window |   rotations |   average_temperature | start_timestamp     | end_timestamp       |
 |----+----------+-------------+-----------------------+---------------------+---------------------|
-|  0 |        1 |        1158 |               15.5172 | 2024-11-08 19:26:08 | 2024-11-08 19:26:39 |
-|  1 |        2 |        2464 |               10.7241 | 2024-11-08 19:26:39 | 2024-11-08 19:27:10 |
-|  2 |        3 |        3855 |               13.8276 | 2024-11-08 19:27:10 | 2024-11-08 19:27:41 |
-+----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-08 19:26:08', 'end_timestamp': '2024-11-08 19:26:39'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-08 19:26:39', 'end_timestamp': '2024-11-08 19:27:10'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-08 19:27:10', 'end_timestamp': '2024-11-08 19:27:41'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 |        1 |        1158 |               15.5172 | 2024-11-10 16:51:19 | 2024-11-10 16:51:50 |
+|  1 |        2 |        2464 |               10.7241 | 2024-11-10 16:51:50 | 2024-11-10 16:52:22 |
+|  2 |        3 |        3855 |               13.8276 | 2024-11-10 16:52:22 | 2024-11-10 16:52:53 |
++----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-10 16:51:19', 'end_timestamp': '2024-11-10 16:51:50'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-10 16:51:50', 'end_timestamp': '2024-11-10 16:52:22'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-10 16:52:22', 'end_timestamp': '2024-11-10 16:52:53'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -6372,10 +6372,10 @@ def pipeline_function():
     return results","+----+----------+-------------+-----------------------+---------------------+---------------------+
 |    |   window |   rotations |   average_temperature | start_timestamp     | end_timestamp       |
 |----+----------+-------------+-----------------------+---------------------+---------------------|
-|  0 |        1 |        1158 |               15.5172 | 2024-11-08 19:27:50 | 2024-11-08 19:28:21 |
-|  1 |        2 |        2464 |               10.7241 | 2024-11-08 19:28:21 | 2024-11-08 19:28:52 |
-|  2 |        3 |        3855 |               13.8276 | 2024-11-08 19:28:52 | 2024-11-08 19:29:23 |
-+----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-08 19:27:50', 'end_timestamp': '2024-11-08 19:28:21'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-08 19:28:21', 'end_timestamp': '2024-11-08 19:28:52'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-08 19:28:52', 'end_timestamp': '2024-11-08 19:29:23'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 |        1 |        1158 |               15.5172 | 2024-11-10 16:53:03 | 2024-11-10 16:53:34 |
+|  1 |        2 |        2464 |               10.7241 | 2024-11-10 16:53:34 | 2024-11-10 16:54:05 |
+|  2 |        3 |        3855 |               13.8276 | 2024-11-10 16:54:05 | 2024-11-10 16:54:36 |
++----+----------+-------------+-----------------------+---------------------+---------------------+","[{'window': 1, 'rotations': 1158, 'average_temperature': 15.517241379310345, 'start_timestamp': '2024-11-10 16:53:03', 'end_timestamp': '2024-11-10 16:53:34'}, {'window': 2, 'rotations': 2464, 'average_temperature': 10.724137931034482, 'start_timestamp': '2024-11-10 16:53:34', 'end_timestamp': '2024-11-10 16:54:05'}, {'window': 3, 'rotations': 3855, 'average_temperature': 13.827586206896552, 'start_timestamp': '2024-11-10 16:54:05', 'end_timestamp': '2024-11-10 16:54:36'}]","Generate a list of average temperature and total rotations values for the current session of the diecutter 25, where each value is computed over 3 consecutive, non-overlapping time windows of 30 seconds.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -6591,8 +6591,8 @@ def pipeline_function():
     return [results]","+----+---------------------+---------------------+-----------------------+
 |    | start_timestamp     | end_timestamp       |   average_temperature |
 |----+---------------------+---------------------+-----------------------|
-|  0 | 2024-11-08 19:29:29 | 2024-11-08 19:30:29 |               12.8589 |
-+----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-08 19:29:29', 'end_timestamp': '2024-11-08 19:30:29', 'average_temperature': 12.858908341915551}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
+|  0 | 2024-11-10 16:54:42 | 2024-11-10 16:55:42 |               12.8264 |
++----+---------------------+---------------------+-----------------------+","[{'start_timestamp': '2024-11-10 16:54:42', 'end_timestamp': '2024-11-10 16:55:42', 'average_temperature': 12.826446280991735}]","Consider the diecutter with id 6, generate a table containing the average temperature computed over a time span of 1 minute.","from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
 
@@ -9095,37 +9095,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:13 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:14 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:14 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:14 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:14 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:14 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:14 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:15 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:57:34 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:57:34 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:57:34 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:57:35 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:57:35 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:57:35 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:57:35 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:57:36 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:57:34', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:34', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:34', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:35', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -9356,37 +9356,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:20 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:20 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:21 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:21 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:22 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:21', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:57:42 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:57:43 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:57:43 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:57:44 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:57:44 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:57:44 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:57:44 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:57:44 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -9617,37 +9617,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:28 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:29 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:29 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:29 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:29 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:29 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:28', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:29', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:57:50 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:57:51 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:57:51 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:57:52 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:57:52 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:57:52 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:57:52 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:57:52 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -9878,37 +9878,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:35 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:36 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:36 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:37 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:37 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:37 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:37 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:37 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:35', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:36', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:37', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:37', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:37', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:37', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:37', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:57:58 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:57:59 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:57:59 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:57:59 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:57:59 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:57:59 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:57:59 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:00 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:00 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:57:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:00', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:00', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -10139,37 +10139,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:42 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:42 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:43 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:43 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:44 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:42', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:43', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:44', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:06 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:07 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:07 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:06', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:07', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -10400,37 +10400,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:50 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:51 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:51 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:51 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:51 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:51 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:52 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:50', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:51', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:52', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:13 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:13 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:14 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:14 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:15 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:14', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:15', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -10661,37 +10661,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:32:57 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:32:58 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:32:58 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:32:59 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:32:59 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:32:59 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:32:59 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:32:59 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:57', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:58', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:32:59', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:21 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:22 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:22 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:22 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:22 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:22 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:22 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:23 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:21', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:22', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:23', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -10922,37 +10922,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:33:04 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:33:04 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:33:04 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:33:04 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:33:05 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:33:05 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:33:05 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:33:05 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:33:06 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:33:04', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:04', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:04', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:04', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:05', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:06', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:29 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:30 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:30 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:31 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:31 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:31 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:31 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:29', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:30', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:31', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:31', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:31', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:31', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -11183,37 +11183,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:33:12 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:33:13 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:33:13 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:33:13 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:12', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:13', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:37 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:38 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:38 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:37', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:38', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip
@@ -11444,37 +11444,37 @@ def pipeline_function():
     return results","+----+---------------------+--------------+---------+---------------+-------------+
 |    | timestamp           |   session_id |   speed |   temperature |   rotations |
 |----+---------------------+--------------+---------+---------------+-------------|
-|  0 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  1 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  2 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  3 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  4 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  5 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  6 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  7 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  8 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-|  9 | 2024-11-08 19:33:19 |           88 |       9 |             0 |          79 |
-| 10 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 11 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 12 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 13 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 14 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 15 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 16 | 2024-11-08 19:33:20 |           88 |       9 |             0 |          79 |
-| 17 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 18 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 19 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 20 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 21 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 22 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 23 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 24 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 25 | 2024-11-08 19:33:20 |           88 |       4 |             4 |         101 |
-| 26 | 2024-11-08 19:33:21 |           88 |       4 |             4 |         101 |
-| 27 | 2024-11-08 19:33:21 |           88 |       4 |             4 |         101 |
-| 28 | 2024-11-08 19:33:21 |           88 |       4 |             4 |         101 |
-| 29 | 2024-11-08 19:33:21 |           88 |       4 |             4 |         101 |
-+----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:19', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:20', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:21', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:21', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:21', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-08 19:33:21', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
+|  0 | 2024-11-10 16:58:44 |           88 |       9 |             0 |          79 |
+|  1 | 2024-11-10 16:58:44 |           88 |       9 |             0 |          79 |
+|  2 | 2024-11-10 16:58:44 |           88 |       9 |             0 |          79 |
+|  3 | 2024-11-10 16:58:44 |           88 |       9 |             0 |          79 |
+|  4 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+|  5 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+|  6 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+|  7 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+|  8 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+|  9 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 10 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 11 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 12 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 13 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 14 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 15 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 16 | 2024-11-10 16:58:45 |           88 |       9 |             0 |          79 |
+| 17 | 2024-11-10 16:58:45 |           88 |       4 |             4 |         101 |
+| 18 | 2024-11-10 16:58:45 |           88 |       4 |             4 |         101 |
+| 19 | 2024-11-10 16:58:45 |           88 |       4 |             4 |         101 |
+| 20 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 21 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 22 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 23 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 24 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 25 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 26 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 27 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 28 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
+| 29 | 2024-11-10 16:58:46 |           88 |       4 |             4 |         101 |
++----+---------------------+--------------+---------+---------------+-------------+","[{'timestamp': '2024-11-10 16:58:44', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:44', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:44', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:44', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 9, 'temperature': 0, 'rotations': 79}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:45', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}, {'timestamp': '2024-11-10 16:58:46', 'session_id': 88, 'speed': 4, 'temperature': 4, 'rotations': 101}]","Compute a table that gives some information about the current session of diecutter 14. For each erroneous stack produced, the table should tell me (i) the type of error, (ii) the current session of the diecutter, (iii) the current speed of the diecutter, (iii) the current temperature of the diecutter and (iv) the total number of rotations until now. The table should contain data for the next 30 stacks.","from data_services.database import GetDiecutterChipIdFromDiecutterId
 from data_services.database import GetCamera2IdFromDiecutterId
 from data_services.database import GetCurrentSessionIdFromDiecutterId
 from data_services.diecutter import GetCurrentDataFromChip

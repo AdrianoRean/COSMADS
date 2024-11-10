@@ -115,8 +115,11 @@ class LLMAgent:
         file_to_save = ""
 
         clean_pipeline = ""
+        import_text, modules = classesInNamespace("data_services")
+        test_list = ["from data_services"] + [f"from {str(module)}" for module in modules]
         for line in pipeline.split("\n"):
-            if "from data_services" in line:
+            res = [ele for ele in test_list if(ele in line)]
+            if res:
                 continue
             else:
                 line += "\n"
