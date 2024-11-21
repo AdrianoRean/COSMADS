@@ -1,8 +1,32 @@
 {
     "q0": {
-        "query": "Give me the job position's information of the employee with ssn 222-52-5555.",
-        "data_services": ["database.GetSerialCamera2IdFromDiecutterId", "database.GetSerialCamera1IdFromDiecutterId", "database.GetDiecuttersIdOfFactory"],
-        "query_example": "Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.",
+        "query": "Give me the job position's information of the employee with last name 'Milgrom'.",
+        "data_services": ["employee.GetDataFromEmployee", "position.GetDataFromPosition"],
+        "query_example": "Give me the job position's information of the employee with ssn 222-52-5555.",
         "pipeline": "pipelines/q0.py"
+    },
+    "q1": {
+        "query": "Compute the average salary of the employees with a female gender.",
+        "data_services": ["employee.GetDataFromEmployee"],
+        "query_example": "Compute the average salary of the employees with a good performance.",
+        "pipeline": "pipelines/q1.py"
+    },
+    "q2": {
+        "query": "Give me the social security number of all the employees that works in Atlanta.",
+        "data_services": ["employee.GetDataFromEmployee", "location.GetDataFromLocation"],
+        "query_example": "Give me the first and last name of all employees that works at address '312 Mount View Dr'.",
+        "pipeline": "pipelines/q2.py"
+    },
+    "q3": {
+        "query": "Give me the difference between the means of the 'Manager' and 'Regional Manager' positions.",
+        "data_services": ["position.GetDataFromPosition"],
+        "query_example": "Give me the mean of the 'Account Representative' position",
+        "pipeline": "pipelines/q3.py"
+    },
+    "q4": {
+        "query": "Give me the location adress of the workplace of all 'Regional Managers'.",
+        "data_services": ["employee.GetDataFromEmployee", "position.GetDataFromPosition", "location.GetDataFromLocation"],
+        "query_example": "Give me the location name of the workplace of all 'Managers'.",
+        "pipeline": "pipelines/q4.py"
     }
 }

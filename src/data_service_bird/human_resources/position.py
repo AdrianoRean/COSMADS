@@ -49,7 +49,10 @@ class GetDataFromPosition:
             query = "SELECT * FROM position WHERE"    
             # Cicla sugli argomenti effettivamente passati
             for param, value in passed_args.items():
-                query = query + f" {param} = {value}"
+                if type(value) == str:
+                    query = query + f" {param} = '{value}'"
+                else:
+                    query = query + f" {param} = {value}"
                 
         df = pd.read_sql_query(query, self.connection)
         return df

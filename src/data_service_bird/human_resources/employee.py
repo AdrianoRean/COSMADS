@@ -11,15 +11,18 @@ class GetDataFromEmployee:
         "detailed_description": 
         """Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute "ssn" is unique for each employee.
+        The attribute "ssn" (which stands for social security number) is unique for each employee.
+        The attribute "hiredate" has format "dd-mm-yy".
+        The attriute "salary" is saved as strings and start with the prefix "US$".
+        The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.
         You may select data trough any combination of this attributes. They are all optional.
         If all attributes are left undeclared, it returns all the available data.
 
         Example usage:
         - If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = 123
-        employee_df = GetDataFromEmployee.call(employeessn=123)
+        employeessn = '123'
+        employee_df = GetDataFromEmployee.call(employeessn=employeessn)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
 
@@ -50,7 +53,10 @@ class GetDataFromEmployee:
             query = "SELECT * FROM employee WHERE"    
             # Cicla sugli argomenti effettivamente passati
             for param, value in passed_args.items():
-                query = query + f" {param} = {value}"
+                if type(value) == str:
+                    query = query + f" {param} = '{value}'"
+                else:
+                    query = query + f" {param} = {value}"
                 
         df = pd.read_sql_query(query, self.connection)
         return df
