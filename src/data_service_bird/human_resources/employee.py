@@ -22,7 +22,9 @@ class GetDataFromEmployee:
         Example usage:
         - If I want to obtain all the information from the employee with ssn 123 I can write:
         employeessn = '123'
-        employee_df = GetDataFromEmployee.call(employeessn=employeessn)
+        employees = GetDataFromEmployee()
+        employees.open_connection()
+        employee_df = employees.call(employeessn=employeessn)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
 
@@ -30,7 +32,7 @@ class GetDataFromEmployee:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
         "input_parameters": ["ssn:str", "lastname:str", "firstname:str", "hiredate:str", "salary:str", "gender:str", "performance:str", "positionID:int", "locationID:int"],
         "output_values": ["employee_df:pandas.DataFrame"],
-        "module": "human_resources"
+        "module": "employee"
     }
     
     def open_connection(self):

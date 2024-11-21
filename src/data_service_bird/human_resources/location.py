@@ -18,7 +18,9 @@ class GetDataFromLocation:
         Example usage:
         - If I want to obtain all the information from the office with locationID 123 I can write:
         locationID = 123
-        location_df = GetDataFromLocation.call(locationID=123)
+        locations = GetDataFromLocation()
+        locations.open_connection()
+        location_df = location.call(locationID=123)
         # assuming the result is a pandas dataframe
         print(location_df.shape)
 
@@ -26,7 +28,7 @@ class GetDataFromLocation:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
         "input_parameters": ["locationID:int", "locationcity:str", "address:str", "state:str", "zipcode:int", "officephone:str"],
         "output_values": ["location_df:pandas.DataFrame"],
-        "module": "human_resources"
+        "module": "location"
     }
     
     def open_connection(self):

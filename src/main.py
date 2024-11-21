@@ -31,7 +31,7 @@ class LLMAgent:
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
-        self.ds_directory = "data_services_bird/human_resources"
+        self.ds_directory = "data_service_bird/human_resources"
         self.doc_directory = "documents"
         self.current_production = "cardboard_production"
         self.sep: str = " - "

@@ -18,6 +18,8 @@ class GetDataFromPosition:
         Example usage:
         - If I want to obtain all the information from the job position with positionID 123 I can write:
         positionID = 123
+        positions = GetDataFromPosition()
+        positions.open_connection()
         position_df = GetDataFromPosition.call(positionID=123)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
@@ -26,7 +28,7 @@ class GetDataFromPosition:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
         "input_parameters": ["positionID:int", "positiontitle:str", "educationrequired:str", "minsalary:str", "maxsalary:int"],
         "output_values": ["position_df:pandas.DataFrame"],
-        "module": "human_resources"
+        "module": "positions"
     }
     
     def open_connection(self):
