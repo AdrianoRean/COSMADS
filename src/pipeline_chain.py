@@ -40,10 +40,9 @@ Guidelines:
 - Do not add any other information between the return statement and the triple backtick (```).
 - The python function should return a list of dictionaries (in some cases the list may contain a single dictionary) as specified in the output schema of the problem statement.
 - The python function should use the available tools to answer the query. To invoke a tool, just call the class name of the tool and pass the input parameters to it, e.g. ToolName(input_parameter1=input_value1, input_parameter2=input_value2, ...).
-- Import the correct tools from the correct modules to use them in the python function. The modules are in the database folder. To import a tool, use the following syntax: from data_services.<module> import <name>.
+- The tools are already imported. Do not import them.
 - You can define helper functions if necessary.
 - The function should be generated with a fixed name, which is "pipeline_function".
-- Use the threading module whenever required to parallelize the data collection process based on the problem statement and the tools available to you.
 
 Here an example of a pipeline that may help you in generating a new pipeline:
 ======
@@ -134,7 +133,7 @@ class PipelineGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        self.llm = ChatOpenAI(model="gpt-4-turbo",
+        self.llm = ChatOpenAI(model="gpt-4o",
                               api_key=openai_key,
                               temperature=0.0)
         # define the output parser

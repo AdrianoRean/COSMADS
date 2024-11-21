@@ -32,6 +32,7 @@ class LLMAgent:
 
         #self.ds_directory = "data_services"
         self.ds_directory = "data_service_bird/human_resources"
+        self.ds_directory_import = "data_service_bird.human_resources"
         self.doc_directory = "documents"
         self.current_production = "cardboard_production"
         self.sep: str = " - "
@@ -112,13 +113,26 @@ class LLMAgent:
 
     def save_intermediate_result_to_json(self, pipeline, data_services) -> str:
         file_to_save = ""
+        
+        modules = []
+        classes = []
+        for data_service in data_services:
+            modules.append(data_service['module'])
+            classes.append(data_service['class_name'])
+        
+        new_pipeline = ""
+        for line in pipeline.split('\n'):
+            if "from" in line and (any(module in line for module in modules) or any(m_class in line for m_class in classes)):
+                continue
+            else:
+                new_pipeline += f"\n{line}"
 
         for data_service in data_services:
             module = data_service['module']
             class_name = data_service['class_name']
-            file_to_save += f"from {self.ds_directory}.{module} import {class_name}\n"
+            file_to_save += f"from {self.ds_directory_import}.{module} import {class_name}\n"
         
-        file_to_save += f"{pipeline}\n"
+        file_to_save += f"{new_pipeline}\n"
 
         main_function = f"""
 if __name__ == "__main__":
@@ -291,7 +305,7 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    q = "q0"
+    q = "q4"
     llm = LLMAgent()
     with open("queries/queries_pipelines_human_resources.json", "r") as f:
         queries = json.load(f)

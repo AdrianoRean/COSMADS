@@ -18,9 +18,9 @@
         "pipeline": "pipelines/q2.py"
     },
     "q3": {
-        "query": "Give me the difference between the means of the 'Manager' and 'Regional Manager' positions.",
+        "query": "Give me the difference between the mean salaries of the 'Manager' and 'Regional Manager' position titles.",
         "data_services": ["position.GetDataFromPosition"],
-        "query_example": "Give me the mean of the 'Account Representative' position",
+        "query_example": "Give me the mean of salary of the 'Account Representative' position title",
         "pipeline": "pipelines/q3.py"
     },
     "q4": {

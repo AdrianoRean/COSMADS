@@ -13,7 +13,7 @@ class GetDataFromEmployee:
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute "ssn" (which stands for social security number) is unique for each employee.
         The attribute "hiredate" has format "dd-mm-yy".
-        The attriute "salary" is saved as strings and start with the prefix "US$".
+        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand.
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.
         You may select data trough any combination of this attributes. They are all optional.

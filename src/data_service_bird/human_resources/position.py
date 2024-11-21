@@ -28,7 +28,7 @@ class GetDataFromPosition:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
         "input_parameters": ["positionID:int", "positiontitle:str", "educationrequired:str", "minsalary:str", "maxsalary:int"],
         "output_values": ["position_df:pandas.DataFrame"],
-        "module": "position"
+        "module": " position"
     }
     
     def open_connection(self):
