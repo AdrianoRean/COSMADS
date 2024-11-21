@@ -30,7 +30,8 @@ class LLMAgent:
         self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode)
         self.runner = PipelineRunner()
 
-        self.ds_directory = "data_services"
+        #self.ds_directory = "data_services"
+        self.ds_directory = "data_services_bird/human_resources"
         self.doc_directory = "documents"
         self.current_production = "cardboard_production"
         self.sep: str = " - "
@@ -290,9 +291,9 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    q = "q3"
+    q = "q0"
     llm = LLMAgent()
-    with open("queries_pipelines.json", "r") as f:
+    with open("queries/queries_pipelines_human_resources.json", "r") as f:
         queries = json.load(f)
     query = queries[q]["query"]
     print(query)

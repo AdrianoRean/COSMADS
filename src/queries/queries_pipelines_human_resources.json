@@ -1,0 +1,8 @@
+{
+    "q0": {
+        "query": "Give me the job position's information of the employee with ssn 222-52-5555.",
+        "data_services": ["database.GetSerialCamera2IdFromDiecutterId", "database.GetSerialCamera1IdFromDiecutterId", "database.GetDiecuttersIdOfFactory"],
+        "query_example": "Given 88888404 serial number tell me the type of camera and the diecutter it is installed on.",
+        "pipeline": "pipelines/q0.py"
+    }
+}

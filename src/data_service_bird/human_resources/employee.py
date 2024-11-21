@@ -65,5 +65,5 @@ print(os.getcwd())
 
 gd.open_connection()
     
-print(gd.call(positionID=3))
+print(gd.call())
 '''

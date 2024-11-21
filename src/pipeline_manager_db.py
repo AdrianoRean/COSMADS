@@ -14,7 +14,8 @@ class PipelineStore():
         return cls.__name__ + " " + file_name + " " + cls.description['description']
 
     def __init__(self):
-        json_setup = json.load(open('queries_pipelines.json'))
+        print(os.getcwd())
+        json_setup = json.load(open('queries/queries_pipelines_human_resources.json'))
         queries = json_setup.keys()
         self.docs = []
         for q in queries:
