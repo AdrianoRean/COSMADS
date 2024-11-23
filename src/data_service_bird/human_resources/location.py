@@ -54,9 +54,10 @@ class GetDataFromLocation:
             for param, (value, operator) in passed_args.items():
                 operator = selectOperator(operator)
                 if type(value) == str:
-                    query = query + f" {param} {operator} '{value}'"
+                    query = query + f" {param} {operator} '{value}' and"
                 else:
-                    query = query + f" {param} {operator} {value}"
+                    query = query + f" {param} {operator} {value} and"
+            query = query[:-4]
                 
         df = pd.read_sql_query(query, self.connection)
         return df
