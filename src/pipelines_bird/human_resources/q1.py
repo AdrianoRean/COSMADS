@@ -1,7 +1,7 @@
 from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
-    performance = "Good"
+    performance = ("Good", "EQUAL")
 
     results = []
 

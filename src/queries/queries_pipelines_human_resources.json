@@ -28,5 +28,11 @@
         "data_services": ["employee.GetDataFromEmployee", "position.GetDataFromPosition", "location.GetDataFromLocation"],
         "query_example": "Give me the location name of the workplace of all 'Managers'.",
         "pipeline": "pipelines/q4.py"
+    },
+    "q5": {
+        "query": "Count all employees' with locationID less than 4",
+        "data_services": ["employee.GetDataFromEmployee"],
+        "query_example": "Count all employees' with positionID greater or equal than 3",
+        "pipeline": "pipelines/q5.py"
     }
 }

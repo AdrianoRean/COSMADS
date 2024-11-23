@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import inspect
-from utilities import selectOperator
+from data_service_bird.utilities import selectOperator
 
 class GetDataFromEmployee:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"

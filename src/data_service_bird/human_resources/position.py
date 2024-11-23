@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import inspect
-from utilities import selectOperator
+from data_service_bird.utilities import selectOperator
 
 class GetDataFromPosition:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
@@ -51,7 +51,7 @@ class GetDataFromPosition:
         else:    
             query = "SELECT * FROM position WHERE"    
             # Cicla sugli argomenti effettivamente passati
-            for param, value in passed_args.items():
+            for param, (value, operator) in passed_args.items():
                 operator = selectOperator(operator)
                 if type(value) == str:
                     query = query + f" {param} {operator} '{value}'"

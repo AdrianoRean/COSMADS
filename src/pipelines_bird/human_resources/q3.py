@@ -1,7 +1,7 @@
 from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
-    positiontitle = "Account Representative"
+    positiontitle = ("Account Representative", "EQUAL")
 
     results = []
 

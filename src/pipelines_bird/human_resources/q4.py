@@ -3,7 +3,7 @@ from data_service_bird.human_resources.position import GetDataFromPosition
 from data_service_bird.human_resources.location import GetDataFromLocation
 
 def pipeline_function():
-    positiontitle = "Manager"
+    positiontitle = ("Manager", "EQUAL")
 
     results = []
 
@@ -18,12 +18,12 @@ def pipeline_function():
     position_df = positions.call(positiontitle=positiontitle)
     positionID = position_df['positionID'].iloc[0]
     
-    employee_df = employees.call(positionID=positionID)
+    employee_df = employees.call(positionID=(positionID, "EQUAL"))
     
     locationecities = []
     for index, employee in employee_df.iterrows():
         locationID = employee["locationID"]
-        locations_df = locations.call(locationID=locationID)
+        locations_df = locations.call(locationID=(locationID, "EQUAL"))
         locationcity = locations_df['locationcity'].iloc[0]
         locationecities.append(str(locationcity))
 
