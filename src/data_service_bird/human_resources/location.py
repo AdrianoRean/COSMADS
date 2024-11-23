@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import inspect
-import os
+from utilities import selectOperator
 
 class GetDataFromLocation:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
@@ -13,14 +13,15 @@ class GetDataFromLocation:
         Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
         The attribute "locationID" is unique for each office.
         You may select data trough any combination of this attributes. They are all optional.
+        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         If all attributes are left undeclared, it returns all the available data.
 
         Example usage:
         - If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = 123
+        locationID = (123, "EQUAL")
         locations = GetDataFromLocation()
         locations.open_connection()
-        location_df = location.call(locationID=123)
+        location_df = location.call(locationID=locationID)
         # assuming the result is a pandas dataframe
         print(location_df.shape)
 
@@ -51,10 +52,11 @@ class GetDataFromLocation:
             query = "SELECT * FROM location WHERE"    
             # Cicla sugli argomenti effettivamente passati
             for param, value in passed_args.items():
+                operator = selectOperator(operator)
                 if type(value) == str:
-                    query = query + f" {param} = '{value}'"
+                    query = query + f" {param} {operator} '{value}'"
                 else:
-                    query = query + f" {param} = {value}"
+                    query = query + f" {param} {operator} {value}"
                 
         df = pd.read_sql_query(query, self.connection)
         return df
@@ -63,8 +65,6 @@ class GetDataFromLocation:
 #if run as main, add 'src/' to db path
 
 gd = GetDataFromLocation()
-
-print(os.getcwd())
 
 gd.open_connection()
     

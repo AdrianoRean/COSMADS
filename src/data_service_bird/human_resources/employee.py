@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import inspect
-import os
+from utilities import selectOperator
 
 class GetDataFromEmployee:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
@@ -17,11 +17,12 @@ class GetDataFromEmployee:
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.
         You may select data trough any combination of this attributes. They are all optional.
+        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         If all attributes are left undeclared, it returns all the available data.
 
         Example usage:
         - If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = '123'
+        employeessn = ('123', "EQUAL")
         employees = GetDataFromEmployee()
         employees.open_connection()
         employee_df = employees.call(employeessn=employeessn)
@@ -54,11 +55,12 @@ class GetDataFromEmployee:
         else:    
             query = "SELECT * FROM employee WHERE"    
             # Cicla sugli argomenti effettivamente passati
-            for param, value in passed_args.items():
+            for param, (value, operator) in passed_args.items():
+                operator = selectOperator(operator)
                 if type(value) == str:
-                    query = query + f" {param} = '{value}'"
+                    query = query + f" {param} {operator} '{value}'"
                 else:
-                    query = query + f" {param} = {value}"
+                    query = query + f" {param} {operator} {value}"
                 
         df = pd.read_sql_query(query, self.connection)
         return df
@@ -69,9 +71,7 @@ class GetDataFromEmployee:
 
 gd = GetDataFromEmployee()
 
-print(os.getcwd())
-
 gd.open_connection()
     
-print(gd.call())
+print(gd.call(positionID=(3, "GREATER OR EQUAL")))
 '''

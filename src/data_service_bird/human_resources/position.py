@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlite3
 import inspect
-import os
+from utilities import selectOperator
 
 class GetDataFromPosition:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
@@ -13,14 +13,15 @@ class GetDataFromPosition:
         Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
         The attribute "positionID" is unique for each job position.
         You may select data trough any combination of this attributes. They are all optional.
+        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         If all attributes are left undeclared, it returns all the available data.
 
         Example usage:
         - If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = 123
+        positionID = (123, "EQUAL")
         positions = GetDataFromPosition()
         positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=123)
+        position_df = GetDataFromPosition.call(positionID=positionID)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
 
@@ -51,10 +52,11 @@ class GetDataFromPosition:
             query = "SELECT * FROM position WHERE"    
             # Cicla sugli argomenti effettivamente passati
             for param, value in passed_args.items():
+                operator = selectOperator(operator)
                 if type(value) == str:
-                    query = query + f" {param} = '{value}'"
+                    query = query + f" {param} {operator} '{value}'"
                 else:
-                    query = query + f" {param} = {value}"
+                    query = query + f" {param} {operator} {value}"
                 
         df = pd.read_sql_query(query, self.connection)
         return df
@@ -64,8 +66,6 @@ class GetDataFromPosition:
 #if run as main, add 'src/' to db path
 
 gd = GetDataFromPosition()
-
-print(os.getcwd())
 
 gd.open_connection()
     
