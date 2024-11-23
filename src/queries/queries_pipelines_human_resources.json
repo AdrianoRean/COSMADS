@@ -3,36 +3,36 @@
         "query": "Give me the job position's information of the employee with last name 'Milgrom'.",
         "data_services": ["employee.GetDataFromEmployee", "position.GetDataFromPosition"],
         "query_example": "Give me the job position's information of the employee with ssn 222-52-5555.",
-        "pipeline": "pipelines/q0.py"
+        "pipeline": "pipelines_bird/human_resources/q0.py"
     },
     "q1": {
         "query": "Compute the average salary of the employees with a female gender.",
         "data_services": ["employee.GetDataFromEmployee"],
         "query_example": "Compute the average salary of the employees with a good performance.",
-        "pipeline": "pipelines/q1.py"
+        "pipeline": "pipelines_bird/human_resources/q1.py"
     },
     "q2": {
         "query": "Give me the social security number of all the employees that works in Atlanta.",
         "data_services": ["employee.GetDataFromEmployee", "location.GetDataFromLocation"],
         "query_example": "Give me the first and last name of all employees that works at address '312 Mount View Dr'.",
-        "pipeline": "pipelines/q2.py"
+        "pipeline": "pipelines_bird/human_resources/q2.py"
     },
     "q3": {
         "query": "Give me the difference between the mean salaries of the 'Manager' and 'Regional Manager' position titles.",
         "data_services": ["position.GetDataFromPosition"],
         "query_example": "Give me the mean of salary of the 'Account Representative' position title",
-        "pipeline": "pipelines/q3.py"
+        "pipeline": "pipelines_bird/human_resources/q3.py"
     },
     "q4": {
         "query": "Give me the location adress of the workplace of all 'Regional Managers'.",
         "data_services": ["employee.GetDataFromEmployee", "position.GetDataFromPosition", "location.GetDataFromLocation"],
         "query_example": "Give me the location name of the workplace of all 'Managers'.",
-        "pipeline": "pipelines/q4.py"
+        "pipeline": "pipelines_bird/human_resources/q4.py"
     },
     "q5": {
         "query": "Count all employees' with locationID less than 4",
         "data_services": ["employee.GetDataFromEmployee"],
         "query_example": "Count all employees' with positionID greater or equal than 3",
-        "pipeline": "pipelines/q5.py"
+        "pipeline": "pipelines_bird/human_resources/q5.py"
     }
 }

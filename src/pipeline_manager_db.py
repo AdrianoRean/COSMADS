@@ -54,7 +54,6 @@ class PipelineStore():
             # best_match contains the list of the closest vectors (the first element is the closest one)            
             best_match = self.db.similarity_search(query)
             best_result = best_match[0]
-            print("PIPELINEEEEEEERFEFEFTEFYFET")
             print(best_result)
         except Exception as e:
             exception = str(e)
