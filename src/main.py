@@ -188,6 +188,17 @@ if __name__ == "__main__":
                 }
             )
             | generator_chain_output
+            | RunnableLambda(lambda x: {
+                    "output": x["pipeline"]
+                }
+            )
+            
+        )
+
+        # return the chain
+        return chain
+    
+    '''
             | RunnableParallel(
                 gen = RunnableLambda(lambda x: {
                     "query": x["inputs"]["query"],
@@ -222,10 +233,7 @@ if __name__ == "__main__":
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
-        )
-
-        # return the chain
-        return chain
+            '''
     
     def get_chain_wrong(self) -> Runnable:
         generator_chain = self.generator.get_chain()
@@ -306,7 +314,7 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     q = "q5"
-    llm = LLMAgent()
+    llm = LLMAgent(mode="chain_of_thoughs")
     with open("queries/queries_pipelines_human_resources.json", "r") as f:
         queries = json.load(f)
     query = queries[q]["query"]

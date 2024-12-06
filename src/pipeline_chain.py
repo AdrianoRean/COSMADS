@@ -1,7 +1,40 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
 from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
 
+TEMPLATE_WITH_DOCUMENT_PRE_QUERY = """
+You are a proficient python developer that generates a python function that solves a natural language query. The python function always returns a list of dictionaries (in some cases the list may contain a single dictionary).
+
+You are given the query under study.
+Query:
+======
+{query}
+======
+
+Your goal is to determine which of the following tools should be used to generate a valid Python function that correctly generates the data specified in the queries:
+======
+{data_services}
+======
+Each tool is represented by a JSON string having the following structure:
+{{
+    "name": <name>,
+    "brief_description": <brief_description>,
+    "detailed_description": <description>,
+    "input_parameters": <input_parameters>,
+    "output_values": <output_values>,
+    "module": <module>
+}}
+where:
+    - <name> is the name of the callable python class
+    - <brief_description> is a string representing a brief description of the callable python class
+    - <detailed_description> is a string representing a detailed description of the callable python class
+    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
+    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
+    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+
+Answer:
+"""
 
 TEMPLATE_WITH_DOCUMENT = """
 You are a proficient python developer that generates a python function that solves a natural language query. The python function always returns a list of dictionaries (in some cases the list may contain a single dictionary).
@@ -125,6 +158,8 @@ class PipelineGeneratorAgent:
         # define the prompt
         if mode == "standard":
             prompt_template = TEMPLATE_WITH_DOCUMENT
+        if mode == "chain_of_thoughs":
+            prompt_template = TEMPLATE_WITH_DOCUMENT_PRE_QUERY
         elif mode == "wo_pipeline":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE
         elif mode == "wrong":
@@ -141,7 +176,7 @@ class PipelineGeneratorAgent:
 
     def get_chain(self):
         # generate the python function
-        agent_chain = self.prompt | self.llm | self.output_parser
+        agent_chain = self.prompt | self.llm | StrOutputParser() #self.output_parser
         return agent_chain
 
 
