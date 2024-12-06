@@ -5,10 +5,10 @@ import numpy as np
 
 def match_similarity(df1, df2):
 
-    matcher = Coma(use_instances=True)
+    matcher = Coma(use_instances=True, java_xmx='1024m')
     matches = valentine_match(df1, df2, matcher)
-    print("matches\n",matches)
-    print()
+    #print("matches\n",matches)
+    #print()
 
     # construct the ground truth based on the columns of df1
     col_df1 = df1.columns.to_list()
@@ -23,16 +23,16 @@ def match_similarity(df1, df2):
                 break
         if not found:
             ground_truth.append((col_df1[i]))
-    print("ground_truth\n",ground_truth)
-    print()
+    #print("ground_truth\n",ground_truth)
+    #print()
 
 
     # accoppiamenti ground truth delle colonne
     metrics = matches.get_metrics(ground_truth)
-    print("metrics\n",metrics)
+    '''print("metrics\n",metrics)
     print("precision",metrics["Precision"])
     print("recall",metrics["RecallAtSizeofGroundTruth"])
-    print()
+    print()'''
 
 
     # order the two schemas based on the matches
@@ -50,10 +50,10 @@ def match_similarity(df1, df2):
     df1 = df1[table1_schema]
     df2 = df2[table2_schema]
 
-    print("df1\n",df1)
+    '''print("df1\n",df1)
     print()
     print("df2\n",df2)
-    print()
+    print()'''
 
 
     # devo ordinare le colonne allo stesso modo
@@ -69,7 +69,7 @@ def match_similarity(df1, df2):
         return exact_similarity
 
     table_similarity = compute_matrix_similarity(df1, df2)
-    print("table_similarity (cell)",table_similarity)
+    #print("table_similarity (cell)",table_similarity)
 
 
     def check_tables_equal(table1, table2):
@@ -84,6 +84,6 @@ def match_similarity(df1, df2):
         return score
 
     other_precision = check_tables_equal(df1, df2)
-    print("table_similarity (row)",other_precision)
+    #print("table_similarity (row)",other_precision)
 
     return metrics["Precision"], metrics["RecallAtSizeofGroundTruth"], table_similarity, other_precision

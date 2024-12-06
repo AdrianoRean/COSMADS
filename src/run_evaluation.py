@@ -1,6 +1,5 @@
 import json
 import pandas as pd
-import os
 
 from data_service_bird.database import GetDataFromDatabase
 
@@ -55,19 +54,21 @@ def evaluate_results(mode):
         df1 = db.call(query=query["SQL"])
         print(f"Query {question} index {index}")
         res = eval_results[(eval_results["index"] == index)]
-        
+        #Check if pipeline completely failed like query 35 eval_26-11-24
+        if type(res["output_json"].values[0]) != str:
+            output_json = "[]"
+        else:
+            output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false")
+        #print(output_json)
+        output_res = json.loads(output_json)
+        df2 = pd.DataFrame(output_res)
+
+        df1.name = "table_1"
+        df2.name = "table_2"
         try:
-            output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("True", "true").replace("False", "false")
-            output_res = json.loads(output_json)
-            df2 = pd.DataFrame(output_res)
-            print("-------------")
-            print(df1)
-            print("-------------")
-            print(df2)
-            
-            exit()
             precision, recall, acc_cell, acc_row = match_similarity(df1, df2)
         except:
+            print(f"Exception for query {index}")
             precision, recall, acc_cell, acc_row = 0, 0, 0, 0
         metrics_res_q_idx.append([precision, recall, acc_cell, acc_row])
         
@@ -94,5 +95,5 @@ if __name__ == "__main__":
     
     modes = ["standard"]
     for mode in modes:
-        #run_evaluation(mode)
+        run_evaluation(mode)
         evaluate_results(mode)

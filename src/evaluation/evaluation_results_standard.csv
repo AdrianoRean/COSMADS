@@ -54,27 +54,28 @@ index,question,data_services,pipeline,output,output_json,example_query,example_p
         print(position_df.shape)
 
         Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
+        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
+    import pandas as pd
+    from employee import GetDataFromEmployee
 
-def pipeline_function():
     results = []
 
     employees = GetDataFromEmployee()
     employees.open_connection()
-    
+
     employee_df = employees.call()
-    
-    # Remove 'US$' and ',' from salary and convert to float for comparison
-    employee_df['salary'] = employee_df['salary'].str.replace('US$', '').str.replace(',', '').astype(float)
-    
+
+    # Convert salary to numeric for comparison
+    employee_df['salary_numeric'] = employee_df['salary'].apply(lambda x: float(x.replace('US$', '').replace(',', '')))
+
     # Find the employee with the highest salary
-    highest_salary_employee = employee_df.loc[employee_df['salary'].idxmax()]
-    
+    highest_salary_employee = employee_df.loc[employee_df['salary_numeric'].idxmax()]
+
     # Prepare the result
     results.append({
         'fullname': f""{highest_salary_employee['firstname']} {highest_salary_employee['lastname']}""
     })
-    
+
     return results","+----+-----------------+
 |    | fullname        |
 |----+-----------------|
@@ -164,7 +165,9 @@ def pipeline_function():
         print(position_df.shape)
 
         Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
+        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
+
+def pipeline_function():
     performance = (""Good"", ""EQUAL"")
 
     results = []
@@ -174,7 +177,7 @@ def pipeline_function():
     employees.open_connection()
     
     employee_df = employees.call(performance=performance)
-    good_performance_count = employee_df.shape[0]
+    good_performance_count = len(employee_df)
     
     results.append({
         'good_performance_count': good_performance_count
@@ -264,28 +267,23 @@ def pipeline_function():
         print(position_df.shape)
 
         Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
+        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
 
-    # Define the query parameters
+def pipeline_function():
     gender = (""M"", ""EQUAL"")
     salary = (""US$70,000"", ""GREATER"")
 
-    # Initialize the results list
     results = []
 
-    # Create an instance of the GetDataFromEmployee class
     employees = GetDataFromEmployee()
-
-    # Open the connection to the data service
     employees.open_connection()
 
-    # Call the data service with the specified parameters
     employee_df = employees.call(gender=gender, salary=salary)
 
-    # Iterate over the resulting dataframe and extract the SSNs
     for _, row in employee_df.iterrows():
-        results.append({'ssn': row['ssn']})
+        results.append({
+            'ssn': row['ssn']
+        })
 
     return results","+----+-------------+
 |    | ssn         |
@@ -491,38 +489,32 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from position import GetDataFromPosition
-
-    # Define the position titles to compare
     position_titles = [""Account Representative"", ""Trainee""]
-
-    # Initialize the data service
-    positions = GetDataFromPosition()
-    positions.open_connection()
-
-    # Initialize a list to store results
     results = []
 
-    # Iterate over the position titles to find their minimum salaries
+    positions = GetDataFromPosition()
+    positions.open_connection()
+    
+    position_df = positions.call()
+    
     for title in position_titles:
-        positiontitle = (title, ""EQUAL"")
-        position_df = positions.call(positiontitle=positiontitle)
-
-        # Extract and clean the minimum salary
-        minsalary = position_df['minsalary'].iloc[0]
-        minsalary = minsalary.replace(""US$"", """").replace("","", """")
-        minsalary = float(minsalary)
-
-        # Append the result to the list
-        results.append({
-            'positiontitle': title,
-            'minsalary': minsalary
-        })
-
+        position_data = position_df[position_df['positiontitle'] == title]
+        if not position_data.empty:
+            minsalary = position_data['minsalary'].iloc[0]
+            minsalary = minsalary.replace(""US$"", """").replace("","", """")
+            minsalary = float(minsalary)
+            results.append({
+                'positiontitle': title,
+                'minsalary': minsalary
+            })
+    
     # Determine which position has the lower minimum salary
-    lower_min_salary_position = min(results, key=lambda x: x['minsalary'])
-
-    return [lower_min_salary_position]","+----+-----------------+-------------+
+    if results[0]['minsalary'] < results[1]['minsalary']:
+        lower_salary_position = results[0]
+    else:
+        lower_salary_position = results[1]
+    
+    return [lower_salary_position]","+----+-----------------+-------------+
 |    | positiontitle   |   minsalary |
 |----+-----------------+-------------|
 |  0 | Trainee         |       18000 |
@@ -615,9 +607,6 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from location import GetDataFromLocation
-
     firstname = (""Sandy"", ""EQUAL"")
     lastname = (""Adams"", ""EQUAL"")
 
@@ -625,22 +614,22 @@ def pipeline_function():
 
     employees = GetDataFromEmployee()
     locations = GetDataFromLocation()
-
+    
     employees.open_connection()
     locations.open_connection()
-
+    
     employee_df = employees.call(firstname=firstname, lastname=lastname)
-
+    
     if not employee_df.empty:
         locationID = employee_df['locationID'].iloc[0]
         location_df = locations.call(locationID=(locationID, ""EQUAL""))
-
+        
         if not location_df.empty:
             locationcity = location_df['locationcity'].iloc[0]
             results.append({
                 'locationcity': locationcity
             })
-
+    
     return results","+----+----------------+
 |    | locationcity   |
 |----+----------------|
@@ -739,36 +728,35 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    # Initialize the results list
-    results = []
+    from employee import GetDataFromEmployee
+    from location import GetDataFromLocation
 
-    # Get the location ID for New York
-    location_city = (""New York"", ""EQUAL"")
+    # Step 1: Get the locationID for New York
+    locationcity = (""New York"", ""EQUAL"")
     locations = GetDataFromLocation()
     locations.open_connection()
-    location_df = locations.call(locationcity=location_city)
+    location_df = locations.call(locationcity=locationcity)
     
-    # Check if New York location exists
-    if not location_df.empty:
-        new_york_location_id = location_df.iloc[0]['locationID']
-        
-        # Get employees with good performance in New York
-        location_id = (new_york_location_id, ""EQUAL"")
-        performance = (""Good"", ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(locationID=location_id, performance=performance)
-        
-        # Count the number of employees with good performance
-        good_performance_count = employee_df.shape[0]
-        
-        # Append the result to the results list
-        results.append({
-            'location': 'New York',
-            'good_performance_count': good_performance_count
-        })
-    
-    return results",,[],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    # Assuming there is only one locationID for New York
+    new_york_location_id = location_df['locationID'].iloc[0]
+
+    # Step 2: Get employees with good performance in New York
+    locationID = (new_york_location_id, ""EQUAL"")
+    performance = (""Good"", ""EQUAL"")
+    employees = GetDataFromEmployee()
+    employees.open_connection()
+    employee_df = employees.call(locationID=locationID, performance=performance)
+
+    # Step 3: Count the number of employees with good performance
+    good_performance_count = employee_df.shape[0]
+
+    # Prepare the result
+    results = [{
+        'location': 'New York',
+        'good_performance_count': good_performance_count
+    }]
+
+    return results",The pipeline did not run successfully,[{'locationcity': 'Atlanta'}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     performance = (""Good"", ""EQUAL"")
@@ -863,11 +851,11 @@ def pipeline_function():
     employee_df = employees.call(firstname=firstname, lastname=lastname)
     locationID = employee_df[""locationID""].iloc[0]
     location_df = locations.call(locationID=(locationID, ""EQUAL""))
-    office_info = location_df.iloc[0]
+    location_info = location_df.iloc[0]
     
-    office_info = office_info.astype(str)
+    location_info = location_info.astype(str)
     results.append({
-        'officephone': office_info['officephone']
+        'officephone': location_info['officephone']
     })
     
     return results","+----+---------------+
@@ -1084,34 +1072,40 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Step 1: Get the positionID for 'Account Representative'
     positiontitle = (""Account Representative"", ""EQUAL"")
+
+    # Initialize the results list
+    results = []
+
+    # Get position data
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
 
-    if position_df.empty:
-        return [{""count"": 0}]
+    # Check if position_df is not empty
+    if not position_df.empty:
+        # Get the positionID for 'Account Representative'
+        account_rep_position_id = position_df['positionID'].iloc[0]
 
-    account_representative_position_id = position_df.iloc[0]['positionID']
+        # Get employee data
+        employees = GetDataFromEmployee()
+        employees.open_connection()
+        employee_df = employees.call(positionID=(account_rep_position_id, ""EQUAL""))
 
-    # Step 2: Get employees with the positionID of 'Account Representative'
-    positionID = (account_representative_position_id, ""EQUAL"")
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-    employee_df = employees.call(positionID=positionID)
+        # Count the number of employees with the 'Account Representative' position
+        num_employees = employee_df.shape[0]
 
-    # Step 3: Count the number of employees
-    employee_count = employee_df.shape[0]
+        # Append the result to the results list
+        results.append({
+            'positiontitle': ""Account Representative"",
+            'num_employees': num_employees
+        })
 
-    return [{""count"": employee_count}]","+----+---------+
-|    |   count |
-|----+---------|
-|  0 |      10 |
-+----+---------+",[{'count': 10}],Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
+    return results","+----+------------------------+-----------------+
+|    | positiontitle          |   num_employees |
+|----+------------------------+-----------------|
+|  0 | Account Representative |              10 |
++----+------------------------+-----------------+","[{'positiontitle': 'Account Representative', 'num_employees': 10}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     positiontitle = (""Account Representative"", ""EQUAL"")
@@ -1200,46 +1194,45 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    import pandas as pd
+    # Initialize the results list
+    results = []
 
-    # Initialize the data service for employees
+    # Get data for James Johnson
     employees = GetDataFromEmployee()
     employees.open_connection()
+    employee_df = employees.call(firstname=(""James"", ""EQUAL""), lastname=(""Johnson"", ""EQUAL""))
 
-    # Fetch data for James Johnson
-    firstname = (""James"", ""EQUAL"")
-    lastname = (""Johnson"", ""EQUAL"")
-    employee_df = employees.call(firstname=firstname, lastname=lastname)
+    # Check if James Johnson exists in the data
+    if not employee_df.empty:
+        # Extract James Johnson's salary and positionID
+        james_salary_str = employee_df.iloc[0]['salary']
+        positionID = employee_df.iloc[0]['positionID']
 
-    # Extract James Johnson's salary and positionID
-    james_salary_str = employee_df['salary'].iloc[0]
-    positionID = employee_df['positionID'].iloc[0]
+        # Convert James Johnson's salary to a float
+        james_salary = float(james_salary_str.replace(""US$"", """").replace("","", """"))
 
-    # Convert salary to float
-    james_salary = float(james_salary_str.replace(""US$"", """").replace("","", """"))
+        # Get data for the position to find the minimum salary
+        positions = GetDataFromPosition()
+        positions.open_connection()
+        position_df = positions.call(positionID=(positionID, ""EQUAL""))
 
-    # Initialize the data service for positions
-    positions = GetDataFromPosition()
-    positions.open_connection()
+        # Check if the position exists in the data
+        if not position_df.empty:
+            # Extract the minimum salary for the position
+            min_salary_str = position_df.iloc[0]['minsalary']
+            min_salary = float(min_salary_str.replace(""US$"", """").replace("","", """"))
 
-    # Fetch data for the position
-    position_df = positions.call(positionID=(positionID, ""EQUAL""))
+            # Calculate the difference
+            salary_difference = james_salary - min_salary
 
-    # Extract the minimum salary for the position
-    min_salary_str = position_df['minsalary'].iloc[0]
-    min_salary = float(min_salary_str.replace(""US$"", """").replace("","", """"))
+            # Append the result
+            results.append({
+                'firstname': 'James',
+                'lastname': 'Johnson',
+                'salary_difference': salary_difference
+            })
 
-    # Calculate the difference
-    salary_difference = james_salary - min_salary
-
-    # Prepare the result
-    result = [{
-        'firstname': 'James',
-        'lastname': 'Johnson',
-        'salary_difference': salary_difference
-    }]
-
-    return result","+----+-------------+------------+---------------------+
+    return results","+----+-------------+------------+---------------------+
 |    | firstname   | lastname   |   salary_difference |
 |----+-------------+------------+---------------------|
 |  0 | James       | Johnson    |               22500 |
@@ -1354,10 +1347,10 @@ def pipeline_function():
     location_df = locations.call(locationcity=(""New York"", ""EQUAL""))
     new_york_location_ids = location_df['locationID'].tolist()
 
-    # Get employees who are Trainees and work in New York
+    # Filter employees who are Trainees and work in New York
     employee_df = employees.call(positionID=(trainee_position_ids, ""EQUAL""), locationID=(new_york_location_ids, ""EQUAL""))
 
-    # Count the number of such employees
+    # Count the number of employees
     num_employees = len(employee_df)
 
     # Return the result as a list of dictionaries
@@ -1582,9 +1575,7 @@ def pipeline_function():
     # Define the names of the employees to compare
     employee_names = [(""Rodriguez"", ""Jose""), (""Adams"", ""Sandy"")]
 
-    results = []
-
-    # Initialize the data services
+    # Initialize the data service classes
     employees = GetDataFromEmployee()
     positions = GetDataFromPosition()
 
@@ -1592,35 +1583,40 @@ def pipeline_function():
     employees.open_connection()
     positions.open_connection()
 
-    # Retrieve employee data for both employees
+    # Initialize a list to store the results
+    results = []
+
+    # Iterate over the employee names to get their position information
     for lastname, firstname in employee_names:
+        # Get the employee data
         employee_df = employees.call(lastname=(lastname, ""EQUAL""), firstname=(firstname, ""EQUAL""))
-        if not employee_df.empty:
-            positionID = employee_df[""positionID""].iloc[0]
-            position_df = positions.call(positionID=(positionID, ""EQUAL""))
-            if not position_df.empty:
-                position_info = position_df.iloc[0]
-                position_info = position_info.astype(str)
-                results.append({
-                    'firstname': firstname,
-                    'lastname': lastname,
-                    'positionID': position_info['positionID'],
-                    'positiontitle': position_info['positiontitle'],
-                    'educationrequired': position_info['educationrequired']
-                })
+        
+        # Get the position ID for the employee
+        positionID = employee_df[""positionID""].iloc[0]
+        
+        # Get the position data
+        position_df = positions.call(positionID=(positionID, ""EQUAL""))
+        
+        # Extract the education required for the position
+        education_required = position_df[""educationrequired""].iloc[0]
+        
+        # Append the result to the list
+        results.append({
+            'lastname': lastname,
+            'firstname': firstname,
+            'educationrequired': education_required
+        })
 
-    # Compare the education levels required for the positions
-    if len(results) == 2:
-        if results[0]['educationrequired'] > results[1]['educationrequired']:
-            return [results[0]]
-        else:
-            return [results[1]]
+    # Determine which employee's job position requires a higher education level
+    # Assuming higher education level is determined by lexicographical order
+    results.sort(key=lambda x: x['educationrequired'], reverse=True)
 
-    return results","+----+-------------+------------+--------------+------------------+---------------------+
-|    | firstname   | lastname   |   positionID | positiontitle    | educationrequired   |
-|----+-------------+------------+--------------+------------------+---------------------|
-|  0 | Jose        | Rodriguez  |            4 | Regional Manager | 6 year degree       |
-+----+-------------+------------+--------------+------------------+---------------------+","[{'firstname': 'Jose', 'lastname': 'Rodriguez', 'positionID': '4', 'positiontitle': 'Regional Manager', 'educationrequired': '6 year degree'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+------------+-------------+---------------------+
+|    | lastname   | firstname   | educationrequired   |
+|----+------------+-------------+---------------------|
+|  0 | Rodriguez  | Jose        | 6 year degree       |
+|  1 | Adams      | Sandy       | 2 year degree       |
++----+------------+-------------+---------------------+","[{'lastname': 'Rodriguez', 'firstname': 'Jose', 'educationrequired': '6 year degree'}, {'lastname': 'Adams', 'firstname': 'Sandy', 'educationrequired': '2 year degree'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
@@ -1717,21 +1713,19 @@ def pipeline_function():
     employees.open_connection()
     locations.open_connection()
 
-    # Define the filters for male employees with good performance
-    gender_filter = (""M"", ""EQUAL"")
-    performance_filter = (""good"", ""EQUAL"")
+    # Define the query parameters
+    gender = (""M"", ""EQUAL"")
+    performance = (""good"", ""EQUAL"")
 
-    # Get the employee data with the specified filters
-    employee_df = employees.call(gender=gender_filter, performance=performance_filter)
+    # Get all male employees with good performance
+    employee_df = employees.call(gender=gender, performance=performance)
 
-    # Get unique location IDs from the filtered employees
-    unique_location_ids = employee_df['locationID'].unique()
+    # Find locationIDs where all male employees with good performance work
+    location_ids = employee_df['locationID'].unique()
 
-    # Prepare the results list
+    # Get zip codes for these locations
     results = []
-
-    # Iterate over each unique location ID to get the corresponding zip code
-    for location_id in unique_location_ids:
+    for location_id in location_ids:
         location_df = locations.call(locationID=(location_id, ""EQUAL""))
         zipcode = location_df['zipcode'].iloc[0]
         results.append({'zipcode': zipcode})
@@ -1946,44 +1940,38 @@ def pipeline_function():
     from employee import GetDataFromEmployee
     from position import GetDataFromPosition
 
-    # Initialize results list
-    results = []
-
-    # Get positionID for Trainee
+    # Step 1: Get the positionID for ""Trainee""
     positiontitle = (""Trainee"", ""EQUAL"")
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
     
     if position_df.empty:
-        return results
+        return []
 
     trainee_position_id = position_df['positionID'].iloc[0]
 
-    # Get employees with positionID of Trainee
+    # Step 2: Get employees with positionID of ""Trainee""
     positionID = (trainee_position_id, ""EQUAL"")
     employees = GetDataFromEmployee()
     employees.open_connection()
     employee_df = employees.call(positionID=positionID)
 
-    # Filter employees with salary over $20,000
+    if employee_df.empty:
+        return []
+
+    # Step 3: Filter employees with salary over $20,000
     employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
-    high_salary_employees = employee_df[employee_df['salary'] > 20000]
+    filtered_employees = employee_df[employee_df['salary'] > 20000]
 
-    # Count the number of employees with salary over $20,000
-    count_high_salary_employees = high_salary_employees.shape[0]
+    # Step 4: Prepare the result
+    result = [{'count': len(filtered_employees)}]
 
-    # Append result
-    results.append({
-        'position': 'Trainee',
-        'count_high_salary_employees': count_high_salary_employees
-    })
-
-    return results","+----+------------+-------------------------------+
-|    | position   |   count_high_salary_employees |
-|----+------------+-------------------------------|
-|  0 | Trainee    |                             1 |
-+----+------------+-------------------------------+","[{'position': 'Trainee', 'count_high_salary_employees': 1}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return result","+----+---------+
+|    |   count |
+|----+---------|
+|  0 |       1 |
++----+---------+",[{'count': 1}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     performance = (""Good"", ""EQUAL"")
@@ -2064,36 +2052,35 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
+    import pandas as pd
 
-    # Get positionID for 'Trainee'
-    positiontitle = (""Trainee"", ""EQUAL"")
+    # Initialize the data service for positions
     positions = GetDataFromPosition()
     positions.open_connection()
+
+    # Get the positionID for the position title ""Trainee""
+    positiontitle = (""Trainee"", ""EQUAL"")
     position_df = positions.call(positiontitle=positiontitle)
-    
-    if position_df.empty:
-        return []
+    trainee_position_ids = position_df['positionID'].tolist()
 
-    trainee_position_id = position_df.iloc[0]['positionID']
-
-    # Get employees with positionID of 'Trainee'
-    positionID = (trainee_position_id, ""EQUAL"")
+    # Initialize the data service for employees
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call(positionID=positionID)
 
-    if employee_df.empty:
-        return []
+    # Get employees with the positionID for ""Trainee""
+    employee_df = employees.call()
+    trainee_employees_df = employee_df[employee_df['positionID'].isin(trainee_position_ids)]
 
-    # Calculate average salary
-    salaries = employee_df['salary']
+    # Process the salary data
+    salaries = trainee_employees_df['salary']
     salaries = salaries.str.replace(""US$"", """")
     salaries = salaries.str.replace("","", """")
     salaries = salaries.astype(float)
+
+    # Calculate the average salary
     average_salary = salaries.mean()
 
+    # Prepare the result
     results = [{
         'position': 'Trainee',
         'average salary': str(average_salary)
@@ -2309,29 +2296,21 @@ def pipeline_function():
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
     from employee import GetDataFromEmployee
 
-    # Define the filter for female employees
-    gender_filter = (""F"", ""EQUAL"")
+    gender = (""F"", ""EQUAL"")
 
-    # Initialize the results list
     results = []
 
-    # Create an instance of the GetDataFromEmployee class
     employees = GetDataFromEmployee()
-
-    # Open the connection to the data service
+    
     employees.open_connection()
-
-    # Retrieve the employee data filtered by gender
-    employee_df = employees.call(gender=gender_filter)
-
-    # Count the number of female employees
-    num_female_employees = employee_df.shape[0]
-
-    # Append the result to the results list
+    
+    employee_df = employees.call(gender=gender)
+    number_of_female_employees = len(employee_df)
+    
     results.append({
-        'number_of_female_employees': num_female_employees
+        'number_of_female_employees': number_of_female_employees
     })
-
+    
     return results","+----+------------------------------+
 |    |   number_of_female_employees |
 |----+------------------------------|
@@ -2420,28 +2399,34 @@ def pipeline_function():
     from employee import GetDataFromEmployee
     from location import GetDataFromLocation
 
-    firstname = (""Jose"", ""EQUAL"")
-    lastname = (""Rodriguez"", ""EQUAL"")
-
-    results = []
-
+    # Initialize the data service classes
     employees = GetDataFromEmployee()
     locations = GetDataFromLocation()
 
+    # Open connections
     employees.open_connection()
     locations.open_connection()
 
+    # Query to find Jose Rodriguez
+    firstname = (""Jose"", ""EQUAL"")
+    lastname = (""Rodriguez"", ""EQUAL"")
+
+    # Get employee data for Jose Rodriguez
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    if not employee_df.empty:
-        locationID = employee_df['locationID'].iloc[0]
-        location_df = locations.call(locationID=(locationID, ""EQUAL""))
+    # Initialize results list
+    results = []
 
-        if not location_df.empty:
-            locationcity = location_df['locationcity'].iloc[0]
-            results.append({
-                'locationcity': locationcity
-            })
+    # Iterate over the employee data
+    for index, employee in employee_df.iterrows():
+        locationID = employee[""locationID""]
+        # Get location data for the employee's location
+        location_df = locations.call(locationID=(locationID, ""EQUAL""))
+        locationcity = location_df['locationcity'].iloc[0]
+        # Append the result
+        results.append({
+            'locationcity': locationcity
+        })
 
     return results","+----+----------------+
 |    | locationcity   |
@@ -2541,6 +2526,9 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
+    from employee import GetDataFromEmployee
+    from location import GetDataFromLocation
+
     firstname = (""Emily"", ""EQUAL"")
     lastname = (""Wood"", ""EQUAL"")
 
@@ -2548,22 +2536,22 @@ def pipeline_function():
 
     employees = GetDataFromEmployee()
     locations = GetDataFromLocation()
-    
+
     employees.open_connection()
     locations.open_connection()
-    
+
     employee_df = employees.call(firstname=firstname, lastname=lastname)
-    
+
     if not employee_df.empty:
         locationID = employee_df['locationID'].iloc[0]
         location_df = locations.call(locationID=(locationID, ""EQUAL""))
-        
+
         if not location_df.empty:
             state = location_df['state'].iloc[0]
             results.append({
                 'state': state
             })
-    
+
     return results","+----+---------+
 |    | state   |
 |----+---------|
@@ -2787,9 +2775,6 @@ def pipeline_function():
     locations.open_connection()
     
     location_df = locations.call(locationcity=locationcity)
-    if location_df.empty:
-        return results
-    
     locationID = location_df['locationID'].iloc[0]
     
     employee_df = employees.call(locationID=(locationID, ""EQUAL""))
@@ -3033,6 +3018,12 @@ def pipeline_function():
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
     import pandas as pd
 
+    # Define the filter criteria
+    location_city = (""New York City"", ""EQUAL"")
+    performance = (""good"", ""EQUAL"")
+
+    results = []
+
     # Initialize the data service classes
     employees = GetDataFromEmployee()
     locations = GetDataFromLocation()
@@ -3042,23 +3033,30 @@ def pipeline_function():
     locations.open_connection()
 
     # Get the locationID for New York City
-    location_df = locations.call(locationcity=(""New York City"", ""EQUAL""))
+    location_df = locations.call(locationcity=location_city)
     if location_df.empty:
-        return []  # No location found for New York City
+        return results  # Return empty if no location found
 
-    # Extract the locationID for New York City
-    nyc_location_id = location_df[""locationID""].iloc[0]
+    # Extract the locationID
+    location_id = location_df[""locationID""].iloc[0]
 
-    # Get employees in New York City with good performance
-    employee_df = employees.call(locationID=(nyc_location_id, ""EQUAL""), performance=(""good"", ""EQUAL""))
+    # Get employees with good performance in New York City
+    employee_df = employees.call(locationID=(location_id, ""EQUAL""), performance=performance)
     if employee_df.empty:
-        return []  # No employees found with good performance in New York City
+        return results  # Return empty if no employees found
 
-    # Prepare the result
-    results = []
+    # Extract the relevant information
     for _, row in employee_df.iterrows():
         results.append({
-            'ssn': row['ssn']
+            'ssn': row['ssn'],
+            'lastname': row['lastname'],
+            'firstname': row['firstname'],
+            'hiredate': row['hiredate'],
+            'salary': row['salary'],
+            'gender': row['gender'],
+            'performance': row['performance'],
+            'positionID': row['positionID'],
+            'locationID': row['locationID']
         })
 
     return results",,[],Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
@@ -3163,7 +3161,7 @@ def pipeline_function():
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
-    account_representative_position_ids = position_df['positionID'].tolist()
+    account_rep_position_ids = position_df['positionID'].tolist()
 
     # Step 3: Get employees who are ""Account Representatives"" in Chicago with good performance
     performance = (""good"", ""EQUAL"")
@@ -3174,7 +3172,7 @@ def pipeline_function():
     # Filter employees based on locationID and positionID
     filtered_employees = employee_df[
         (employee_df['locationID'].isin(chicago_location_ids)) &
-        (employee_df['positionID'].isin(account_representative_position_ids))
+        (employee_df['positionID'].isin(account_rep_position_ids))
     ]
 
     # Prepare the result
@@ -3410,10 +3408,10 @@ def pipeline_function():
     employee_df['salary_numeric'] = employee_df['salary'].apply(lambda x: float(x.replace('US$', '').replace(',', '')))
 
     # Find the highest paid manager
-    highest_paid_employee = employee_df.loc[employee_df['salary_numeric'].idxmax()]
+    highest_paid_manager = employee_df.loc[employee_df['salary_numeric'].idxmax()]
 
     # Get the locationID of the highest paid manager
-    locationID = highest_paid_employee['locationID']
+    locationID = highest_paid_manager['locationID']
 
     # Get the full address of the office
     location_df = locations.call(locationID=(locationID, ""EQUAL""))
@@ -3658,35 +3656,40 @@ def pipeline_function():
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
     if not employee_df.empty:
-        # Assuming there's only one Jose Rodriguez
-        employee = employee_df.iloc[0]
-        current_salary = float(employee['salary'].replace(""US$"", """").replace("","", """"))
-        positionID = employee['positionID']
+        # Extract the positionID and current salary
+        positionID = employee_df.iloc[0]['positionID']
+        current_salary_str = employee_df.iloc[0]['salary']
+        current_salary = float(current_salary_str.replace(""US$"", """").replace("","", """"))
 
-        # Get position data for Jose Rodriguez's position
+        # Get position data for the employee's position
         positions = GetDataFromPosition()
         positions.open_connection()
         position_df = positions.call(positionID=(positionID, ""EQUAL""))
 
         if not position_df.empty:
-            position = position_df.iloc[0]
-            max_salary = float(position['maxsalary'])
+            # Extract the max salary for the position
+            max_salary_str = position_df.iloc[0]['maxsalary']
+            max_salary = float(max_salary_str.replace(""US$"", """").replace("","", """"))
 
-            # Calculate the percentage increase possible
+            # Calculate the possible percentage increase
             if current_salary < max_salary:
                 percentage_increase = ((max_salary - current_salary) / current_salary) * 100
             else:
                 percentage_increase = 0.0
 
             results.append({
-                'firstname': employee['firstname'],
-                'lastname': employee['lastname'],
-                'current_salary': employee['salary'],
-                'max_salary': f""US${max_salary:,.2f}"",
+                'firstname': 'Jose',
+                'lastname': 'Rodriguez',
+                'current_salary': current_salary_str,
+                'max_salary': max_salary_str,
                 'percentage_increase': percentage_increase
             })
 
-    return results",The pipeline did not run successfully,"[{'firstname': 'Tracy', 'lastname': 'Coulter', 'max_salary': 'US$150,000.00'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+-------------+------------+------------------+---------------+-----------------------+
+|    | firstname   | lastname   | current_salary   | max_salary    |   percentage_increase |
+|----+-------------+------------+------------------+---------------+-----------------------|
+|  0 | Jose        | Rodriguez  | US$150,000.00    | US$250,000.00 |               66.6667 |
++----+-------------+------------+------------------+---------------+-----------------------+","[{'firstname': 'Jose', 'lastname': 'Rodriguez', 'current_salary': 'US$150,000.00', 'max_salary': 'US$250,000.00', 'percentage_increase': 66.66666666666666}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     performance = (""Good"", ""EQUAL"")
@@ -4096,30 +4099,27 @@ def pipeline_function():
         print(position_df.shape)
 
         Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
+        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
 
+def pipeline_function():
     results = []
 
     employees = GetDataFromEmployee()
     employees.open_connection()
     
-    # Get all employee data
     employee_df = employees.call()
     
-    # Convert hiredate to datetime to find the earliest hire date
+    # Convert hiredate to datetime to sort by hiredate
     employee_df['hiredate'] = pd.to_datetime(employee_df['hiredate'], format='%d-%m-%y')
     
-    # Find the first ever hired employee
-    first_hired_employee = employee_df.loc[employee_df['hiredate'].idxmin()]
+    # Sort by hiredate to find the first hired employee
+    first_employee = employee_df.sort_values(by='hiredate').iloc[0]
     
-    # Extract the salary and remove the ""US$"" and "","" for conversion to float
-    salary_str = first_hired_employee['salary']
-    salary_str = salary_str.replace(""US$"", """").replace("","", """")
-    salary = float(salary_str)
+    # Extract the salary and remove the ""US$"" and "","" for conversion
+    salary = first_employee['salary'].replace(""US$"", """").replace("","", """")
     
     results.append({
-        'first_hired_employee_salary': salary
+        'first_employee_salary': salary
     })
     
     return results",The pipeline did not run successfully,[{'num_positions': 0}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
@@ -4148,135 +4148,7 @@ def pipeline_function():
     
     return results"
 35,How much is the minimum salary given to the position with the most complex work?,,,,,,
-36,What is the full office location address where most of the employees work at?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        If all attributes are left undeclared, it returns all the available data.
-
-        Example usage:
-        - If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        If all attributes are left undeclared, it returns all the available data.
-
-        Example usage:
-        - If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        If all attributes are left undeclared, it returns all the available data.
-
-        Example usage:
-        - If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from location import GetDataFromLocation
-
-    results = []
-
-    # Initialize the data services
-    employees = GetDataFromEmployee()
-    locations = GetDataFromLocation()
-
-    # Open connections
-    employees.open_connection()
-    locations.open_connection()
-
-    # Get all employee data
-    employee_df = employees.call()
-
-    # Find the locationID with the most employees
-    most_common_locationID = employee_df['locationID'].mode().iloc[0]
-
-    # Get the location details for the most common locationID
-    location_df = locations.call(locationID=(most_common_locationID, ""EQUAL""))
-
-    # Extract the full office location address
-    for index, location in location_df.iterrows():
-        results.append({
-            'address': location['address'],
-            'locationcity': location['locationcity'],
-            'state': location['state'],
-            'zipcode': location['zipcode']
-        })
-
-    return results","+----+------------------+----------------+---------+-----------+
-|    | address          | locationcity   | state   |   zipcode |
-|----+------------------+----------------+---------+-----------|
-|  0 | 500 Loop Highway | Chicago        | IL      |     60620 |
-+----+------------------+----------------+---------+-----------+","[{'address': '500 Loop Highway', 'locationcity': 'Chicago', 'state': 'IL', 'zipcode': 60620}]",Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-from data_service_bird.human_resources.position import GetDataFromPosition
-from data_service_bird.human_resources.location import GetDataFromLocation
-
-def pipeline_function():
-    positiontitle = (""Manager"", ""EQUAL"")
-
-    results = []
-
-    employees = GetDataFromEmployee()
-    positions = GetDataFromPosition()
-    locations = GetDataFromLocation()
-    
-    employees.open_connection()
-    positions.open_connection()
-    locations.open_connection()
-    
-    position_df = positions.call(positiontitle=positiontitle)
-    positionID = position_df['positionID'].iloc[0]
-    
-    employee_df = employees.call(positionID=(positionID, ""EQUAL""))
-    
-    locationecities = []
-    for index, employee in employee_df.iterrows():
-        locationID = employee[""locationID""]
-        locations_df = locations.call(locationID=(locationID, ""EQUAL""))
-        locationcity = locations_df['locationcity'].iloc[0]
-        locationecities.append(str(locationcity))
-
-    locationecities = list(set(locationecities))
-    
-    for city in locationecities: 
-        results.append({
-            'locationcity': city
-        })
-    
-    return results
-"
+36,What is the full office location address where most of the employees work at?,,,,,,
 37,What is the average salary of all employees with a 2 year degree position?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -4335,27 +4207,28 @@ def pipeline_function():
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
     import pandas as pd
 
-    # Initialize the results list
-    results = []
-
-    # Get positions with a 2-year degree requirement
-    educationrequired = (""2 year degree"", ""EQUAL"")
+    # Initialize the data service for positions
     positions = GetDataFromPosition()
     positions.open_connection()
+
+    # Filter positions that require a 2-year degree
+    educationrequired = (""2 year degree"", ""EQUAL"")
     position_df = positions.call(educationrequired=educationrequired)
 
-    # Extract position IDs that require a 2-year degree
+    # Get the position IDs that require a 2-year degree
     position_ids = position_df['positionID'].tolist()
 
-    # Get employees with the specified position IDs
+    # Initialize the data service for employees
     employees = GetDataFromEmployee()
     employees.open_connection()
+
+    # Filter employees with the position IDs obtained
     employee_df = employees.call()
 
-    # Filter employees by position IDs
+    # Filter employees with the relevant position IDs
     filtered_employees = employee_df[employee_df['positionID'].isin(position_ids)]
 
-    # Extract and clean salary data
+    # Extract and clean the salary data
     salaries = filtered_employees['salary']
     salaries = salaries.str.replace(""US$"", """")
     salaries = salaries.str.replace("","", """")
@@ -4364,17 +4237,17 @@ def pipeline_function():
     # Calculate the average salary
     average_salary = salaries.mean()
 
-    # Append the result to the results list
-    results.append({
+    # Prepare the result
+    results = [{
         'educationrequired': ""2 year degree"",
-        'average salary': average_salary
-    })
+        'average salary': str(average_salary)
+    }]
 
     return results","+----+---------------------+------------------+
 |    | educationrequired   |   average salary |
 |----+---------------------+------------------|
 |  0 | 2 year degree       |          20333.3 |
-+----+---------------------+------------------+","[{'educationrequired': '2 year degree', 'average salary': 20333.333333333332}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
++----+---------------------+------------------+","[{'educationrequired': '2 year degree', 'average salary': '20333.333333333332'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     performance = (""Good"", ""EQUAL"")
@@ -4473,8 +4346,8 @@ def pipeline_function():
     # Get the position ID for 'Regional Manager'
     position_df = positions.call(positiontitle=positiontitle)
     if position_df.empty:
-        return [{'count': 0}]
-
+        return [{""count"": 0}]
+    
     positionID = position_df['positionID'].iloc[0]
 
     # Get the employees who are male and have the position of 'Regional Manager'
@@ -4483,7 +4356,7 @@ def pipeline_function():
     # Count the number of male Regional Managers
     count = employee_df.shape[0]
 
-    return [{'count': count}]","+----+---------+
+    return [{""count"": count}]","+----+---------+
 |    |   count |
 |----+---------|
 |  0 |       2 |
@@ -4703,13 +4576,10 @@ def pipeline_function():
     from location import GetDataFromLocation
     from position import GetDataFromPosition
 
-    # Define the filters for the query
+    # Define the filters
     state_filter = (""Illinois"", ""EQUAL"")
     positiontitle_filter = (""Account Representative"", ""EQUAL"")
     performance_filter = (""satisfying"", ""EQUAL"")
-
-    # Initialize results list
-    results = []
 
     # Get location data
     locations = GetDataFromLocation()
@@ -4732,10 +4602,8 @@ def pipeline_function():
     # Count the number of Account Representatives in Illinois with satisfying performance
     count = merged_df.shape[0]
 
-    # Append the result to the results list
-    results.append({
-        'count': count
-    })
+    # Prepare the result
+    results = [{""count"": count}]
 
     return results","+----+---------+
 |    |   count |
@@ -4830,7 +4698,6 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
-import pandas as pd
 
 def pipeline_function():
     # Define the performance criteria for the worst performing managers
@@ -4957,48 +4824,44 @@ def pipeline_function():
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
+    
+    # Get the positionID for Account Representatives
+    account_rep_position_ids = position_df['positionID'].tolist()
 
-    # Step 2: Filter employees who are Account Representatives
-    position_ids = position_df['positionID'].tolist()
+    # Step 2: Get all employees with good performance who are Account Representatives
+    performance = (""good"", ""EQUAL"")
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call()
+    employee_df = employees.call(performance=performance)
+    
+    # Filter employees who are Account Representatives
+    good_account_reps_df = employee_df[employee_df['positionID'].isin(account_rep_position_ids)]
 
-    account_representatives_df = employee_df[employee_df['positionID'].isin(position_ids)]
+    # Step 3: Count the number of good performing Account Representatives per location
+    location_counts = good_account_reps_df['locationID'].value_counts()
 
-    # Step 3: Filter good performing Account Representatives
-    good_performance_df = account_representatives_df[account_representatives_df['performance'] == 'Good']
-
-    # Step 4: Count good performing Account Representatives by location
-    location_counts = good_performance_df['locationID'].value_counts()
-
-    # Step 5: Get location details
+    # Step 4: Get the state information for each location
     locations = GetDataFromLocation()
     locations.open_connection()
     location_df = locations.call()
 
-    # Step 6: Merge location counts with location details
+    # Merge location counts with location data to get state information
     location_counts_df = location_counts.reset_index()
     location_counts_df.columns = ['locationID', 'count']
     merged_df = location_counts_df.merge(location_df, on='locationID')
 
-    # Step 7: Find the state with the highest count
-    max_count = merged_df['count'].max()
-    top_state_df = merged_df[merged_df['count'] == max_count]
+    # Step 5: Group by state and find the state with the highest count
+    state_counts = merged_df.groupby('state')['count'].sum()
+    max_state = state_counts.idxmax()
+    max_count = state_counts.max()
 
     # Prepare the result
-    results = []
-    for _, row in top_state_df.iterrows():
-        results.append({
-            'state': row['state'],
-            'count': row['count']
-        })
+    results = [{
+        'state': max_state,
+        'count': max_count
+    }]
 
-    return results","+----+---------+---------+
-|    | state   |   count |
-|----+---------+---------|
-|  0 | IL      |       2 |
-+----+---------+---------+","[{'state': 'IL', 'count': 2}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
+    return results",The pipeline did not run successfully,"[{'performance': 'Poor', 'average salary': 40000.0}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     positiontitle = (""Account Representative"", ""EQUAL"")
@@ -5099,15 +4962,12 @@ def pipeline_function():
     employee_df['numeric_salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
 
     # Find the employee with the lowest salary
-    min_salary_row = employee_df.loc[employee_df['numeric_salary'].idxmin()]
+    min_salary_employee = employee_df.loc[employee_df['numeric_salary'].idxmin()]
 
-    # Extract the required information
-    full_name = f""{min_salary_row['firstname']} {min_salary_row['lastname']}""
-    performance_status = min_salary_row['performance']
-
+    # Prepare the result
     results.append({
-        'full_name': full_name,
-        'performance_status': performance_status
+        'full_name': f""{min_salary_employee['firstname']} {min_salary_employee['lastname']}"",
+        'performance_status': min_salary_employee['performance']
     })
 
     return results","+----+----------------+----------------------+
@@ -5202,12 +5062,12 @@ def pipeline_function():
     locations = GetDataFromLocation()
     locations.open_connection()
 
-    location_df = locations.call()
-
-    for index, location in location_df.iterrows():
-        if location['state'] in western_states:
+    for state in western_states:
+        location_df = locations.call(state=(state, ""EQUAL""))
+        for index, location in location_df.iterrows():
+            locationcity = location['locationcity']
             results.append({
-                'locationcity': location['locationcity']
+                'locationcity': locationcity
             })
 
     return results",,[],Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
@@ -5316,10 +5176,8 @@ def pipeline_function():
     # Fetch the data from the location service
     location_df = locations.call(zipcode=zipcode)
 
-    # Prepare the result list
+    # Prepare the result as a list of dictionaries
     results = []
-
-    # Iterate over the dataframe and collect city and address
     for index, row in location_df.iterrows():
         results.append({
             'locationcity': row['locationcity'],
@@ -5647,7 +5505,7 @@ def pipeline_function():
     employees = GetDataFromEmployee()
     employees.open_connection()
     
-    # Fetch all employees data
+    # Retrieve all employee data
     employee_df = employees.call()
     
     # Filter employees with average performance
@@ -5771,15 +5629,15 @@ def pipeline_function():
             position_info = position_df.iloc[0]
             results.append({
                 'hiredate': employee_info['hiredate'],
-                'position': position_info['positiontitle'],
+                'positiontitle': position_info['positiontitle'],
                 'salary': employee_info['salary']
             })
     
-    return results","+----+------------+------------+--------------+
-|    | hiredate   | position   | salary       |
-|----+------------+------------+--------------|
-|  0 | 3/12/97    | Manager    | US$69,000.00 |
-+----+------------+------------+--------------+","[{'hiredate': '3/12/97', 'position': 'Manager', 'salary': 'US$69,000.00'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+------------+-----------------+--------------+
+|    | hiredate   | positiontitle   | salary       |
+|----+------------+-----------------+--------------|
+|  0 | 3/12/97    | Manager         | US$69,000.00 |
++----+------------+-----------------+--------------+","[{'hiredate': '3/12/97', 'positiontitle': 'Manager', 'salary': 'US$69,000.00'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
@@ -5865,9 +5723,14 @@ def pipeline_function():
 
         Things to keep in mind:
         - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
+    from employee import GetDataFromEmployee
+    from position import GetDataFromPosition
+
+    # Define the query parameters for the employee
     firstname = (""Bill"", ""EQUAL"")
     lastname = (""Marlin"", ""EQUAL"")
 
+    # Initialize the results list
     results = []
 
     # Get employee data
@@ -5875,37 +5738,34 @@ def pipeline_function():
     employees.open_connection()
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Extract positionID
-    position_ids = employee_df['positionID'].unique()
+    # Iterate over each employee record
+    for _, employee in employee_df.iterrows():
+        # Extract positionID
+        positionID = employee['positionID']
 
-    # Get position data
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    position_df = positions.call()
+        # Get position data
+        positions = GetDataFromPosition()
+        positions.open_connection()
+        position_df = positions.call(positionID=(positionID, ""EQUAL""))
 
-    # Filter position data for the relevant position IDs
-    relevant_positions = position_df[position_df['positionID'].isin(position_ids)]
+        # Extract the relevant information
+        for _, position in position_df.iterrows():
+            minsalary = position['minsalary']
+            maxsalary = position['maxsalary']
+            positiontitle = position['positiontitle']
 
-    for _, row in relevant_positions.iterrows():
-        minsalary = row['minsalary']
-        minsalary = minsalary.replace(""US$"", """").replace("","", """")
-        minsalary = float(minsalary)
+            # Append the result
+            results.append({
+                'minsalary': minsalary,
+                'maxsalary': maxsalary,
+                'positiontitle': positiontitle
+            })
 
-        maxsalary = row['maxsalary']
-        maxsalary = maxsalary.replace(""US$"", """").replace("","", """")
-        maxsalary = float(maxsalary)
-
-        results.append({
-            'positiontitle': row['positiontitle'],
-            'minsalary': minsalary,
-            'maxsalary': maxsalary
-        })
-
-    return results","+----+-----------------+-------------+-------------+
-|    | positiontitle   |   minsalary |   maxsalary |
-|----+-----------------+-------------+-------------|
-|  0 | Manager         |       50000 |      150000 |
-+----+-----------------+-------------+-------------+","[{'positiontitle': 'Manager', 'minsalary': 50000.0, 'maxsalary': 150000.0}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
+    return results","+----+--------------+---------------+-----------------+
+|    | minsalary    | maxsalary     | positiontitle   |
+|----+--------------+---------------+-----------------|
+|  0 | US$50,000.00 | US$150,000.00 | Manager         |
++----+--------------+---------------+-----------------+","[{'minsalary': 'US$50,000.00', 'maxsalary': 'US$150,000.00', 'positiontitle': 'Manager'}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     positiontitle = (""Account Representative"", ""EQUAL"")
@@ -6019,20 +5879,19 @@ def pipeline_function():
     # Get all positions
     position_df = positions.call()
 
-    # Merge employee and position data
-    merged_df = employee_df.merge(position_df, on='positionID', how='inner')
-
     # Prepare the result
     results = []
-    for index, row in merged_df.iterrows():
-        full_name = f""{row['firstname']} {row['lastname']}""
+    for index, employee in employee_df.iterrows():
+        positionID = employee['positionID']
+        position_title = position_df[position_df['positionID'] == positionID]['positiontitle'].iloc[0]
+        full_name = f""{employee['firstname']} {employee['lastname']}""
         results.append({
             'full_name': full_name,
-            'gender': row['gender'],
-            'position': row['positiontitle']
+            'gender': employee['gender'],
+            'position': position_title
         })
 
-    return results",The pipeline did not run successfully,"[{'positiontitle': 'Manager', 'minsalary': 50000.0, 'maxsalary': 150000.0}]",Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results",The pipeline did not run successfully,"[{'minsalary': 'US$50,000.00', 'maxsalary': 'US$150,000.00', 'positiontitle': 'Manager'}]",Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 from data_service_bird.human_resources.location import GetDataFromLocation
 
@@ -6140,16 +5999,20 @@ def pipeline_function():
     locations.open_connection()
     
     location_df = locations.call(state=state)
-    location_ids = location_df[""locationID""].tolist()
+    utah_location_ids = location_df[""locationID""].tolist()
     
-    if location_ids:
-        employee_df = employees.call(locationID=(location_ids, ""EQUAL""))
-        for _, row in employee_df.iterrows():
-            results.append({
-                'fullname': f""{row['firstname']} {row['lastname']}"",
-                'hiredate': row['hiredate'],
-                'performance': row['performance']
-            })
+    if not utah_location_ids:
+        return results
+    
+    employee_df = employees.call()
+    filtered_employee_df = employee_df[employee_df[""locationID""].isin(utah_location_ids)]
+    
+    for _, row in filtered_employee_df.iterrows():
+        results.append({
+            'fullname': f""{row['firstname']} {row['lastname']}"",
+            'hiredate': row['hiredate'],
+            'performance': row['performance']
+        })
     
     return results",,[],Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
@@ -6236,44 +6099,45 @@ def pipeline_function():
         print(position_df.shape)
 
         Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","from employee import GetDataFromEmployee
-from location import GetDataFromLocation
-from position import GetDataFromPosition
+        - The frame is a pandas dataframe, so you may order, project and group the result if needed. - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","def pipeline_function():
+    import pandas as pd
 
-def pipeline_function():
-    performance = (""poor"", ""EQUAL"")
-    positiontitle = (""Manager"", ""EQUAL"")
-
-    results = []
-
+    # Initialize the data service classes
     employees = GetDataFromEmployee()
     positions = GetDataFromPosition()
     locations = GetDataFromLocation()
-    
+
+    # Open connections
     employees.open_connection()
     positions.open_connection()
     locations.open_connection()
-    
-    # Get positionID for Managers
-    position_df = positions.call(positiontitle=positiontitle)
-    manager_positionID = position_df['positionID'].iloc[0]
-    
-    # Get employees with poor performance
-    employee_df = employees.call(performance=performance, positionID=(manager_positionID, ""EQUAL""))
-    
-    for index, employee in employee_df.iterrows():
-        locationID = employee[""locationID""]
-        locations_df = locations.call(locationID=(locationID, ""EQUAL""))
-        
-        if not locations_df.empty:
-            location_info = locations_df.iloc[0]
+
+    # Get all positions to find managers
+    position_df = positions.call()
+    manager_positions = position_df[position_df['positiontitle'].str.contains(""Manager"", case=False)]
+
+    # Get all employees with poor performance
+    employee_df = employees.call(performance=(""poor"", ""EQUAL""))
+
+    # Filter employees who are managers
+    manager_employee_df = employee_df[employee_df['positionID'].isin(manager_positions['positionID'])]
+
+    # Prepare the results
+    results = []
+
+    for index, manager in manager_employee_df.iterrows():
+        locationID = manager['locationID']
+        location_df = locations.call(locationID=(locationID, ""EQUAL""))
+
+        if not location_df.empty:
+            location_info = location_df.iloc[0]
             results.append({
-                'fullname': f""{employee['firstname']} {employee['lastname']}"",
+                'fullname': f""{manager['firstname']} {manager['lastname']}"",
                 'locationcity': location_info['locationcity'],
                 'address': location_info['address'],
                 'zipcode': location_info['zipcode']
             })
-    
+
     return results",,[],Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 from data_service_bird.human_resources.location import GetDataFromLocation
