@@ -26,8 +26,9 @@ class LLMAgent:
 
         self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
         self.document_manager = DocumentManagerDB()
-
-        self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode)
+        
+        self.suggestor = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs")
+        self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs_post")
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -152,8 +153,14 @@ if __name__ == "__main__":
             f.write(file_to_save)
 
     def get_chain(self) -> Runnable:
+        suggestor_chain = self.suggestor.get_chain()
         generator_chain = self.generator.get_chain()
         runner_chain = self.runner.get_chain()
+        
+        suggestor_chain_output = {
+            "pipeline": suggestor_chain,
+            "inputs": RunnablePassthrough()
+        }
 
         generator_chain_output = {
             "pipeline": generator_chain,
@@ -167,13 +174,15 @@ if __name__ == "__main__":
 
         chain = (
             RunnableLambda(lambda x: {
-                "query": x,
-                "pipeline_search": self.pipeline_manager.pipeline_store.search(x),
+                "query": x["query"],
+                "evidence": x["evidence"],
+                "pipeline_search": self.pipeline_manager.pipeline_store.search(x["query"]),
                 }
             )
             | RunnableLambda( 
                 lambda x: {
                     "query": x["query"],
+                    "evidence": x["evidence"],
                     "example": self.get_example(x["pipeline_search"]["output"]),
                     "data_services": self.get_data_services()
                 }
@@ -181,34 +190,37 @@ if __name__ == "__main__":
             | RunnableLambda( 
                 lambda x: {
                     "query": x["query"],
+                    "evidence": x["evidence"],
                     "data_services": x["data_services"][0],
                     "data_services_list": x["data_services"][1],
                     "example_query": x["example"][0],
                     "example_pipeline": x["example"][1],
                 }
             )
-            | generator_chain_output
+            | suggestor_chain_output
             | RunnableLambda(lambda x: {
-                    "output": x["pipeline"]
+                    "query": x["inputs"]["query"],
+                    "evidence": x["inputs"]["evidence"],
+                    "data_services": x["inputs"]["data_services"],
+                    "data_services_list": x["inputs"]["data_services_list"],
+                    "example_query": x["inputs"]["example_query"],
+                    "example_pipeline": x["inputs"]["example_pipeline"],
+                    "advices": x["pipeline"]
                 }
             )
-            
-        )
-
-        # return the chain
-        return chain
-    
-    '''
+            | generator_chain_output
             | RunnableParallel(
                 gen = RunnableLambda(lambda x: {
                     "query": x["inputs"]["query"],
+                    "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
                     "example_query": x["inputs"]["example_query"],
                     "example_pipeline": x["inputs"]["example_pipeline"],
-                    "pipeline": x["pipeline"]
+                    "advices" : x["inputs"]["advices"],
+                    "pipeline": x["pipeline"].strip()[len("python"):].strip()
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"], x["inputs"]["data_services_list"])
+                    self.save_intermediate_result_to_json(x["pipeline"].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
                 )
             )
             | RunnableLambda(lambda x: {
@@ -218,22 +230,30 @@ if __name__ == "__main__":
             | RunnableParallel(
                 inputs = RunnableLambda(lambda x: {
                     "query": x["inputs"]["gen"]["query"],
+                    "evidence": x["inputs"]["gen"]["evidence"],
                     "data_services": x["inputs"]["gen"]["data_services"],
                     "example_query": x["inputs"]["gen"]["example_query"],
                     "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
+                    "advices" : x["inputs"]["gen"]["advices"],
                     "pipeline": x["inputs"]["gen"]["pipeline"],
                 }),
                 output = runner_chain_output
             )
             | RunnableLambda(lambda x: {
                 "query": x["inputs"]["query"],
+                    "evidence": x["inputs"]["evidence"],
                 "data_services": x["inputs"]["data_services"],
                 "example_query": x["inputs"]["example_query"],
                 "example_pipeline": x["inputs"]["example_pipeline"],
+                "advices" : x["inputs"]["advices"],
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
-            '''
+            
+        )
+
+        # return the chain
+        return chain
     
     def get_chain_wrong(self) -> Runnable:
         generator_chain = self.generator.get_chain()
@@ -317,7 +337,13 @@ if __name__ == "__main__":
     llm = LLMAgent(mode="chain_of_thoughs")
     with open("queries/queries_pipelines_human_resources.json", "r") as f:
         queries = json.load(f)
-    query = queries[q]["query"]
-    print(query)
-    result = llm.get_chain().invoke(query)
+        
+    input_file = {
+        "query" : queries[q]["query"],
+        "evidence" : queries[q]["evidence"]
+    }
+    print(queries[q]["query"])
+    result = llm.get_chain().invoke(input_file)
+    print(result["advices"])
+    print("\n --------------------------- \n")
     print(result["output"])

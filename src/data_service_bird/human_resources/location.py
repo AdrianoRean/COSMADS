@@ -12,6 +12,11 @@ class GetDataFromLocation:
         """Data service that provides data in a dataframe format about offices and their location.
         Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
         The attribute "locationID" is unique for each office.
+        The attribute "locationcity" represent the city the office is in.
+        The attribute "address" represent the actual address of the office.
+        The attribute "state" is the state the office is in.
+        The attribute "zipcode" is the postal code of the office.
+        The attribute "officephone" is the telephone number of the office.
         You may select data trough any combination of this attributes. They are all optional.
         For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         If all attributes are left undeclared, it returns all the available data.

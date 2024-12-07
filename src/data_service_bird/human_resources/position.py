@@ -12,6 +12,11 @@ class GetDataFromPosition:
         """Data service that provides data in a dataframe format about job positions, their requirements and salaries.
         Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
         The attribute "positionID" is unique for each job position.
+        The attribute "positiontitle" is the name of the job position.
+        The attribute "educationrequired" indicates the minimum education level needed for having this job position.
+        The attribute "minsalary" is minimum salary that an employee with this job position can have.
+        The attribute "maxsalary" is maximum salary that an employee with this job position can have.
+        The term "job position" and "position title" are often used interchangeably.
         You may select data trough any combination of this attributes. They are all optional.
         For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         If all attributes are left undeclared, it returns all the available data.
