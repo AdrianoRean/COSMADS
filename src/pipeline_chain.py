@@ -166,6 +166,15 @@ where:
     - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
     - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
     - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+    
+You have been provided also some evidence to help you in your task.
+======
+{evidence}
+======
+notes:
+- Evidence may be missing
+- The evidence may be referring to other programming languages, like SQL or Java. You have only to suggest Python advices.
+- The evidence is always useful, but be careful in using it as it is.
 
 Guidelines:
 - Make sure to generate a correct and concise python function.

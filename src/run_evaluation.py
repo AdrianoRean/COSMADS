@@ -17,10 +17,14 @@ def run_evaluation(mode):
 
     res_eval = []
     for index, query in enumerate(main_queries):
+        input_file = {
+            "query" : query["question"],
+            "evidence" : query["evidence"]
+        }
         question = query["question"]
         print(question)
         try:
-            res = llm_chain.invoke(question)
+            res = llm_chain.invoke(input_file)
 
             data_services = res['data_services']
             pipeline =  res["pipeline"]
@@ -28,16 +32,17 @@ def run_evaluation(mode):
 
             example_query = res["example_query"]
             example_pipeline = res["example_pipeline"]
-
+            
+            advice = json.loads(open("advice.json", "r").read())
             output_json = json.loads(open("result.json", "r").read())
 
-            res_elem = [index, question, data_services, pipeline, output, output_json, example_query, example_pipeline]
+            res_elem = [index, question, data_services, advice, pipeline, output, output_json, example_query, example_pipeline]
         except Exception as e:
             print(f"Error in query {index}: {e}")
-            res_elem = [index, question, None, None, None, None, None, None]
+            res_elem = [index, question, None, None, None, None, None, None, None]
         res_eval.append(res_elem)
 
-    res_df = pd.DataFrame(res_eval, columns=["index", "question", "data_services", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
+    res_df = pd.DataFrame(res_eval, columns=["index", "question", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
     res_df.to_csv(f"evaluation/evaluation_results_{mode}.csv", sep=',', index=False)
 
 
@@ -93,7 +98,7 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["standard"]
+    modes = ["chain_of_thoughs"]
     for mode in modes:
         run_evaluation(mode)
         evaluate_results(mode)

@@ -5,7 +5,7 @@ import dotenv
 import os
 import ast
 import glob
-from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough
+from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough, RunnableBranch
 
 # append the path to the parent directory to the system path
 import sys
@@ -23,12 +23,16 @@ class LLMAgent:
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         print(mode)
+        self.mode = mode
 
         self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
         self.document_manager = DocumentManagerDB()
         
-        self.suggestor = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs")
-        self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs_post")
+        if mode == "chain_of_thoughs":
+            self.suggestor = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs")
+            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs_post")
+        else:
+            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -151,17 +155,55 @@ if __name__ == "__main__":
 
         with open(INTERMEDIATE_RESULTS_FILEPATH, "w") as f:
             f.write(file_to_save)
-
-    def get_chain(self) -> Runnable:
+    
+    def save_advice(self, advice):
+        with open("advice.json", "w") as f:
+            json.dump(json.loads(advice), f, indent=4)
+            
+    def get_chain_of_thoughs(self):
         suggestor_chain = self.suggestor.get_chain()
-        generator_chain = self.generator.get_chain()
-        runner_chain = self.runner.get_chain()
-        
         suggestor_chain_output = {
             "pipeline": suggestor_chain,
             "inputs": RunnablePassthrough()
         }
+        
+        chain = ( 
+                 suggestor_chain_output
+                 |
+                 RunnableParallel(
+                    gen = RunnableLambda(lambda x: {
+                        "query": x["inputs"]["query"],
+                        "evidence": x["inputs"]["evidence"],
+                        "data_services": x["inputs"]["data_services"],
+                        "data_services_list": x["inputs"]["data_services_list"],
+                        "example_query": x["inputs"]["example_query"],
+                        "example_pipeline": x["inputs"]["example_pipeline"],
+                        "advices" : x["pipeline"]
+                    }),
+                    exe = RunnableLambda(lambda x:
+                        self.save_advice(x["pipeline"])
+                    )
+                )
+                | RunnableLambda(lambda x: {
+                        "query": x["gen"]["query"],
+                        "evidence": x["gen"]["evidence"],
+                        "data_services": x["gen"]["data_services"],
+                        "data_services_list": x["gen"]["data_services_list"],
+                        "example_query": x["gen"]["example_query"],
+                        "example_pipeline": x["gen"]["example_pipeline"],
+                        "advices" : x["gen"]["advices"]
+                    })
+        )
+        
+        return chain
 
+    def get_chain(self) -> Runnable:
+        
+        print(self.mode)
+        
+        generator_chain = self.generator.get_chain()
+        runner_chain = self.runner.get_chain()
+        
         generator_chain_output = {
             "pipeline": generator_chain,
             "inputs": RunnablePassthrough()
@@ -197,16 +239,9 @@ if __name__ == "__main__":
                     "example_pipeline": x["example"][1],
                 }
             )
-            | suggestor_chain_output
-            | RunnableLambda(lambda x: {
-                    "query": x["inputs"]["query"],
-                    "evidence": x["inputs"]["evidence"],
-                    "data_services": x["inputs"]["data_services"],
-                    "data_services_list": x["inputs"]["data_services_list"],
-                    "example_query": x["inputs"]["example_query"],
-                    "example_pipeline": x["inputs"]["example_pipeline"],
-                    "advices": x["pipeline"]
-                }
+            | RunnableBranch(
+                (lambda x: self.mode == "chain_of_thoughs", lambda x: self.get_chain_of_thoughs()),
+                lambda x: x
             )
             | generator_chain_output
             | RunnableParallel(
@@ -216,7 +251,6 @@ if __name__ == "__main__":
                     "data_services": x["inputs"]["data_services"],
                     "example_query": x["inputs"]["example_query"],
                     "example_pipeline": x["inputs"]["example_pipeline"],
-                    "advices" : x["inputs"]["advices"],
                     "pipeline": x["pipeline"].strip()[len("python"):].strip()
                 }),
                 exe = RunnableLambda(lambda x:
@@ -234,7 +268,6 @@ if __name__ == "__main__":
                     "data_services": x["inputs"]["gen"]["data_services"],
                     "example_query": x["inputs"]["gen"]["example_query"],
                     "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
-                    "advices" : x["inputs"]["gen"]["advices"],
                     "pipeline": x["inputs"]["gen"]["pipeline"],
                 }),
                 output = runner_chain_output
@@ -245,7 +278,6 @@ if __name__ == "__main__":
                 "data_services": x["inputs"]["data_services"],
                 "example_query": x["inputs"]["example_query"],
                 "example_pipeline": x["inputs"]["example_pipeline"],
-                "advices" : x["inputs"]["advices"],
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
@@ -334,7 +366,7 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     q = "q5"
-    llm = LLMAgent(mode="chain_of_thoughs")
+    llm = LLMAgent(mode="standard")
     with open("queries/queries_pipelines_human_resources.json", "r") as f:
         queries = json.load(f)
         
@@ -344,6 +376,4 @@ if __name__ == "__main__":
     }
     print(queries[q]["query"])
     result = llm.get_chain().invoke(input_file)
-    print(result["advices"])
-    print("\n --------------------------- \n")
     print(result["output"])
