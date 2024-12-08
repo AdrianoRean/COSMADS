@@ -239,13 +239,13 @@ class DataServiceGenerator:
             table_inputs = "["
             table_parameters = ""
             for index in range(table[2], len(database_columns)):
-                if table[0] == database_columns[index][0]:
+                if table[0] == database_columns[index][0] and index != len(database_columns) - 1:
                     table_inputs += f"\"{database_columns[index][1]}:{database_types[index-1]}\", "
                     table_parameters += f"{database_columns[index][1]} = None, "
                 else:
                     table_inputs = table_inputs[:-2] + "]"
                     table_parameters = table_parameters[:-2]
-                    break
+                    break            
             #Signaling primary keys
             primary_key_text = ""
             primary_keys = [i for i in database_primary_keys if i >= table[2] and i < index]
