@@ -21,6 +21,8 @@ Each tool is represented by a JSON string having the following structure:
     "name": <name>,
     "brief_description": <brief_description>,
     "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
     "input_parameters": <input_parameters>,
     "output_values": <output_values>,
     "module": <module>
@@ -72,6 +74,8 @@ Each tool is represented by a JSON string having the following structure:
     "name": <name>,
     "brief_description": <brief_description>,
     "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
     "input_parameters": <input_parameters>,
     "output_values": <output_values>,
     "module": <module>
@@ -155,6 +159,8 @@ Each tool is represented by a JSON string having the following structure:
     "name": <name>,
     "brief_description": <brief_description>,
     "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
     "input_parameters": <input_parameters>,
     "output_values": <output_values>,
     "module": <module>
@@ -215,6 +221,8 @@ Each tool is represented by a JSON string having the following structure:
     "name": <name>,
     "brief_description": <brief_description>,
     "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
     "input_parameters": <input_parameters>,
     "output_values": <output_values>,
     "module": <module>

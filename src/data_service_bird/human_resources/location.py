@@ -8,6 +8,7 @@ class GetDataFromLocation:
     connection = None
     description = {
         "brief_description": "Data service that provides data in a dataframe format about offices and their location.",
+        
         "detailed_description": 
         """Data service that provides data in a dataframe format about offices and their location.
         Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
@@ -16,24 +17,28 @@ class GetDataFromLocation:
         The attribute "address" represent the actual address of the office.
         The attribute "state" is the state the office is in.
         The attribute "zipcode" is the postal code of the office.
-        The attribute "officephone" is the telephone number of the office.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        If all attributes are left undeclared, it returns all the available data.
+        The attribute "officephone" is the telephone number of the office.""",
 
-        Example usage:
-        - If I want to obtain all the information from the office with locationID 123 I can write:
+        "useful_info": """
+        - You may select data trough any combination of this attributes. They are all optional.
+        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
+        - If all attributes are left undeclared, it returns all the available data.
+        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
+
+        "usage_example":"""
+        # If I want to obtain all the information from the office with locationID 123 I can write:
         locationID = (123, "EQUAL")
         locations = GetDataFromLocation()
         locations.open_connection()
         location_df = location.call(locationID=locationID)
         # assuming the result is a pandas dataframe
         print(location_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
+        """,
+        
         "input_parameters": ["locationID:int", "locationcity:str", "address:str", "state:str", "zipcode:int", "officephone:str"],
+        
         "output_values": ["location_df:pandas.DataFrame"],
+        
         "module": "location"
     }
     

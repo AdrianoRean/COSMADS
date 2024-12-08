@@ -132,6 +132,8 @@ secret.txt
 # MacOS stuff
 .DS_Store
 
+#Database stuff (too heavy)
+src/data_service_bird_automatic/
 
 # temporary files
 intermediate_results.json

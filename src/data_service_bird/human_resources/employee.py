@@ -8,6 +8,7 @@ class GetDataFromEmployee:
     connection = None
     description = {
         "brief_description": "Data service that provides data in a dataframe format about employees, their personal data and jobs.",
+        
         "detailed_description": 
         """Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
@@ -15,24 +16,28 @@ class GetDataFromEmployee:
         The attribute "hiredate" has format "dd-mm-yy".
         The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand.
         The attriute "gender" is saved as either "M" or "F".
-        The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        If all attributes are left undeclared, it returns all the available data.
+        The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.""",
 
-        Example usage:
-        - If I want to obtain all the information from the employee with ssn 123 I can write:
+        "useful_info": """
+        - You may select data trough any combination of this attributes. They are all optional.
+        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
+        - If all attributes are left undeclared, it returns all the available data.
+        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
+        
+        "usage_example": """
+        # If I want to obtain all the information from the employee with ssn 123 I can write:
         employeessn = ('123', "EQUAL")
         employees = GetDataFromEmployee()
         employees.open_connection()
         employee_df = employees.call(employeessn=employeessn)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
+        """,
+        
         "input_parameters": ["ssn:str", "lastname:str", "firstname:str", "hiredate:str", "salary:str", "gender:str", "performance:str", "positionID:int", "locationID:int"],
+        
         "output_values": ["employee_df:pandas.DataFrame"],
+        
         "module": "employee"
     }
     

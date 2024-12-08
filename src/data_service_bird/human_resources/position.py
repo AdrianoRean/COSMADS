@@ -8,6 +8,7 @@ class GetDataFromPosition:
     connection = None
     description = {
         "brief_description": "Data service that provides data in a dataframe format about job positions, their requirements and salaries.",
+        
         "detailed_description": 
         """Data service that provides data in a dataframe format about job positions, their requirements and salaries.
         Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
@@ -16,24 +17,28 @@ class GetDataFromPosition:
         The attribute "educationrequired" indicates the minimum education level needed for having this job position.
         The attribute "minsalary" is minimum salary that an employee with this job position can have.
         The attribute "maxsalary" is maximum salary that an employee with this job position can have.
-        The term "job position" and "position title" are often used interchangeably.
-        You may select data trough any combination of this attributes. They are all optional.
-        For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        If all attributes are left undeclared, it returns all the available data.
+        The term "job position" and "position title" are often used interchangeably.""",
 
-        Example usage:
-        - If I want to obtain all the information from the job position with positionID 123 I can write:
+        "useful_info": """
+        - You may select data trough any combination of this attributes. They are all optional.
+        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
+        - If all attributes are left undeclared, it returns all the available data.
+        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
+
+        "usage_example":"""
+        #If I want to obtain all the information from the job position with positionID 123 I can write:
         positionID = (123, "EQUAL")
         positions = GetDataFromPosition()
         positions.open_connection()
         position_df = GetDataFromPosition.call(positionID=positionID)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
-
-        Things to keep in mind:
-        - The frame is a pandas dataframe, so you may order, project and group the result if needed.""",
+        """,
+        
         "input_parameters": ["positionID:int", "positiontitle:str", "educationrequired:str", "minsalary:str", "maxsalary:int"],
+        
         "output_values": ["position_df:pandas.DataFrame"],
+        
         "module": " position"
     }
     
