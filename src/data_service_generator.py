@@ -211,8 +211,8 @@ class DataServiceGenerator:
 
     def create_data_services(self, database, database_location):
         database_name = database["db_id"]
-        database_table_names = database["table_names"]
-        database_columns = database["column_names"]
+        database_table_names = database["table_names_original"]
+        database_columns = database["column_names_original"]
         database_types = database["column_types"]
         database_primary_keys = database["primary_keys"]
         database_foreign_keys = database["foreign_keys"]
@@ -239,13 +239,16 @@ class DataServiceGenerator:
             table_inputs = "["
             table_parameters = ""
             for index in range(table[2], len(database_columns)):
-                if table[0] == database_columns[index][0] and index != len(database_columns) - 1:
+                if table[0] == database_columns[index][0]:
                     table_inputs += f"\"{database_columns[index][1]}:{database_types[index-1]}\", "
                     table_parameters += f"{database_columns[index][1]} = None, "
                 else:
                     table_inputs = table_inputs[:-2] + "]"
                     table_parameters = table_parameters[:-2]
-                    break            
+                    break
+                if index == len(database_columns) -1:
+                    table_inputs = table_inputs[:-2] + "]"
+                    table_parameters = table_parameters[:-2]          
             #Signaling primary keys
             primary_key_text = ""
             primary_keys = [i for i in database_primary_keys if i >= table[2] and i < index]
