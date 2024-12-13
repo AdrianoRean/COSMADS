@@ -21,6 +21,6 @@ def average_results(file_path):
     print(f"Average acc_row: {averages['acc_row']:.6f}")
     print(f"Average recall: {averages['recall']:.6f}")
     
-average_results(file_path1)
-print("\n ----------- \n")
+##average_results(file_path1)
+##print("\n ----------- \n")
 average_results(file_path3)

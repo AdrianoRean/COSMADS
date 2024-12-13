@@ -45,6 +45,8 @@ class LLMAgent:
     def get_example(self, res_search):
         simil_query = res_search.page_content
         pipeline_id = res_search.metadata["pipeline"]
+        if self.mode == "chain_of_tables":
+            pipeline_id = "pipelines_bird/chain_of_tables" + pipeline_id[len("pipelines_bird"):]
         pipeline_text = open(pipeline_id).read()
         return [simil_query, pipeline_text]
     
