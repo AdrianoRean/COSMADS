@@ -160,7 +160,7 @@ if __name__ == "__main__":
         with open("advice.json", "w") as f:
             json.dump(json.loads(advice), f, indent=4)
             
-    def get_chain_of_thoughs(self):
+    def chain_of_thoughs(self, x, generator_chain_output):
         suggestor_chain = self.suggestor.get_chain()
         suggestor_chain_output = {
             "pipeline": suggestor_chain,
@@ -178,10 +178,10 @@ if __name__ == "__main__":
                         "data_services_list": x["inputs"]["data_services_list"],
                         "example_query": x["inputs"]["example_query"],
                         "example_pipeline": x["inputs"]["example_pipeline"],
-                        "advices" : x["pipeline"]
+                        "advices" : x["pipeline"][1]
                     }),
                     exe = RunnableLambda(lambda x:
-                        self.save_advice(x["pipeline"])
+                        self.save_advice(x["pipeline"][1])
                     )
                 )
                 | RunnableLambda(lambda x: {
@@ -193,9 +193,51 @@ if __name__ == "__main__":
                         "example_pipeline": x["gen"]["example_pipeline"],
                         "advices" : x["gen"]["advices"]
                     })
+                | generator_chain_output
         )
         
-        return chain
+        return chain.invoke(x)
+    
+    def chain_of_tables(self, x, generator_chain_output):
+        
+        x["action"] = "NONE"
+        x["pipeline"] = ""
+        
+        chain = ( 
+                 generator_chain_output
+                 | RunnableBranch(
+                    (lambda x: x["pipeline"][0] != "STOP", lambda x: {
+                        "query": x["inputs"]["query"],
+                        "evidence": x["inputs"]["evidence"],
+                        "data_services": x["inputs"]["data_services"],
+                        "data_services_list": x["inputs"]["data_services_list"],
+                        "example_query": x["inputs"]["example_query"],
+                        "example_pipeline": x["inputs"]["example_pipeline"],
+                        "pipeline" : x["pipeline"][1],
+                        "action" : x["pipeline"][0]
+                        }),
+                    lambda x: {
+                        "inputs": x["inputs"],
+                        "action" : x["pipeline"][0]
+                        }
+                    )
+        )
+        
+        while x["action"] != "STOP":   
+            print("**********************")
+            print(f"Last action is: {x['action'].strip()}")            
+            print(f"Actual pipeline is: {x['pipeline']}")
+            x = chain.invoke(x)
+        
+        return x
+    
+    def run_chain(self, x, generator_output_chain):
+        return (
+            RunnableLambda(
+                lambda x: x)
+            |
+            generator_output_chain
+            ).invoke(x)
 
     def get_chain(self) -> Runnable:
         
@@ -240,10 +282,10 @@ if __name__ == "__main__":
                 }
             )
             | RunnableBranch(
-                (lambda x: self.mode == "chain_of_thoughs", lambda x: self.get_chain_of_thoughs()),
-                lambda x: x
+                (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
+                (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
+                lambda x: self.run_chain(x, generator_chain_output)
             )
-            | generator_chain_output
             | RunnableParallel(
                 gen = RunnableLambda(lambda x: {
                     "query": x["inputs"]["query"],
@@ -251,10 +293,10 @@ if __name__ == "__main__":
                     "data_services": x["inputs"]["data_services"],
                     "example_query": x["inputs"]["example_query"],
                     "example_pipeline": x["inputs"]["example_pipeline"],
-                    "pipeline": x["pipeline"].strip()[len("python"):].strip()
+                    "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
+                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
                 )
             )
             | RunnableLambda(lambda x: {

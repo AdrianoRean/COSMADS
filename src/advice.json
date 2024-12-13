@@ -1,20 +1,10 @@
 {
-    "general_suggestions": "To solve the query, first retrieve the employee data to find the employee with the highest salary. Then, extract the necessary details such as name, position ID, and location ID. Use the position ID to get the position title from the job positions data and the location ID to get the city from the location data. Finally, calculate the monthly average salary by dividing the highest salary by 12.",
+    "general_suggestions": "To solve the query 'Count all employees with locationID less than 4', we need to use the data service that provides employee data. We will filter the employees based on the 'locationID' attribute using the 'MINOR' operator and then count the resulting entries.",
     "tools": [
         {
             "tool_name": "GetDataFromEmployee",
-            "motivation": "To retrieve employee data, including salary, name, position ID, and location ID, which are necessary to identify the employee with the highest salary.",
-            "suggestions": "Use this tool to fetch all employee data. Convert the salary from string to a numeric format for comparison. Identify the employee with the maximum salary and extract their details."
-        },
-        {
-            "tool_name": "GetDataFromPosition",
-            "motivation": "To obtain the position title of the employee with the highest salary using their position ID.",
-            "suggestions": "After identifying the employee with the highest salary, use their position ID to query this tool and retrieve the corresponding position title."
-        },
-        {
-            "tool_name": "GetDataFromLocation",
-            "motivation": "To obtain the city location of the employee with the highest salary using their location ID.",
-            "suggestions": "Use the location ID of the employee with the highest salary to query this tool and retrieve the city name."
+            "motivation": "This tool provides access to employee data, which includes the 'locationID' attribute necessary for filtering.",
+            "suggestions": "Use the 'GetDataFromEmployee' class to retrieve employee data. Open a connection and call the service with the 'locationID' parameter set to (4, 'MINOR'). This will return a DataFrame of employees with 'locationID' less than 4. Use the DataFrame's shape attribute or len() function to count the number of rows, which represents the number of employees matching the criteria."
         }
     ]
 }
