@@ -1,4 +1,5 @@
 import json
+import re
 import pandas as pd
 
 from data_service_bird.database import GetDataFromDatabase
@@ -64,6 +65,8 @@ def evaluate_results(mode):
             output_json = "[]"
         else:
             output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+            pattern = r'(".+\$)".+"'
+            output_json = re.sub(pattern, r'\1.+"', output_json)
         print(output_json)
         output_res = json.loads(output_json)
         df2 = pd.DataFrame(output_res)
@@ -98,7 +101,7 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["standard"]
+    modes = ["chain_of_thoughs"]
     for mode in modes:
         #run_evaluation(mode)
         evaluate_results(mode)

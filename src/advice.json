@@ -1,10 +1,20 @@
 {
-    "general_suggestions": "To solve the query 'Count all employees with locationID less than 4', we need to use the data service that provides employee data. We will filter the employees based on the 'locationID' attribute using the 'MINOR' operator and then count the resulting entries.",
+    "general_suggestions": "To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations.",
     "tools": [
         {
             "tool_name": "GetDataFromEmployee",
-            "motivation": "This tool provides access to employee data, which includes the 'locationID' attribute necessary for filtering.",
-            "suggestions": "Use the 'GetDataFromEmployee' class to retrieve employee data. Open a connection and call the service with the 'locationID' parameter set to (4, 'MINOR'). This will return a DataFrame of employees with 'locationID' less than 4. Use the DataFrame's shape attribute or len() function to count the number of rows, which represents the number of employees matching the criteria."
+            "motivation": "To retrieve employee details including salary, which is needed to find the employee with the highest salary.",
+            "suggestions": "Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'."
+        },
+        {
+            "tool_name": "GetDataFromPosition",
+            "motivation": "To retrieve the position title of the employee with the highest salary.",
+            "suggestions": "Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'."
+        },
+        {
+            "tool_name": "GetDataFromLocation",
+            "motivation": "To retrieve the location city of the employee with the highest salary.",
+            "suggestions": "Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'."
         }
     ]
 }
