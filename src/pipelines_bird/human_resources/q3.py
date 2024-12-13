@@ -1,16 +1,17 @@
 from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
+    #STANDARD
     positiontitle = ("Account Representative", "EQUAL")
-
     results = []
-
+    
     positions = GetDataFromPosition()
-    
     positions.open_connection()
-    
+
+    #RETRIEVE
     position_df = positions.call(positiontitle=positiontitle)
     
+    #STANDARD
     minsalary = position_df['minsalary']
     minsalary = minsalary.str.replace("US$", "")
     minsalary = minsalary.str.replace(",", "")
@@ -22,11 +23,12 @@ def pipeline_function():
     maxsalary = float(maxsalary)
     
     mean_salary = (minsalary + maxsalary)/2
-    
     mean_salary = str(mean_salary)
+    
     results.append({
         'positiontitle': positiontitle,
         'mean_salary': mean_salary
     })
     
+    #STOP
     return results
