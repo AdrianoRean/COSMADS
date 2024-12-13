@@ -3,6 +3,86 @@ from langchain.schema import BaseOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 
+TEMPLATE_WITH_DOCUMENT_TABLES = """
+You are a proficient python developer that generates a python function that solves a natural language query. The python function always returns a list of dictionaries. Also, the list always contain a dictionary of the form:
+======
+{{
+    "ACTION" : <ACTION>
+}}
+======
+
+You are given the query under study.
+Query:
+======
+{query}
+======
+
+Your goal is concur into generating a valid Python function that correctly generates the data specified in the queries, using the following tools:
+======
+{data_services}
+======
+Each tool is represented by a JSON string having the following structure:
+{{
+    "name": <name>,
+    "brief_description": <brief_description>,
+    "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
+    "input_parameters": <input_parameters>,
+    "output_values": <output_values>,
+    "module": <module>
+}}
+where:
+    - <name> is the name of the callable python class
+    - <brief_description> is a string representing a brief description of the callable python class
+    - <detailed_description> is a string representing a detailed description of the callable python class
+    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
+    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
+    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+======
+    
+You have to choose between three actions:
+- STOP: The function already solve the problem, so there only need to return the data and close the function.
+- RETRIEVE: The function need to retrieve additional data though the tools.
+- STANDARD: The function need to perfom some variable declaration and/or transformation onto the data.
+
+On the basis of such action, you will:
+- STOP: Add only the return statement of the function.
+- RETRIEVE: Add only the function calls needed to retrieve the new data.
+- STANDARD: Add only the lines of code needed to declare variables and/or transform the data.
+
+For each such action, add an adequate comment to signal the start the new lines of codes.
+======
+    
+You have been provided also some evidence to help you in your task.
+======
+{evidence}
+======
+notes:
+- Evidence may be missing
+- The evidence may be referring to other programming languages, like SQL or Java. You have to use only Python.
+- The evidence is always useful, but be careful in using it as it is.
+
+Guidelines:
+- Make sure to generate a correct and concise python function.
+- Generate the function within the ``` and ``` delimiters after the "Answer:" line.
+- Always end the script with a newline character and a triple backtick (```). It is important that after the return statement there is a newline character, followed by a triple backtick (```). 
+- Do not add any other information between the return statement and the triple backtick (```).
+- The python function should return a list of dictionaries (in some cases the list may contain a single dictionary) as specified in the output schema of the problem statement.
+- The python function should use the available tools to answer the query.
+- The tools are already imported. Do not import them.
+- You can define helper functions if necessary.
+- The function should be generated with a fixed name, which is "pipeline_function".
+
+Here an example of a finalized pipeline that may help you in generating a new pipeline:
+======
+Query: {example_query}
+Pipeline: {example_pipeline}
+======
+
+Answer:
+"""
+
 TEMPLATE_WITH_DOCUMENT_PRE_REASONING = """
 You are a proficient python developer that generates a python function that solves a natural language query. The python function always returns a list of dictionaries (in some cases the list may contain a single dictionary).
 
@@ -275,6 +355,8 @@ class PipelineGeneratorAgent:
         # define the prompt
         if mode == "standard":
             prompt_template = TEMPLATE_WITH_DOCUMENT
+        if mode == "chain of tables":
+            prompt_template = TEMPLATE_WITH_DOCUMENT_TABLES
         elif mode == "chain_of_thoughs_post":
             prompt_template = TEMPLATE_WITH_DOCUMENT_POST_REASONING
         elif mode == "chain_of_thoughs":
