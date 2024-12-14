@@ -101,7 +101,7 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["chain_of_thoughs"]
+    modes = ["chain_of_error"]
     for mode in modes:
-        #run_evaluation(mode)
+        run_evaluation(mode)
         evaluate_results(mode)

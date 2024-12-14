@@ -1,4 +1,76 @@
+TEMPLATE_WITH_DOCUMENT_RETRY = """
+You are a proficient python developer have to patch python functions that solve natural language query. 
+The python functions always return a list of dictionaries (in some cases the list may contain a single dictionary).
 
+You are given the query, function and previous result under study.
+Query:
+======
+{query}
+======
+Function:
+======
+{pipeline}
+======
+Function result/error:
+======
+{output}
+======
+
+Your goal is to determine the causes of the code exception.
+If they are not correct, you should provide a patched version of the function that correctly respond to the query and write "WRONG" and the reasons before the ``` and ``` delimiters.
+
+The python function that correctly generates the data specified in the queries should use at least one of the following tools:
+======
+{data_services}
+======
+Each tool is represented by a JSON string having the following structure:
+{{
+    "name": <name>,
+    "brief_description": <brief_description>,
+    "detailed_description": <description>,
+    "useful_info": <useful_info>,
+    "usage_example": <usage_example>,
+    "input_parameters": <input_parameters>,
+    "output_values": <output_values>,
+    "module": <module>
+}}
+where:
+    - <name> is the name of the callable python class
+    - <brief_description> is a string representing a brief description of the callable python class
+    - <detailed_description> is a string representing a detailed description of the callable python class
+    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
+    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
+    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+    
+You have been provided also some evidence to help you in your task.
+======
+{evidence}
+======
+notes:
+- Evidence may be missing
+- The evidence may be referring to other programming languages, like SQL or Java. You have only to suggest Python advices.
+- The evidence is always useful, but be careful in using it as it is.
+
+Guidelines:
+- The result you have been provided will be a runtime exception.
+- Generate the correct the function within the ```python and ``` delimiters after the "Answer:" line.
+- Always end the script with a newline character and a triple backtick (```). It is important that after the return statement there is a newline character, followed by a triple backtick (```). 
+- Before the ``` and ``` delimiters, state "WRONG"  and the causes of exception.
+- Do not add any other information between the return statement and the triple backtick (```).
+- The python function should return a list of dictionaries (in some cases the list may contain a single dictionary) as specified in the output schema of the problem statement.
+- The python function should use the available tools to answer the query.
+- The tools are already imported. Do not import them.
+- You can define helper functions if necessary.
+- The function should be generated with a fixed name, which is "pipeline_function".
+
+Here an example of a pipeline that may help you in generating a new pipeline:
+======
+Query: {example_query}
+Pipeline: {example_pipeline}
+======
+
+Answer:
+"""
 
 TEMPLATE_WITH_DOCUMENT_TABLES = """
 You are a proficient python developer that generates a python function that solves a natural language query. The python function always returns a list of dictionaries (in some cases the list may contain a single dictionary).

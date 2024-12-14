@@ -22,6 +22,7 @@ class LLMAgent:
     def __init__(self, mode = "standard"):
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        self.key = OPENAI_API_KEY
         print(mode)
         self.mode = mode
 
@@ -233,6 +234,105 @@ if __name__ == "__main__":
         
         return x
     
+    def chain_of_error(self, x, generator_chain_output, runner_chain_output):
+        
+        first = True
+        
+        self.first_trier = PipelineGeneratorAgent(self.key, mode="standard")
+        
+        first_trier_chain_output = {
+            "pipeline": self.first_trier.get_chain(),
+            "inputs": RunnablePassthrough()
+        }
+        
+        chain = ( 
+                 RunnableBranch(
+                    (lambda x: first, lambda x: self.run_chain(x, first_trier_chain_output)),
+                    lambda x: self.run_chain(x, generator_chain_output)
+                 )
+                 | RunnableParallel(
+                    gen = RunnableLambda(lambda x: {
+                        "query": x["inputs"]["query"],
+                        "evidence": x["inputs"]["evidence"],
+                        "data_services": x["inputs"]["data_services"],
+                        "data_services_list": x["inputs"]["data_services_list"],
+                        "example_query": x["inputs"]["example_query"],
+                        "example_pipeline": x["inputs"]["example_pipeline"],
+                        "pipeline": x["pipeline"][1].strip()[len("python"):].strip(),
+                        "analysis": x["pipeline"][0]
+                    }),
+                    exe = RunnableLambda(lambda x:
+                        self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
+                )
+                )
+                | RunnableLambda(lambda x: {
+                    "inputs": x,
+                    "pipeline_filepath": str(INTERMEDIATE_RESULTS_FILEPATH)
+                })
+                | RunnableParallel(
+                    inputs = RunnableLambda(lambda x: {
+                        "query": x["inputs"]["gen"]["query"],
+                        "evidence": x["inputs"]["gen"]["evidence"],
+                        "data_services": x["inputs"]["gen"]["data_services"],
+                        "data_services_list": x["inputs"]["gen"]["data_services_list"],
+                        "example_query": x["inputs"]["gen"]["example_query"],
+                        "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
+                        "pipeline": x["inputs"]["gen"]["pipeline"],
+                        "analysis": x["inputs"]["gen"]["analysis"],
+                    }),
+                    output = runner_chain_output
+                )
+                | RunnableLambda(lambda x: {
+                    "query": x["inputs"]["query"],
+                    "evidence": x["inputs"]["evidence"],
+                    "data_services": x["inputs"]["data_services"],
+                    "data_services_list": x["inputs"]["data_services_list"],
+                    "example_query": x["inputs"]["example_query"],
+                    "example_pipeline": x["inputs"]["example_pipeline"],
+                    "pipeline": x["inputs"]["pipeline"],
+                    "analysis": x["inputs"]["analysis"],
+                    "output": x["output"]["output"],
+                })
+            )
+        
+        for i in range (0,3):   
+            x = chain.invoke(x)
+            analysis = x['analysis'].strip()
+            
+            if x['output'][0] == "+":
+                x["inputs"] = {
+                    "query" : x["query"],
+                    "evidence" : x["evidence"],
+                    "data_services" : x["data_services"],
+                    "data_services_list": x["data_services_list"],
+                    "example_query" : x["example_query"],
+                    "example_pipeline" : x["example_pipeline"],
+                }
+                x["pipeline"] = [None, x["pipeline"]]
+                x["pipeline"][1] = "python" + x["pipeline"][1]
+                break
+            else:
+                print("**********************")
+                print(f"Last analysis is: {analysis}")            
+                print(f"Last pipeline is: {x['pipeline']}")        
+                print(f"Output 0: {x['output'][0]}")  
+                print("------------------------ OUTPUT -----------------")   
+                print(x["output"])   
+                first = False
+        
+        x["inputs"] = {
+            "query" : x["query"],
+            "evidence" : x["evidence"],
+            "data_services" : x["data_services"],
+            "data_services_list": x["data_services_list"],
+            "example_query" : x["example_query"],
+            "example_pipeline" : x["example_pipeline"],
+        }
+        x["pipeline"] = [None, x["pipeline"]]
+        x["pipeline"][1] = "python" + x["pipeline"][1]
+                
+        return x
+    
     def run_chain(self, x, generator_output_chain):
         return (
             RunnableLambda(
@@ -286,6 +386,7 @@ if __name__ == "__main__":
             | RunnableBranch(
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
+                (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableParallel(
@@ -318,7 +419,7 @@ if __name__ == "__main__":
             )
             | RunnableLambda(lambda x: {
                 "query": x["inputs"]["query"],
-                    "evidence": x["inputs"]["evidence"],
+                "evidence": x["inputs"]["evidence"],
                 "data_services": x["inputs"]["data_services"],
                 "example_query": x["inputs"]["example_query"],
                 "example_pipeline": x["inputs"]["example_pipeline"],
@@ -409,15 +510,26 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    q = "q5"
-    llm = LLMAgent(mode="standard")
-    with open("queries/queries_pipelines_human_resources.json", "r") as f:
-        queries = json.load(f)
+    llm = LLMAgent(mode="chain_of_error")
+    
+    mode = "bird" # test or bird
+    
+    if mode == "test":
+        q = "q5"
+        with open("queries/queries_pipelines_human_resources.json", "r") as f:
+            queries = json.load(f)
+            query = queries[q]["query"]
+    else:
+        q = 43
+        with open("queries/test/human_resources.json", "r") as f:
+            queries = json.load(f)
+            query = queries[q]["question"]
         
+    
     input_file = {
-        "query" : queries[q]["query"],
+        "query" : query,
         "evidence" : queries[q]["evidence"]
     }
-    print(queries[q]["query"])
+    print(query)
     result = llm.get_chain().invoke(input_file)
     print(result["output"])

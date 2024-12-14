@@ -31,6 +31,8 @@ class PipelineGeneratorAgent:
         # define the prompt
         if mode == "standard":
             prompt_template = TEMPLATE_WITH_DOCUMENT
+        elif mode == "chain_of_error":
+            prompt_template = TEMPLATE_WITH_DOCUMENT_RETRY
         elif mode == "chain_of_tables":
             prompt_template = TEMPLATE_WITH_DOCUMENT_TABLES
         elif mode == "chain_of_thoughs_post":

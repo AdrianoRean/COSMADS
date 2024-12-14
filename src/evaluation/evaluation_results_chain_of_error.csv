@@ -69,14 +69,14 @@ index,question,data_services,advice,pipeline,output,output_json,example_query,ex
     employee_df = employees.call()
     
     # Convert salary to numeric for comparison
-    employee_df['salary_numeric'] = employee_df['salary'].str.replace('US$', '').str.replace(',', '').astype(float)
+    employee_df['numeric_salary'] = employee_df['salary'].apply(lambda x: float(x.replace('US$', '').replace(',', '')))
     
     # Find the employee with the highest salary
-    highest_salary_employee = employee_df.loc[employee_df['salary_numeric'].idxmax()]
+    max_salary_employee = employee_df.loc[employee_df['numeric_salary'].idxmax()]
     
     # Append the result as a dictionary
     results.append({
-        'fullname': f""{highest_salary_employee['firstname']} {highest_salary_employee['lastname']}""
+        'fullname': f""{max_salary_employee['firstname']} {max_salary_employee['lastname']}""
     })
     
     # Return the results
@@ -181,26 +181,27 @@ def pipeline_function():
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
     from employee import GetDataFromEmployee
-
+    
     # Define the performance filter
     performance = (""Good"", ""EQUAL"")
     results = []
-
-    # Initialize the data service
+    
+    # Initialize the employee data service
     employees = GetDataFromEmployee()
     employees.open_connection()
-
-    # Retrieve the data
+    
+    # Retrieve employees with good performance
     employee_df = employees.call(performance=performance)
-
+    
     # Count the number of employees with good performance
     good_performance_count = len(employee_df)
-
+    
     # Append the result to the list
     results.append({
         'good_performance_count': good_performance_count
     })
-
+    
+    # Return the results
     return results","+----+--------------------------+
 |    |   good_performance_count |
 |----+--------------------------|
@@ -292,22 +293,23 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
+    import pandas as pd
     from employee import GetDataFromEmployee
-    
+
     # Initialize the connection to the employee data service
     employees = GetDataFromEmployee()
     employees.open_connection()
-    
+
     # Define the query parameters
     gender = (""M"", ""EQUAL"")
     salary = (""US$70,000"", ""GREATER"")
-    
-    # Retrieve the data
+
+    # Retrieve the employee data based on the query parameters
     employee_df = employees.call(gender=gender, salary=salary)
-    
+
     # Extract the social security numbers of the male employees with a salary over $70,000
-    results = [{'ssn': row['ssn']} for index, row in employee_df.iterrows()]
-    
+    results = employee_df[['ssn']].to_dict(orient='records')
+
     # Return the results
     return results","+----+-------------+
 |    | ssn         |
@@ -421,8 +423,8 @@ def pipeline_function():
     position_df = positions.call(positiontitle=positiontitle)
 
     # Extract the required education for the 'Regional Manager' position
-    if not position_df.empty:
-        education_required = position_df['educationrequired'].iloc[0]
+    for index, row in position_df.iterrows():
+        education_required = row['educationrequired']
         results.append({
             'educationrequired': education_required
         })
@@ -544,22 +546,22 @@ def pipeline_function():
     positiontitle_account_rep = (""Account Representative"", ""EQUAL"")
     positiontitle_trainee = (""Trainee"", ""EQUAL"")
     results = []
-
+    
     # Initialize the data service for positions
     positions = GetDataFromPosition()
     positions.open_connection()
-
+    
     # Retrieve data for Account Representative
     account_rep_df = positions.call(positiontitle=positiontitle_account_rep)
     # Retrieve data for Trainee
     trainee_df = positions.call(positiontitle=positiontitle_trainee)
-
+    
     # Extract and clean the minimum salary for Account Representative
     minsalary_account_rep = account_rep_df['minsalary'].str.replace(""US$"", """").str.replace("","", """").astype(float).min()
-
+    
     # Extract and clean the minimum salary for Trainee
     minsalary_trainee = trainee_df['minsalary'].str.replace(""US$"", """").str.replace("","", """").astype(float).min()
-
+    
     # Determine which position has the lower minimum salary
     if minsalary_account_rep < minsalary_trainee:
         results.append({
@@ -571,7 +573,8 @@ def pipeline_function():
             'positiontitle': 'Trainee',
             'lower_minsalary': minsalary_trainee
         })
-
+    
+    # Return the results
     return results","+----+-----------------+-------------------+
 |    | positiontitle   |   lower_minsalary |
 |----+-----------------+-------------------|
@@ -671,31 +674,34 @@ def pipeline_function():
     from employee import GetDataFromEmployee
     from location import GetDataFromLocation
 
-    # Initialize the results list
-    results = []
-
-    # Define the employee's full name
+    # Define the search criteria for the employee
     firstname = (""Sandy"", ""EQUAL"")
     lastname = (""Adams"", ""EQUAL"")
+    results = []
 
-    # Retrieve employee data
+    # Initialize and open connection to the employee data service
     employees = GetDataFromEmployee()
     employees.open_connection()
+
+    # Retrieve the employee data for Sandy Adams
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Check if the employee exists
+    # Check if the employee exists in the data
     if not employee_df.empty:
-        # Get the locationID of the employee
+        # Get the locationID for Sandy Adams
         locationID = employee_df['locationID'].iloc[0]
         locationID = (locationID, ""EQUAL"")
 
-        # Retrieve location data
+        # Initialize and open connection to the location data service
         locations = GetDataFromLocation()
         locations.open_connection()
+
+        # Retrieve the location data for the given locationID
         location_df = locations.call(locationID=locationID)
 
-        # Get the city of the office
+        # Check if the location exists in the data
         if not location_df.empty:
+            # Get the city where Sandy Adams works
             locationcity = location_df['locationcity'].iloc[0]
             results.append({'locationcity': locationcity})
 
@@ -755,130 +761,7 @@ def pipeline_function():
     #STOP    
     return results
 "
-6,"Among the employees working at the office in New York, how many of them have a good job performance?","brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the parameters for querying the location and employee data
-    locationcity = (""New York"", ""EQUAL"")
-    performance = (""Good"", ""EQUAL"")
-    
-    # Initialize the results list
-    results = []
-    
-    # Get the location data
-    locations = GetDataFromLocation()
-    locations.open_connection()
-    location_df = locations.call(locationcity=locationcity)
-    
-    # Extract the location IDs for New York
-    ny_location_ids = location_df['locationID'].tolist()
-    
-    # Get the employee data
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-    employee_df = employees.call(performance=performance)
-    
-    # Filter employees based on location IDs for New York
-    ny_employees = employee_df[employee_df['locationID'].isin(ny_location_ids)]
-    
-    # Count the number of employees with good performance in New York
-    good_performance_count = ny_employees.shape[0]
-    
-    # Append the result to the results list
-    results.append({
-        'location': 'New York',
-        'good_performance_count': good_performance_count
-    })
-    
-    # Return the results
-    return results","+----+------------+--------------------------+
-|    | location   |   good_performance_count |
-|----+------------+--------------------------|
-|  0 | New York   |                        0 |
-+----+------------+--------------------------+","[{'location': 'New York', 'good_performance_count': 0}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-
-def pipeline_function():
-    
-    #STANDARD
-    performance = (""Good"", ""EQUAL"")
-    results = []
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(performance=performance)
-    
-    #STANDARD
-    salaries = employee_df['salary']
-    salaries = salaries.str.replace(""US$"", """")
-    salaries = salaries.str.replace("","", """")
-    salaries = salaries.astype(float)
-    
-    average_salary = salaries.mean()
-    average_salary = str(average_salary)
-    
-    results.append({
-        'performance': performance,
-        'average salary': average_salary
-    })
-    
-    #STOP
-    return results"
+6,"Among the employees working at the office in New York, how many of them have a good job performance?",,,,,,,
 7,What is the office phone number of the location at which Sandy Adams works?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -1067,27 +950,30 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize the results list
+    from employee import GetDataFromEmployee
+    from location import GetDataFromLocation
+
+    # Initialize results list
     results = []
 
-    # Open connection to the location data service
+    # Open connection to location data
     locations = GetDataFromLocation()
     locations.open_connection()
 
-    # Retrieve the locationID for the address 450 Peachtree Rd
+    # Retrieve locationID for the given address
     address = (""450 Peachtree Rd"", ""EQUAL"")
     location_df = locations.call(address=address)
 
-    # Check if the location exists
     if not location_df.empty:
+        # Get the locationID
         locationID = location_df['locationID'].iloc[0]
         locationID = (locationID, ""EQUAL"")
 
-        # Open connection to the employee data service
+        # Open connection to employee data
         employees = GetDataFromEmployee()
         employees.open_connection()
 
-        # Retrieve employees with the specified locationID and gender 'M'
+        # Retrieve male employees at the given location
         gender = (""M"", ""EQUAL"")
         employee_df = employees.call(locationID=locationID, gender=gender)
 
@@ -1215,25 +1101,29 @@ def pipeline_function():
     # Initialize the results list
     results = []
 
-    # Get the positionID for 'Account Representative'
+    # Define the position title to filter
     positiontitle = (""Account Representative"", ""EQUAL"")
+
+    # Create an instance of GetDataFromPosition and open connection
     positions = GetDataFromPosition()
     positions.open_connection()
-    position_df = positions.call(positiontitle=positiontitle)
-    
-    # Check if position_df is not empty
-    if not position_df.empty:
-        # Get the positionID for 'Account Representative'
-        account_rep_position_id = position_df['positionID'].iloc[0]
 
-        # Get employees with the positionID of 'Account Representative'
-        positionID = (account_rep_position_id, ""EQUAL"")
+    # Retrieve the position data for 'Account Representative'
+    position_df = positions.call(positiontitle=positiontitle)
+
+    # Extract the positionID for 'Account Representative'
+    if not position_df.empty:
+        account_representative_position_id = position_df['positionID'].iloc[0]
+
+        # Create an instance of GetDataFromEmployee and open connection
         employees = GetDataFromEmployee()
         employees.open_connection()
-        employee_df = employees.call(positionID=positionID)
 
-        # Count the number of employees
-        num_employees = len(employee_df)
+        # Retrieve employee data for those with the 'Account Representative' position
+        employee_df = employees.call(positionID=(account_representative_position_id, ""EQUAL""))
+
+        # Count the number of employees in this position
+        num_employees = employee_df.shape[0]
 
         # Append the result to the results list
         results.append({
@@ -1365,6 +1255,8 @@ def pipeline_function():
 
     # Extract the minimum salary for the position
     minsalary = position_df['minsalary'].iloc[0]
+
+    # Clean and convert the minimum salary to a float
     minsalary = minsalary.replace(""US$"", """").replace("","", """")
     minsalary = float(minsalary)
 
@@ -1475,51 +1367,48 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize the results list
+    from employee import GetDataFromEmployee
+    from location import GetDataFromLocation
+    from position import GetDataFromPosition
+
+    # Initialize results list
     results = []
 
-    # Step 1: Get the positionID for 'Trainee'
+    # Get positionID for 'Trainee'
     positiontitle = (""Trainee"", ""EQUAL"")
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
-    
-    # Check if any position is found
-    if position_df.empty:
-        return results
+    trainee_position_ids = position_df['positionID'].tolist()
 
-    # Get the positionID for 'Trainee'
-    positionID = position_df['positionID'].iloc[0]
-    positionID = (positionID, ""EQUAL"")
-
-    # Step 2: Get the locationID for 'New York'
+    # Get locationID for 'New York'
     locationcity = (""New York"", ""EQUAL"")
     locations = GetDataFromLocation()
     locations.open_connection()
     location_df = locations.call(locationcity=locationcity)
-    
-    # Check if any location is found
-    if location_df.empty:
-        return results
+    ny_location_ids = location_df['locationID'].tolist()
 
-    # Get the locationID for 'New York'
-    locationID = location_df['locationID'].iloc[0]
-    locationID = (locationID, ""EQUAL"")
-
-    # Step 3: Get employees who are 'Trainees' and work in 'New York'
+    # Get employees who are 'Trainees' and work in 'New York'
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call(positionID=positionID, locationID=locationID)
+    employee_df = employees.call()
 
-    # Count the number of employees
-    num_employees = len(employee_df)
+    # Filter employees who are trainees and work in New York
+    filtered_employees = employee_df[
+        (employee_df['positionID'].isin(trainee_position_ids)) &
+        (employee_df['locationID'].isin(ny_location_ids))
+    ]
 
-    # Append the result
+    # Append the count of such employees to results
     results.append({
-        'num_employees': num_employees
+        'count': len(filtered_employees)
     })
 
-    return results",,[],Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+---------+
+|    |   count |
+|----+---------|
+|  0 |       0 |
++----+---------+",[{'count': 0}],Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 from data_service_bird.human_resources.location import GetDataFromLocation
 
@@ -1627,40 +1516,36 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize the results list
-    results = []
-
     # Define the position title for Trainee
     positiontitle = (""Trainee"", ""EQUAL"")
+    results = []
 
-    # Open connection to the position data service
+    # Initialize and open connection to the position data service
     positions = GetDataFromPosition()
     positions.open_connection()
 
-    # Retrieve the position data for Trainee
+    # Retrieve position data for Trainee
     position_df = positions.call(positiontitle=positiontitle)
 
-    # Get the positionID for Trainee
-    if not position_df.empty:
-        positionID = position_df['positionID'].iloc[0]
-        positionID = (positionID, ""EQUAL"")
+    # Extract the positionID for Trainee
+    positionID = position_df['positionID'].iloc[0]
+    positionID = (positionID, ""EQUAL"")
 
-        # Open connection to the employee data service
-        employees = GetDataFromEmployee()
-        employees.open_connection()
+    # Initialize and open connection to the employee data service
+    employees = GetDataFromEmployee()
+    employees.open_connection()
 
-        # Retrieve the employee data for those with the Trainee position
-        employee_df = employees.call(positionID=positionID)
+    # Retrieve employee data for those with the Trainee positionID
+    employee_df = employees.call(positionID=positionID)
 
-        # Extract full names of employees working as Trainee
-        for index, employee in employee_df.iterrows():
-            full_name = f""{employee['firstname']} {employee['lastname']}""
-            results.append({'fullname': full_name})
+    # Iterate over the employee dataframe and collect full names
+    for index, employee in employee_df.iterrows():
+        full_name = f""{employee['firstname']} {employee['lastname']}""
+        results.append({
+            'fullname': full_name
+        })
 
-    # Return the list of dictionaries with full names
+    # Return the list of dictionaries containing full names of Trainees
     return results","+----+----------------+
 |    | fullname       |
 |----+----------------|
@@ -1921,49 +1806,54 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize results list
+    import pandas as pd
+    
+    # Initialize the results list
     results = []
-
-    # Open connection to position data
+    
+    # Define the position title and salary filter
+    positiontitle = (""Trainee"", ""EQUAL"")
+    
+    # Open connection to the position data service
     positions = GetDataFromPosition()
     positions.open_connection()
-
-    # Retrieve positionID for 'Trainee'
-    positiontitle = (""Trainee"", ""EQUAL"")
+    
+    # Retrieve position data for Trainee
     position_df = positions.call(positiontitle=positiontitle)
+    
+    # Extract the positionID for Trainee
     trainee_position_ids = position_df['positionID'].tolist()
-
-    # Open connection to employee data
+    
+    # Open connection to the employee data service
     employees = GetDataFromEmployee()
     employees.open_connection()
-
-    # Retrieve employees with positionID in trainee_position_ids
-    # and salary greater than 20000
-    salary_threshold = 20000
-    employee_df = employees.call()
-    employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
-    filtered_employees = employee_df[
-        (employee_df['positionID'].isin(trainee_position_ids)) & 
-        (employee_df['salary'] > salary_threshold)
-    ]
-
-    # Count the number of employees
-    count = len(filtered_employees)
-
-    # Append result
+    
+    # Initialize a counter for employees with salary over 20,000
+    count = 0
+    
+    # Iterate over each Trainee positionID
+    for position_id in trainee_position_ids:
+        # Retrieve employee data for each Trainee positionID
+        employee_df = employees.call(positionID=(position_id, ""EQUAL""))
+        
+        # Clean and convert salary to float
+        employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
+        
+        # Count employees with salary over 20,000
+        count += employee_df[employee_df['salary'] > 20000].shape[0]
+    
+    # Append the result to the results list
     results.append({
+        'position': 'Trainee',
         'count': count
     })
-
-    # Return results
-    return results","+----+---------+
-|    |   count |
-|----+---------|
-|  0 |       1 |
-+----+---------+",[{'count': 1}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    
+    # Return the results
+    return results","+----+------------+---------+
+|    | position   |   count |
+|----+------------+---------|
+|  0 | Trainee    |       1 |
++----+------------+---------+","[{'position': 'Trainee', 'count': 1}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     
@@ -2050,47 +1940,47 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize the position title filter for 'Trainee'
-    positiontitle = (""Trainee"", ""EQUAL"")
-    results = []
-
-    # Retrieve position data to get the positionID for 'Trainee'
+    import pandas as pd
+    
+    # Initialize the connection to the data services
+    employees = GetDataFromEmployee()
     positions = GetDataFromPosition()
+    
+    employees.open_connection()
     positions.open_connection()
+    
+    # Retrieve the position ID for 'Trainee'
+    positiontitle = (""Trainee"", ""EQUAL"")
     position_df = positions.call(positiontitle=positiontitle)
-
-    # Check if 'Trainee' position exists
-    if not position_df.empty:
-        trainee_position_id = position_df.iloc[0]['positionID']
-
-        # Retrieve employee data for those with the 'Trainee' position
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(positionID=(trainee_position_id, ""EQUAL""))
-
-        # Process the salary data
-        if not employee_df.empty:
-            salaries = employee_df['salary']
-            salaries = salaries.str.replace(""US$"", """")
-            salaries = salaries.str.replace("","", """")
-            salaries = salaries.astype(float)
-
-            # Calculate the average salary
-            average_salary = salaries.mean()
-            average_salary = str(average_salary)
-
-            # Append the result
-            results.append({
-                'position': 'Trainee',
-                'average salary': average_salary
-            })
-
-    # Return the results
-    return results","+----+------------+------------------+
-|    | position   |   average salary |
-|----+------------+------------------|
-|  0 | Trainee    |          20333.3 |
-+----+------------+------------------+","[{'position': 'Trainee', 'average salary': '20333.333333333332'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    
+    if position_df.empty:
+        return [{'average salary': '0'}]
+    
+    trainee_position_id = position_df['positionID'].iloc[0]
+    
+    # Retrieve employees with the 'Trainee' position
+    positionID = (trainee_position_id, ""EQUAL"")
+    employee_df = employees.call(positionID=positionID)
+    
+    if employee_df.empty:
+        return [{'average salary': '0'}]
+    
+    # Process the salary data
+    salaries = employee_df['salary']
+    salaries = salaries.str.replace(""US$"", """")
+    salaries = salaries.str.replace("","", """")
+    salaries = salaries.astype(float)
+    
+    # Calculate the average salary
+    average_salary = salaries.mean()
+    average_salary = str(average_salary)
+    
+    # Return the result
+    return [{'average salary': average_salary}]","+----+------------------+
+|    |   average salary |
+|----+------------------|
+|  0 |          20333.3 |
++----+------------------+",[{'average salary': '20333.333333333332'}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     
@@ -2187,8 +2077,8 @@ def pipeline_function():
     employees.open_connection()
 
     # Retrieve employee data for Trainees
-    positionID = (123, ""EQUAL"")  # Assuming 123 is the positionID for Trainee
-    employee_df = employees.call(positionID=positionID)
+    position_title = (""Trainee"", ""EQUAL"")
+    employee_df = employees.call(positionID=position_title)
 
     # Process salary data
     salaries = employee_df['salary']
@@ -2204,7 +2094,7 @@ def pipeline_function():
     positions.open_connection()
 
     # Retrieve position data for Trainees
-    position_df = positions.call(positionID=positionID)
+    position_df = positions.call(positiontitle=position_title)
 
     # Get the minimum salary for Trainees
     min_salary = position_df['minsalary'].str.replace(""US$"", """").str.replace("","", """").astype(float).iloc[0]
@@ -2214,13 +2104,18 @@ def pipeline_function():
 
     # Append the result
     results.append({
+        'position': 'Trainee',
         'average_salary': average_salary,
         'min_salary': min_salary,
         'percentage_increase': percentage_increase
     })
 
     # Return the results
-    return results",The pipeline did not run successfully,"[{'position': 'Trainee', 'average salary': '20333.333333333332'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+------------+------------------+--------------+-----------------------+
+|    | position   |   average_salary |   min_salary |   percentage_increase |
+|----+------------+------------------+--------------+-----------------------|
+|  0 | Trainee    |              nan |        18000 |                   nan |
++----+------------+------------------+--------------+-----------------------+","[{'position': 'Trainee', 'average_salary': nan, 'min_salary': 18000.0, 'percentage_increase': nan}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     
@@ -2307,24 +2202,26 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    
-    # Initialize the connection to the employee data service
+    # Initialize the gender filter for female employees
+    gender_filter = (""F"", ""EQUAL"")
+    results = []
+
+    # Create an instance of the GetDataFromEmployee class
     employees = GetDataFromEmployee()
     employees.open_connection()
-    
-    # Define the filter for female employees
-    gender_filter = ('F', 'EQUAL')
-    
-    # Retrieve the data for female employees
+
+    # Retrieve the employee data with the specified gender filter
     employee_df = employees.call(gender=gender_filter)
-    
+
     # Count the number of female employees
-    num_female_employees = employee_df.shape[0]
-    
-    # Prepare the result as a list of dictionaries
-    results = [{'number_of_female_employees': num_female_employees}]
-    
+    female_count = employee_df.shape[0]
+
+    # Append the result to the list of dictionaries
+    results.append({
+        'number_of_female_employees': female_count
+    })
+
+    # Return the results
     return results","+----+------------------------------+
 |    |   number_of_female_employees |
 |----+------------------------------|
@@ -2577,7 +2474,7 @@ def pipeline_function():
     # Retrieve the employee data for Emily Wood
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Check if any employee data was found
+    # Check if any employee data was returned
     if not employee_df.empty:
         # Get the locationID for Emily Wood
         locationID = employee_df['locationID'].iloc[0]
@@ -2589,7 +2486,7 @@ def pipeline_function():
         # Retrieve the location data for the given locationID
         location_df = locations.call(locationID=(locationID, ""EQUAL""))
 
-        # Check if any location data was found
+        # Check if any location data was returned
         if not location_df.empty:
             # Get the state from the location data
             state = location_df['state'].iloc[0]
@@ -2712,27 +2609,24 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize the result list
+    # Initialize the results list
     results = []
 
-    # Define the employee's full name
+    # Define the employee's name
     firstname = (""David"", ""EQUAL"")
     lastname = (""Whitehead"", ""EQUAL"")
 
-    # Create an instance of the employee data service
+    # Create an instance of GetDataFromEmployee and open the connection
     employees = GetDataFromEmployee()
     employees.open_connection()
 
     # Retrieve the employee's data
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Get the positionID of David Whitehead
+    # Get the positionID of the employee
     positionID = employee_df[""positionID""].iloc[0]
 
-    # Create an instance of the position data service
+    # Create an instance of GetDataFromPosition and open the connection
     positions = GetDataFromPosition()
     positions.open_connection()
 
@@ -2742,7 +2636,7 @@ def pipeline_function():
     # Extract the education required for the position
     education_required = position_df[""educationrequired""].iloc[0]
 
-    # Append the result as a dictionary
+    # Append the result to the results list
     results.append({
         'educationrequired': education_required
     })
@@ -2861,12 +2755,11 @@ def pipeline_function():
     if not location_df.empty:
         # Get the locationID for Miami
         miami_locationID = location_df['locationID'].iloc[0]
-        miami_locationID = (miami_locationID, ""EQUAL"")
 
         # Step 2: Get all employees in the Miami office
         employees = GetDataFromEmployee()
         employees.open_connection()
-        employee_df = employees.call(locationID=miami_locationID)
+        employee_df = employees.call(locationID=(miami_locationID, ""EQUAL""))
 
         # Count the number of employees
         num_employees = len(employee_df)
@@ -3142,24 +3035,22 @@ def pipeline_function():
     locationcity = (""New York City"", ""EQUAL"")
     performance = (""Good"", ""EQUAL"")
 
-    # Get location data to find the locationID for New York City
+    # Get location data
     locations = GetDataFromLocation()
     locations.open_connection()
     location_df = locations.call(locationcity=locationcity)
 
     # Check if any location matches the criteria
     if not location_df.empty:
-        # Get the locationID for New York City
         locationID = location_df[""locationID""].iloc[0]
 
-        # Get employee data with good performance in New York City
+        # Get employee data
         employees = GetDataFromEmployee()
         employees.open_connection()
         employee_df = employees.call(locationID=(locationID, ""EQUAL""), performance=performance)
 
         # Check if any employee matches the criteria
         if not employee_df.empty:
-            # Extract the social security number of the employee
             for _, row in employee_df.iterrows():
                 results.append({
                     'ssn': row['ssn']
@@ -3268,7 +3159,7 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the filters for the query
+    # Define the criteria for filtering
     positiontitle = (""Account Representative"", ""EQUAL"")
     locationcity = (""Chicago"", ""EQUAL"")
     performance = (""Good"", ""EQUAL"")
@@ -3276,35 +3167,26 @@ def pipeline_function():
     # Initialize results list
     results = []
     
-    # Get position data to find the positionID for ""Account Representative""
+    # Get position data
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
     
-    # Extract the positionID for ""Account Representative""
-    if not position_df.empty:
-        positionID = position_df.iloc[0]['positionID']
-    else:
-        return results  # Return empty if no position found
-    
-    # Get location data to find the locationID for ""Chicago""
+    # Get location data
     locations = GetDataFromLocation()
     locations.open_connection()
     location_df = locations.call(locationcity=locationcity)
     
-    # Extract the locationID for ""Chicago""
-    if not location_df.empty:
-        locationID = location_df.iloc[0]['locationID']
-    else:
-        return results  # Return empty if no location found
-    
-    # Get employee data with the specified filters
+    # Get employee data
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call(positionID=(positionID, ""EQUAL""), locationID=(locationID, ""EQUAL""), performance=performance)
+    employee_df = employees.call(performance=performance)
     
-    # Count the number of employees that match the criteria
-    count = employee_df.shape[0]
+    # Merge dataframes to filter employees based on position and location
+    merged_df = employee_df.merge(position_df, on='positionID').merge(location_df, on='locationID')
+    
+    # Count the number of account representatives in Chicago with good performance
+    count = merged_df.shape[0]
     
     # Append the result to the results list
     results.append({
@@ -3408,36 +3290,36 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the employee's full name
-    firstname = (""Kenneth"", ""EQUAL"")
-    lastname = (""Charles"", ""EQUAL"")
+    # Initialize the result list
     results = []
 
-    # Initialize the employee data service
+    # Define the employee's name
+    firstname = (""Kenneth"", ""EQUAL"")
+    lastname = (""Charles"", ""EQUAL"")
+
+    # Get employee data
     employees = GetDataFromEmployee()
     employees.open_connection()
-
-    # Retrieve the employee data
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Get the positionID of the employee
+    # Extract the positionID
     positionID = employee_df[""positionID""].iloc[0]
 
-    # Initialize the position data service
+    # Get position data
     positions = GetDataFromPosition()
     positions.open_connection()
-
-    # Retrieve the position data
     position_df = positions.call(positionID=(positionID, ""EQUAL""))
 
-    # Extract the position title
+    # Extract position title
     position_info = position_df.iloc[0]
     position_info = position_info.astype(str)
 
+    # Append the result
     results.append({
         'positiontitle': position_info['positiontitle']
     })
 
+    # Return the results
     return results","+----+------------------------+
 |    | positiontitle          |
 |----+------------------------|
@@ -3481,160 +3363,7 @@ def pipeline_function():
     #STOP
     return results
 "
-28,Give the full address of the office of the highest paid manager.,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    import pandas as pd
-    
-    # Initialize the results list
-    results = []
-    
-    # Open connection to the position data service
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    
-    # Retrieve position data for managers
-    positiontitle = (""Manager"", ""EQUAL"")
-    position_df = positions.call(positiontitle=positiontitle)
-    
-    # Get the position IDs for managers
-    manager_position_ids = position_df['positionID'].tolist()
-    
-    # Open connection to the employee data service
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-    
-    # Retrieve employee data for managers
-    employee_df = employees.call(positionID=(manager_position_ids, ""EQUAL""))
-    
-    # Convert salary to numeric for comparison
-    employee_df['salary_numeric'] = employee_df['salary'].apply(lambda x: float(x.replace('US$', '').replace(',', '')))
-    
-    # Find the highest paid manager
-    highest_paid_manager = employee_df.loc[employee_df['salary_numeric'].idxmax()]
-    
-    # Get the location ID of the highest paid manager
-    locationID = highest_paid_manager['locationID']
-    
-    # Open connection to the location data service
-    locations = GetDataFromLocation()
-    locations.open_connection()
-    
-    # Retrieve location data for the highest paid manager's office
-    location_df = locations.call(locationID=(locationID, ""EQUAL""))
-    
-    # Extract the full address
-    full_address = location_df[['address', 'locationcity', 'state', 'zipcode']].iloc[0].to_dict()
-    
-    # Append the result
-    results.append(full_address)
-    
-    # Return the results
-    return results",The pipeline did not run successfully,[{'positiontitle': 'Account Representative'}],Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-from data_service_bird.human_resources.position import GetDataFromPosition
-from data_service_bird.human_resources.location import GetDataFromLocation
-
-def pipeline_function():
-    
-    #STANDARD
-    positiontitle = (""Manager"", ""EQUAL"")
-    results = []
-    
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    
-    #RETRIEVE
-    position_df = positions.call(positiontitle=positiontitle)
-    
-    #STANDARD
-    positionID = position_df['positionID'].iloc[0]
-    positionID = (positionID, ""EQUAL"")
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(positionID=positionID)
-    
-    #STANDARD
-    locations = GetDataFromLocation()
-    locations.open_connection()
-    
-    locationecities = []
-    for index, employee in employee_df.iterrows():
-        locationID = employee[""locationID""]
-        
-        #RETRIEVE
-        locations_df = locations.call(locationID=(locationID, ""EQUAL""))
-        
-        #STANDARD
-        locationcity = locations_df['locationcity'].iloc[0]
-        locationecities.append(str(locationcity))
-
-    locationecities = list(set(locationecities))
-    
-    for city in locationecities: 
-        results.append({
-            'locationcity': city
-        })
-    
-    #STOP    
-    return results
-"
+28,Give the full address of the office of the highest paid manager.,,,,,,,
 29,What is the max salary for 'Tracy Coulter' if he/she stays on his/her position?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -3764,140 +3493,7 @@ def pipeline_function():
     
     #STOP
     return results"
-30,"If Jose Rodriguez tried his best, how many percentage can his salary raise without changing his position?","brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize the result list
-    results = []
-
-    # Set up the employee query for Jose Rodriguez
-    firstname = (""Jose"", ""EQUAL"")
-    lastname = (""Rodriguez"", ""EQUAL"")
-
-    # Retrieve employee data
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-    employee_df = employees.call(firstname=firstname, lastname=lastname)
-
-    # Check if the employee exists
-    if not employee_df.empty:
-        # Extract the employee's current salary and positionID
-        current_salary_str = employee_df.iloc[0]['salary']
-        positionID = employee_df.iloc[0]['positionID']
-
-        # Convert salary to float
-        current_salary = float(current_salary_str.replace(""US$"", """").replace("","", """"))
-
-        # Retrieve position data
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = positions.call(positionID=(positionID, ""EQUAL""))
-
-        # Check if the position exists
-        if not position_df.empty:
-            # Extract the max salary for the position
-            max_salary = float(position_df.iloc[0]['maxsalary'])
-
-            # Calculate the possible percentage increase
-            percentage_increase = ((max_salary - current_salary) / current_salary) * 100
-
-            # Append the result
-            results.append({
-                'firstname': 'Jose',
-                'lastname': 'Rodriguez',
-                'current_salary': current_salary_str,
-                'max_salary': f""US${max_salary:,.2f}"",
-                'percentage_increase': percentage_increase
-            })
-
-    # Return the results
-    return results",The pipeline did not run successfully,"[{'firstname': 'Tracy', 'lastname': 'Coulter', 'max_salary': 'US$150,000.00'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-
-def pipeline_function():
-    
-    #STANDARD
-    performance = (""Good"", ""EQUAL"")
-    results = []
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(performance=performance)
-    
-    #STANDARD
-    salaries = employee_df['salary']
-    salaries = salaries.str.replace(""US$"", """")
-    salaries = salaries.str.replace("","", """")
-    salaries = salaries.astype(float)
-    
-    average_salary = salaries.mean()
-    average_salary = str(average_salary)
-    
-    results.append({
-        'performance': performance,
-        'average salary': average_salary
-    })
-    
-    #STOP
-    return results"
+30,"If Jose Rodriguez tried his best, how many percentage can his salary raise without changing his position?",,,,,,,
 31,"How many employees whose performance is poor have a salary of over $50,000 per year?","brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -3955,9 +3551,9 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from data_service_bird.human_resources.employee import GetDataFromEmployee
+    from employee import GetDataFromEmployee
     
-    # Define the criteria for filtering employees
+    # Define the conditions for filtering
     performance = (""Poor"", ""EQUAL"")
     salary = (""US$50,000"", ""GREATER"")
     results = []
@@ -3966,29 +3562,23 @@ def pipeline_function():
     employees = GetDataFromEmployee()
     employees.open_connection()
     
-    # Retrieve the data with the specified filters
-    employee_df = employees.call(performance=performance)
-    
-    # Process the salary column to remove the 'US$' prefix and commas
-    employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
-    
-    # Filter employees with salary greater than 50,000
-    filtered_df = employee_df[employee_df['salary'] > 50000]
+    # Retrieve the data with the specified conditions
+    employee_df = employees.call(performance=performance, salary=salary)
     
     # Count the number of employees that match the criteria
-    count = len(filtered_df)
+    num_employees = len(employee_df)
     
     # Append the result to the list
     results.append({
-        'count': count
+        'number_of_employees': num_employees
     })
     
     # Return the results
-    return results","+----+---------+
-|    |   count |
-|----+---------|
-|  0 |       2 |
-+----+---------+",[{'count': 2}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+-----------------------+
+|    |   number_of_employees |
+|----+-----------------------|
+|  0 |                     2 |
++----+-----------------------+",[{'number_of_employees': 2}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     
@@ -4088,7 +3678,7 @@ def pipeline_function():
     employee_df = employees.call()
     
     # Convert salary to numeric for comparison
-    employee_df['numeric_salary'] = employee_df['salary'].str.replace('US$', '').str.replace(',', '').astype(float)
+    employee_df['numeric_salary'] = employee_df['salary'].apply(lambda x: float(x.replace('US$', '').replace(',', '')))
     
     # Find the employee with the highest salary
     highest_salary_employee = employee_df.loc[employee_df['numeric_salary'].idxmax()]
@@ -4199,11 +3789,13 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the condition for maxsalary
-    maxsalary_condition = (100000, ""MINOR OR EQUAL"")
+    # Initialize the results list
     results = []
     
-    # Initialize the data service for positions
+    # Define the condition for maxsalary
+    maxsalary_condition = (100000, ""MINOR"")
+    
+    # Create an instance of GetDataFromPosition
     positions = GetDataFromPosition()
     positions.open_connection()
     
@@ -4211,9 +3803,9 @@ def pipeline_function():
     position_df = positions.call(maxsalary=maxsalary_condition)
     
     # Count the number of positions that meet the condition
-    num_positions = position_df.shape[0]
+    num_positions = len(position_df)
     
-    # Append the result to the list
+    # Append the result to the results list
     results.append({
         'num_positions': num_positions
     })
@@ -4258,116 +3850,7 @@ def pipeline_function():
     #STOP
     return results
 "
-34,How much is the salary of the first ever employee that was hired?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-
-    # Initialize the connection to the employee data service
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    # Retrieve all employee data
-    employee_df = employees.call()
-
-    # Convert 'hiredate' to datetime format to find the earliest hire date
-    employee_df['hiredate'] = pd.to_datetime(employee_df['hiredate'], format='%d-%m-%y')
-
-    # Find the first ever employee that was hired
-    first_hired_employee = employee_df.loc[employee_df['hiredate'].idxmin()]
-
-    # Extract the salary of the first hired employee
-    salary = first_hired_employee['salary']
-
-    # Prepare the result as a list of dictionaries
-    results = [{
-        'first_hired_employee_salary': salary
-    }]
-
-    return results",The pipeline did not run successfully,[{'num_positions': 0}],Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-
-def pipeline_function():
-    
-    #STANDARD
-    performance = (""Good"", ""EQUAL"")
-    results = []
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(performance=performance)
-    
-    #STANDARD
-    salaries = employee_df['salary']
-    salaries = salaries.str.replace(""US$"", """")
-    salaries = salaries.str.replace("","", """")
-    salaries = salaries.astype(float)
-    
-    average_salary = salaries.mean()
-    average_salary = str(average_salary)
-    
-    results.append({
-        'performance': performance,
-        'average salary': average_salary
-    })
-    
-    #STOP
-    return results"
+34,How much is the salary of the first ever employee that was hired?,,,,,,,
 35,How much is the minimum salary given to the position with the most complex work?,,,,,,,
 36,What is the full office location address where most of the employees work at?,,,,,,,
 37,What is the average salary of all employees with a 2 year degree position?,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
@@ -4459,7 +3942,7 @@ def pipeline_function():
 
     # Append result
     results.append({
-        'educationrequired': '2 year degree',
+        'educationrequired': ""2 year degree"",
         'average salary': average_salary
     })
 
@@ -4554,42 +4037,36 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize the results list
-    results = []
-
-    # Define the position title for Regional Manager
+    # Define the criteria for filtering
+    gender = (""M"", ""EQUAL"")
     positiontitle = (""Regional Manager"", ""EQUAL"")
-
+    
+    # Initialize results list
+    results = []
+    
     # Get position data
     positions = GetDataFromPosition()
     positions.open_connection()
     position_df = positions.call(positiontitle=positiontitle)
-
-    # Check if any position matches the title
+    
+    # Check if any position matches the criteria
     if not position_df.empty:
-        # Get the positionID for Regional Manager
         positionID = position_df['positionID'].iloc[0]
         positionID = (positionID, ""EQUAL"")
-
-        # Define the gender for male
-        gender = (""M"", ""EQUAL"")
-
+        
         # Get employee data
         employees = GetDataFromEmployee()
         employees.open_connection()
-        employee_df = employees.call(positionID=positionID, gender=gender)
-
+        employee_df = employees.call(gender=gender, positionID=positionID)
+        
         # Count the number of male Regional Managers
         male_regional_manager_count = len(employee_df)
-
+        
         # Append the result to the results list
         results.append({
             'male_regional_manager_count': male_regional_manager_count
         })
-
+    
     # Return the results
     return results","+----+-------------------------------+
 |    |   male_regional_manager_count |
@@ -4708,51 +4185,64 @@ def pipeline_function():
     # Initialize the results list
     results = []
 
-    # Define the criteria for the query
-    positiontitle = (""Account Representative"", ""EQUAL"")
-    performance = (""good"", ""EQUAL"")
-    state = (""Illinois"", ""EQUAL"")
-
-    # Get data from the position service
+    # Open connection to the position data service
     positions = GetDataFromPosition()
     positions.open_connection()
+
+    # Retrieve positionID for 'Account Representative'
+    positiontitle = (""Account Representative"", ""EQUAL"")
     position_df = positions.call(positiontitle=positiontitle)
-
-    # Get the positionID for 'Account Representative'
-    if not position_df.empty:
-        account_rep_position_id = position_df['positionID'].iloc[0]
-
-        # Get data from the location service
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = locations.call(state=state)
-
-        # Get the locationIDs for Illinois
-        illinois_location_ids = location_df['locationID'].tolist()
-
-        # Get data from the employee service
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(positionID=(account_rep_position_id, ""EQUAL""), 
-                                     performance=performance)
-
-        # Filter employees based on locationID in Illinois
-        illinois_employees = employee_df[employee_df['locationID'].isin(illinois_location_ids)]
-
-        # Count the number of Account Representatives with satisfying performance in Illinois
-        count = len(illinois_employees)
-
-        # Append the result to the results list
+    
+    if position_df.empty:
+        # If no position found, return 0
         results.append({
-            'count': count
+            'num_account_representatives': 0
         })
+        return results
+
+    account_representative_position_id = position_df['positionID'].iloc[0]
+
+    # Open connection to the location data service
+    locations = GetDataFromLocation()
+    locations.open_connection()
+
+    # Retrieve locationID for offices in Illinois
+    state = (""Illinois"", ""EQUAL"")
+    location_df = locations.call(state=state)
+    
+    if location_df.empty:
+        # If no location found, return 0
+        results.append({
+            'num_account_representatives': 0
+        })
+        return results
+
+    illinois_location_ids = location_df['locationID'].tolist()
+
+    # Open connection to the employee data service
+    employees = GetDataFromEmployee()
+    employees.open_connection()
+
+    # Retrieve employees who are Account Representatives in Illinois with satisfying performance
+    positionID = (account_representative_position_id, ""EQUAL"")
+    locationID = (illinois_location_ids, ""IN"")
+    performance = (""good"", ""EQUAL"")
+    employee_df = employees.call(positionID=positionID, locationID=locationID, performance=performance)
+
+    # Count the number of employees
+    num_employees = len(employee_df)
+
+    # Append the result to the results list
+    results.append({
+        'num_account_representatives': num_employees
+    })
 
     # Return the results
-    return results","+----+---------+
-|    |   count |
-|----+---------|
-|  0 |       0 |
-+----+---------+",[{'count': 0}],Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
+    return results","+----+-------------------------------+
+|    |   num_account_representatives |
+|----+-------------------------------|
+|  0 |                             0 |
++----+-------------------------------+",[{'num_account_representatives': 0}],Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     #STANDARD
@@ -4847,25 +4337,27 @@ def pipeline_function():
     from employee import GetDataFromEmployee
     from position import GetDataFromPosition
 
-    # Define the performance and position title criteria
-    performance = (""Poor"", ""EQUAL"")
-    positiontitle = (""manager"", ""EQUAL"")
+    # Define the performance filter for worst performing managers
+    performance_filter = (""Poor"", ""EQUAL"")
+    position_title_filter = (""manager"", ""EQUAL"")
 
     # Initialize results list
     results = []
 
+    # Retrieve all positions to find position IDs for managers
+    positions = GetDataFromPosition()
+    positions.open_connection()
+    position_df = positions.call()
+
+    # Filter for manager positions
+    manager_position_ids = position_df[position_df['positiontitle'].str.contains(""manager"", case=False)]['positionID'].tolist()
+
     # Retrieve employee data
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call(performance=performance)
-
-    # Retrieve position data
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    position_df = positions.call(positiontitle=positiontitle)
+    employee_df = employees.call(performance=performance_filter)
 
     # Filter employees who are managers
-    manager_position_ids = position_df['positionID'].unique()
     manager_employees_df = employee_df[employee_df['positionID'].isin(manager_position_ids)]
 
     # Process salaries
@@ -4881,16 +4373,14 @@ def pipeline_function():
     # Append result
     results.append({
         'performance': 'Poor',
-        'position': 'manager',
         'average salary': average_salary
     })
 
-    # Return results
-    return results","+----+---------------+------------+------------------+
-|    | performance   | position   |   average salary |
-|----+---------------+------------+------------------|
-|  0 | Poor          | manager    |              nan |
-+----+---------------+------------+------------------+","[{'performance': 'Poor', 'position': 'manager', 'average salary': 'nan'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+    return results","+----+---------------+------------------+
+|    | performance   |   average salary |
+|----+---------------+------------------|
+|  0 | Poor          |            55250 |
++----+---------------+------------------+","[{'performance': 'Poor', 'average salary': '55250.0'}]",Compute the average salary of the employees with a good performance.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 
 def pipeline_function():
     
@@ -4977,33 +4467,35 @@ def pipeline_function():
         position_df = GetDataFromPosition.call(positionID=positionID)
         # assuming the result is a pandas dataframe
         print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
+         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","from employee import GetDataFromEmployee
 
+def pipeline_function():
     # Initialize the results list
     results = []
-
-    # Open connection to the employee data service
+    
+    # Create an instance of the GetDataFromEmployee class
     employees = GetDataFromEmployee()
     employees.open_connection()
-
+    
     # Retrieve all employee data
     employee_df = employees.call()
-
+    
     # Process the salary column to convert it to a numeric format
     employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
-
-    # Find the employee(s) with the lowest salary
+    
+    # Find the minimum salary
     min_salary = employee_df['salary'].min()
+    
+    # Filter the employee(s) with the minimum salary
     lowest_salary_employees = employee_df[employee_df['salary'] == min_salary]
-
+    
     # Extract the required information and append to results
     for _, row in lowest_salary_employees.iterrows():
         results.append({
             'full name': f""{row['firstname']} {row['lastname']}"",
             'performance status': row['performance']
         })
-
+    
     # Return the results
     return results","+----+----------------+----------------------+
 |    | full name      | performance status   |
@@ -5106,26 +4598,25 @@ def pipeline_function():
     locations = GetDataFromLocation()
     locations.open_connection()
     
-    # Retrieve location data for each Western state
+    # Retrieve data for each Western state and collect unique location cities
+    location_cities = set()
     for state in western_states:
         state_condition = (state, ""EQUAL"")
         location_df = locations.call(state=state_condition)
-        
-        # Extract unique location cities
-        unique_cities = location_df['locationcity'].unique()
-        
-        # Append each city to the results list
-        for city in unique_cities:
-            results.append({'locationcity': city})
+        location_cities.update(location_df['locationcity'].unique())
+    
+    # Prepare the results as a list of dictionaries
+    for city in location_cities:
+        results.append({'locationcity': city})
     
     # Return the results
     return results","+----+----------------+
 |    | locationcity   |
 |----+----------------|
-|  0 | Denver         |
-|  1 | Salt Lake City |
-|  2 | Los Angeles    |
-+----+----------------+","[{'locationcity': 'Denver'}, {'locationcity': 'Salt Lake City'}, {'locationcity': 'Los Angeles'}]",Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
+|  0 | Salt Lake City |
+|  1 | Los Angeles    |
+|  2 | Denver         |
++----+----------------+","[{'locationcity': 'Salt Lake City'}, {'locationcity': 'Los Angeles'}, {'locationcity': 'Denver'}]",Give me the location name of the workplace of all 'Managers'.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
 from data_service_bird.human_resources.position import GetDataFromPosition
 from data_service_bird.human_resources.location import GetDataFromLocation
 
@@ -5244,10 +4735,10 @@ def pipeline_function():
     # Retrieve data from the location service with the specified condition
     location_df = locations.call(zipcode=zipcode_condition)
 
-    # Iterate over the resulting dataframe and collect city and address information
+    # Iterate over the resulting dataframe to extract city and address
     for index, location in location_df.iterrows():
-        city = location['locationcity']
-        address = location['address']
+        city = location[""locationcity""]
+        address = location[""address""]
         results.append({
             'city': city,
             'address': address
@@ -5485,7 +4976,7 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the position title to filter
+    # Initialize the position title filter
     positiontitle = (""Trainer"", ""EQUAL"")
     results = []
     
@@ -5496,19 +4987,24 @@ def pipeline_function():
     # Retrieve data for the specified position title
     position_df = positions.call(positiontitle=positiontitle)
     
-    # Extract the maximum salary, clean it and convert to float
-    maxsalary = position_df['maxsalary'].iloc[0]
-    maxsalary = maxsalary.replace(""US$"", """").replace("","", """")
-    maxsalary = float(maxsalary)
+    # Convert maxsalary to numeric after removing currency symbols and commas
+    position_df['maxsalary'] = position_df['maxsalary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
     
-    # Append the result as a dictionary to the results list
+    # Extract the maximum salary
+    maxsalary = position_df['maxsalary'].max()
+    
+    # Append the result to the list
     results.append({
         'positiontitle': ""Trainer"",
         'max_salary': maxsalary
     })
     
     # Return the results
-    return results",The pipeline did not run successfully,"[{'positionID': 1, 'positiontitle': 'Account Representative', 'educationrequired': '4 year degree', 'minsalary': 'US$25,000.00', 'maxsalary': 'US$75,000.00'}, {'positionID': 2, 'positiontitle': 'Manager', 'educationrequired': '4 year degree', 'minsalary': 'US$50,000.00', 'maxsalary': 'US$150,000.00'}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
+    return results","+----+-----------------+--------------+
+|    | positiontitle   |   max_salary |
+|----+-----------------+--------------|
+|  0 | Trainer         |          nan |
++----+-----------------+--------------+","[{'positiontitle': 'Trainer', 'max_salary': nan}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     #STANDARD
@@ -5543,136 +5039,7 @@ def pipeline_function():
     #STOP
     return results
 "
-49,List the full name and social security number of the account representative with average performance.,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    from employee import GetDataFromEmployee
-    from position import GetDataFromPosition
-
-    # Initialize the result list
-    results = []
-
-    # Open connection to employee data
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    # Retrieve employees with average performance and position as account representative
-    performance = (""Average"", ""EQUAL"")
-    employee_df = employees.call(performance=performance)
-
-    # Open connection to position data
-    positions = GetDataFromPosition()
-    positions.open_connection()
-
-    # Retrieve positionID for account representative
-    positiontitle = (""account representative"", ""EQUAL"")
-    position_df = positions.call(positiontitle=positiontitle)
-
-    # Filter employees who are account representatives
-    account_rep_positionID = position_df[""positionID""].iloc[0]
-    account_reps_df = employee_df[employee_df[""positionID""] == account_rep_positionID]
-
-    # Collect full name and ssn of account representatives with average performance
-    for _, row in account_reps_df.iterrows():
-        results.append({
-            'full_name': f""{row['firstname']} {row['lastname']}"",
-            'ssn': row['ssn']
-        })
-
-    # Return the results
-    return results",The pipeline did not run successfully,"[{'positionID': 1, 'positiontitle': 'Account Representative', 'educationrequired': '4 year degree', 'minsalary': 'US$25,000.00', 'maxsalary': 'US$75,000.00'}, {'positionID': 2, 'positiontitle': 'Manager', 'educationrequired': '4 year degree', 'minsalary': 'US$50,000.00', 'maxsalary': 'US$150,000.00'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-from data_service_bird.human_resources.position import GetDataFromPosition
-
-def pipeline_function():
-    
-    #STANDARD
-    ssn = (""222-52-5555"", ""EQUAL"")
-    results = []
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(ssn=ssn)
-    
-    #STANDARD
-    positionID = employee_df[""positionID""].iloc[0]
-    
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    
-    #RETRIEVE
-    position_df = positions.call(positionID=(positionID, ""EQUAL""))
-    
-    #STANDARD
-    position_info = position_df.iloc[0]
-    position_info = position_info.astype(str)  
-    
-    results.append({
-        'positionID': position_info['positionID'],
-        'positiontitle': position_info['positiontitle'],
-        'educationrequired': position_info['educationrequired'],
-        'minsalary': position_info['minsalary'],
-        'maxsalary': position_info['maxsalary']
-    })
-    
-    #STOP
-    return results
-"
+49,List the full name and social security number of the account representative with average performance.,,,,,,,
 50,When was Emily Wood hired? Mention her position and salary.,"brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -5730,19 +5097,19 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Define the search criteria for Emily Wood
+    # Define the search criteria for the employee
     firstname = (""Emily"", ""EQUAL"")
     lastname = (""Wood"", ""EQUAL"")
     results = []
 
-    # Initialize the employee data service
+    # Initialize and open connection to the employee data service
     employees = GetDataFromEmployee()
     employees.open_connection()
 
     # Retrieve employee data for Emily Wood
     employee_df = employees.call(firstname=firstname, lastname=lastname)
 
-    # Extract the relevant information
+    # Extract relevant information
     if not employee_df.empty:
         employee_info = employee_df.iloc[0]
         employee_info = employee_info.astype(str)
@@ -5996,6 +5363,10 @@ def pipeline_function():
     # Retrieve location data for New York City
     location_df = locations.call(locationcity=(""New York City"", ""EQUAL""))
 
+    # Check if any location data is returned
+    if location_df.empty:
+        return results
+
     # Extract location IDs for New York City
     ny_location_ids = location_df['locationID'].tolist()
 
@@ -6013,18 +5384,18 @@ def pipeline_function():
 
         # Retrieve position data for each employee
         for index, employee in employee_df.iterrows():
-            position_id = employee['positionID']
-            position_df = positions.call(positionID=(position_id, ""EQUAL""))
+            position_df = positions.call(positionID=(employee['positionID'], ""EQUAL""))
 
-            # Extract position title
-            position_title = position_df['positiontitle'].iloc[0]
+            # Check if position data is returned
+            if not position_df.empty:
+                position_title = position_df['positiontitle'].iloc[0]
 
-            # Append employee data to results
-            results.append({
-                'full_name': f""{employee['firstname']} {employee['lastname']}"",
-                'gender': employee['gender'],
-                'position': position_title
-            })
+                # Append employee details to results
+                results.append({
+                    'full_name': f""{employee['firstname']} {employee['lastname']}"",
+                    'gender': employee['gender'],
+                    'position': position_title
+                })
 
     # Return the results
     return results","+----+----------------+----------+------------------+
@@ -6142,33 +5513,34 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize results list
+    # Initialize the results list
     results = []
 
-    # Get location data for Utah
-    state = (""UT"", ""EQUAL"")
+    # Create an instance of GetDataFromLocation and open connection
     locations = GetDataFromLocation()
     locations.open_connection()
-    location_df = locations.call(state=state)
+
+    # Retrieve location data for Utah state
+    location_df = locations.call(state=(""UT"", ""EQUAL""))
 
     # Extract location IDs for Utah
     utah_location_ids = location_df[""locationID""].tolist()
 
-    # Get employee data for those in Utah
+    # Create an instance of GetDataFromEmployee and open connection
     employees = GetDataFromEmployee()
     employees.open_connection()
-    employee_df = employees.call()
 
-    # Filter employees based on Utah location IDs
-    utah_employees = employee_df[employee_df[""locationID""].isin(utah_location_ids)]
+    # Retrieve employee data for each location ID in Utah
+    for location_id in utah_location_ids:
+        employee_df = employees.call(locationID=(location_id, ""EQUAL""))
 
-    # Prepare the result
-    for _, row in utah_employees.iterrows():
-        results.append({
-            'full_name': f""{row['firstname']} {row['lastname']}"",
-            'hired_date': row['hiredate'],
-            'performance_status': row['performance']
-        })
+        # Process each employee in the dataframe
+        for _, row in employee_df.iterrows():
+            results.append({
+                'full_name': f""{row['firstname']} {row['lastname']}"",
+                'hired_date': row['hiredate'],
+                'performance_status': row['performance']
+            })
 
     # Return the results
     return results","+----+---------------+--------------+----------------------+
@@ -6272,51 +5644,48 @@ def pipeline_function():
         # assuming the result is a pandas dataframe
         print(position_df.shape)
          - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize the results list
-    results = []
-
     # Define the position title and performance status
     positiontitle = (""Account Representative"", ""EQUAL"")
     performance = (""Poor"", ""EQUAL"")
-
-    # Create instances of the data service classes
-    employees = GetDataFromEmployee()
+    
+    # Initialize results list
+    results = []
+    
+    # Get position data to find the education required
     positions = GetDataFromPosition()
-
-    # Open connections to the data services
-    employees.open_connection()
     positions.open_connection()
-
-    # Retrieve the position data for 'Account Representative'
     position_df = positions.call(positiontitle=positiontitle)
-
-    # Check if position data is available
-    if not position_df.empty:
-        # Get the positionID and education required for 'Account Representative'
-        positionID = position_df.iloc[0]['positionID']
-        education_required = position_df.iloc[0]['educationrequired']
-
-        # Retrieve employee data for those with 'Poor' performance and the specified positionID
-        employee_df = employees.call(performance=performance, positionID=(positionID, ""EQUAL""))
-
-        # Iterate over the employee data and collect the required information
-        for _, row in employee_df.iterrows():
-            # Extract and clean the salary
-            salary = row['salary'].replace(""US$"", """").replace("","", """")
-
-            # Append the result to the results list
-            results.append({
-                'fullname': f""{row['firstname']} {row['lastname']}"",
-                'salary': salary,
-                'education_required': education_required
-            })
-
+    
+    # Extract education required for the position
+    education_required = position_df['educationrequired'].iloc[0]
+    
+    # Get employee data for those with poor performance in the specified position
+    employees = GetDataFromEmployee()
+    employees.open_connection()
+    employee_df = employees.call(performance=performance)
+    
+    # Filter employees who are account representatives
+    account_representatives_df = employee_df[employee_df['positionID'].isin(position_df['positionID'])]
+    
+    # Process each account representative with poor performance
+    for _, row in account_representatives_df.iterrows():
+        # Clean and convert salary to a float
+        salary = row['salary'].replace(""US$"", """").replace("","", """")
+        salary = float(salary)
+        
+        # Append the result
+        results.append({
+            'fullname': f""{row['firstname']} {row['lastname']}"",
+            'salary': salary,
+            'education_required': education_required
+        })
+    
     # Return the results
     return results","+----+-----------------+----------+----------------------+
 |    | fullname        |   salary | education_required   |
 |----+-----------------+----------+----------------------|
 |  0 | Kenneth Charles |    40000 | 4 year degree        |
-+----+-----------------+----------+----------------------+","[{'fullname': 'Kenneth Charles', 'salary': '40000.00', 'education_required': '4 year degree'}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
++----+-----------------+----------+----------------------+","[{'fullname': 'Kenneth Charles', 'salary': 40000.0, 'education_required': '4 year degree'}]",Give me the mean of salary of the 'Account Representative' position title,"from data_service_bird.human_resources.position import GetDataFromPosition
 
 def pipeline_function():
     #STANDARD
@@ -6432,7 +5801,7 @@ def pipeline_function():
     # Retrieve location data for the given locationID
     location_df = locations.call(locationID=(locationID, ""EQUAL""))
     
-    # Extract the city from the location data
+    # Extract city information
     location_info = location_df.iloc[0]
     located_city = location_info['locationcity']
     
@@ -6487,140 +5856,7 @@ def pipeline_function():
     #STOP
     return results
 "
-57,"Describe the employees' full name, positions, located city and office phone number within Colorado state.","brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
-        Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
-        The attribute ""ssn"" (which stands for social security number) is unique for each employee.
-        The attribute ""hiredate"" has format ""dd-mm-yy"".
-        The attriute ""salary"" is saved as strings and start with the prefix ""US$"" and contains "","" to separate thousand.
-        The attriute ""gender"" is saved as either ""M"" or ""F"".
-        The attributes ""positionID"" and ""locationID"" are foreign keys to the position and location collections respectively. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the employee with ssn 123 I can write:
-        employeessn = ('123', ""EQUAL"")
-        employees = GetDataFromEmployee()
-        employees.open_connection()
-        employee_df = employees.call(employeessn=employeessn)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['ssn:str', 'lastname:str', 'firstname:str', 'hiredate:str', 'salary:str', 'gender:str', 'performance:str', 'positionID:int', 'locationID:int'] - output_values: ['employee_df:pandas.DataFrame'] - module: employee - class_name: GetDataFromEmployeebrief_description: Data service that provides data in a dataframe format about offices and their location. - detailed_description: Data service that provides data in a dataframe format about offices and their location.
-        Each data entry has the following attributes: locationID, locationcity, address, state, zipcode, officephone.
-        The attribute ""locationID"" is unique for each office.
-        The attribute ""locationcity"" represent the city the office is in.
-        The attribute ""address"" represent the actual address of the office.
-        The attribute ""state"" is the state the office is in.
-        The attribute ""zipcode"" is the postal code of the office.
-        The attribute ""officephone"" is the telephone number of the office. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        # If I want to obtain all the information from the office with locationID 123 I can write:
-        locationID = (123, ""EQUAL"")
-        locations = GetDataFromLocation()
-        locations.open_connection()
-        location_df = location.call(locationID=locationID)
-        # assuming the result is a pandas dataframe
-        print(location_df.shape)
-         - input_parameters: ['locationID:int', 'locationcity:str', 'address:str', 'state:str', 'zipcode:int', 'officephone:str'] - output_values: ['location_df:pandas.DataFrame'] - module: location - class_name: GetDataFromLocationbrief_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries. - detailed_description: Data service that provides data in a dataframe format about job positions, their requirements and salaries.
-        Each data entry has the following attributes: positionID, positiontitle, educationrequired, minsalary, maxsalary.
-        The attribute ""positionID"" is unique for each job position.
-        The attribute ""positiontitle"" is the name of the job position.
-        The attribute ""educationrequired"" indicates the minimum education level needed for having this job position.
-        The attribute ""minsalary"" is minimum salary that an employee with this job position can have.
-        The attribute ""maxsalary"" is maximum salary that an employee with this job position can have.
-        The term ""job position"" and ""position title"" are often used interchangeably. - useful_info: 
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: ""EQUAL"", ""GREATER"", ""GREATER OR EQUAL"", ""MINOR"", ""MINOR OR EQUAL"".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed. - usage_example: 
-        #If I want to obtain all the information from the job position with positionID 123 I can write:
-        positionID = (123, ""EQUAL"")
-        positions = GetDataFromPosition()
-        positions.open_connection()
-        position_df = GetDataFromPosition.call(positionID=positionID)
-        # assuming the result is a pandas dataframe
-        print(position_df.shape)
-         - input_parameters: ['positionID:int', 'positiontitle:str', 'educationrequired:str', 'minsalary:str', 'maxsalary:int'] - output_values: ['position_df:pandas.DataFrame'] - module:  position - class_name: GetDataFromPosition","{'general_suggestions': ""To solve the query, we need to first retrieve the employee data to find the employee with the highest salary. Then, we need to extract the employee's name, position title, and location city. This requires joining data from the employee, position, and location datasets. We will use the 'GetDataFromEmployee' to get the employee details, 'GetDataFromPosition' to get the position title, and 'GetDataFromLocation' to get the location city. The salary needs to be converted from string to a numeric format to perform the necessary calculations."", 'tools': [{'tool_name': 'GetDataFromEmployee', 'motivation': 'To retrieve employee details including salary, which is needed to find the employee with the highest salary.', 'suggestions': ""Use this tool to get all employee data. Convert the 'salary' field from string to a numeric format by removing 'US$' and commas. Find the employee with the maximum salary and extract their 'ssn', 'firstname', 'lastname', 'positionID', and 'locationID'.""}, {'tool_name': 'GetDataFromPosition', 'motivation': 'To retrieve the position title of the employee with the highest salary.', 'suggestions': ""Use the 'positionID' obtained from the employee data to query this tool and get the 'positiontitle'.""}, {'tool_name': 'GetDataFromLocation', 'motivation': 'To retrieve the location city of the employee with the highest salary.', 'suggestions': ""Use the 'locationID' obtained from the employee data to query this tool and get the 'locationcity'.""}]}","def pipeline_function():
-    # Initialize results list
-    results = []
-
-    # Create instances of the data service classes
-    employees = GetDataFromEmployee()
-    locations = GetDataFromLocation()
-    positions = GetDataFromPosition()
-
-    # Open connections
-    employees.open_connection()
-    locations.open_connection()
-    positions.open_connection()
-
-    # Retrieve location data for Colorado state
-    location_df = locations.call(state=(""CO"", ""EQUAL""))
-
-    # Extract location IDs for Colorado
-    colorado_location_ids = location_df[""locationID""].tolist()
-
-    # Retrieve employee data for those located in Colorado
-    employee_df = employees.call(locationID=(colorado_location_ids, ""EQUAL""))
-
-    # Retrieve all position data
-    position_df = positions.call()
-
-    # Merge dataframes to get full information
-    merged_df = employee_df.merge(location_df, on=""locationID"").merge(position_df, on=""positionID"")
-
-    # Iterate over the merged dataframe to construct the result
-    for _, row in merged_df.iterrows():
-        results.append({
-            'fullname': f""{row['firstname']} {row['lastname']}"",
-            'position': row['positiontitle'],
-            'located_city': row['locationcity'],
-            'office_phone': row['officephone']
-        })
-
-    # Return the results
-    return results",The pipeline did not run successfully,"[{'full_name': 'William Martin', 'performance_status': 'Good', 'located_city': 'New York City'}]",Give me the job position's information of the employee with ssn 222-52-5555.,"from data_service_bird.human_resources.employee import GetDataFromEmployee
-from data_service_bird.human_resources.position import GetDataFromPosition
-
-def pipeline_function():
-    
-    #STANDARD
-    ssn = (""222-52-5555"", ""EQUAL"")
-    results = []
-    
-    employees = GetDataFromEmployee()
-    employees.open_connection()
-
-    #RETRIEVE
-    employee_df = employees.call(ssn=ssn)
-    
-    #STANDARD
-    positionID = employee_df[""positionID""].iloc[0]
-    
-    positions = GetDataFromPosition()
-    positions.open_connection()
-    
-    #RETRIEVE
-    position_df = positions.call(positionID=(positionID, ""EQUAL""))
-    
-    #STANDARD
-    position_info = position_df.iloc[0]
-    position_info = position_info.astype(str)  
-    
-    results.append({
-        'positionID': position_info['positionID'],
-        'positiontitle': position_info['positiontitle'],
-        'educationrequired': position_info['educationrequired'],
-        'minsalary': position_info['minsalary'],
-        'maxsalary': position_info['maxsalary']
-    })
-    
-    #STOP
-    return results
-"
+57,"Describe the employees' full name, positions, located city and office phone number within Colorado state.",,,,,,,
 58,"Calculate the monthly average salary of the employee with highest salary. Mention his name, position title and location city.","brief_description: Data service that provides data in a dataframe format about employees, their personal data and jobs. - detailed_description: Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute ""ssn"" (which stands for social security number) is unique for each employee.
@@ -6690,30 +5926,26 @@ def pipeline_function():
     # Retrieve all employee data
     employee_df = employees.call()
     
-    # Clean and convert salary to float
+    # Process salary to numeric
     employee_df['salary'] = employee_df['salary'].str.replace(""US$"", """").str.replace("","", """").astype(float)
     
     # Find the employee with the highest salary
     highest_salary_employee = employee_df.loc[employee_df['salary'].idxmax()]
     
-    # Calculate the monthly average salary
+    # Calculate monthly average salary
     monthly_average_salary = highest_salary_employee['salary'] / 12
     
-    # Open connection to position data
+    # Get position title
+    positionID = (highest_salary_employee['positionID'], ""EQUAL"")
     positions = GetDataFromPosition()
     positions.open_connection()
-    
-    # Retrieve position title
-    positionID = (highest_salary_employee['positionID'], ""EQUAL"")
     position_df = positions.call(positionID=positionID)
     position_title = position_df.iloc[0]['positiontitle']
     
-    # Open connection to location data
+    # Get location city
+    locationID = (highest_salary_employee['locationID'], ""EQUAL"")
     locations = GetDataFromLocation()
     locations.open_connection()
-    
-    # Retrieve location city
-    locationID = (highest_salary_employee['locationID'], ""EQUAL"")
     location_df = locations.call(locationID=locationID)
     location_city = location_df.iloc[0]['locationcity']
     
