@@ -510,7 +510,7 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    llm = LLMAgent(mode="chain_of_error")
+    llm = LLMAgent(mode="wo_pipeline")
     
     mode = "bird" # test or bird
     
