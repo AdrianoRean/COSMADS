@@ -45,7 +45,10 @@ class LLMAgent:
         self.current_production = "cardboard_production"
         self.sep: str = " - "
 
-    def get_example(self, res_search):
+    def get_example(self, res_search, pipeline_index):
+        if pipeline_index != None:
+            return self.get_example_wrong_all(pipeline_index)
+        
         simil_query = res_search.page_content
         pipeline_id = res_search.metadata["pipeline"]
         if self.mode == "chain_of_tables":
@@ -68,6 +71,18 @@ class LLMAgent:
             pipeline_id = "pipelines/q0.py"
         pipeline_text = open(pipeline_id).read()
         return [simil_query, pipeline_text]
+    
+    def get_example_wrong_all(self, pipeline_index):
+        f = json.load(open("queries/queries_pipelines_human_resources.json"))
+        
+        query = f[f"q{pipeline_index}"]["query"]
+        pipeline = f[f"q{pipeline_index}"]["pipeline"]
+            
+        if self.mode == "chain_of_tables":
+            pipeline = "pipelines_bird/chain_of_tables" + pipeline[len("pipelines_bird"):]
+        pipeline_text = open(pipeline).read()
+        
+        return [query, pipeline_text]
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -121,7 +136,7 @@ class LLMAgent:
         document_str = self.sep.join([f"{key}: {value}" for key, value in document.items()])
         return document_str
 
-    def save_intermediate_result_to_json(self, pipeline, data_services) -> str:
+    def save_intermediate_result_to_json(self, pipeline, data_services, pipeline_index) -> str:
         file_to_save = ""
         
         modules = []
@@ -144,7 +159,8 @@ class LLMAgent:
         
         file_to_save += f"{new_pipeline}\n"
 
-        main_function = f"""
+        if pipeline_index == None:
+            main_function = f"""
 if __name__ == "__main__":
     result = pipeline_function()
     import json
@@ -156,14 +172,31 @@ if __name__ == "__main__":
     result = tabulate(result, headers='keys', tablefmt='psql')
     print(result)
     """
+        else:
+            main_function = f"""
+if __name__ == "__main__":
+    result = pipeline_function()
+    import json
+    import pandas as pd
+    with open("result_{pipeline_index}.json", "w") as f:
+        json.dump(result, f, indent=4)
+    result = pd.DataFrame(result)
+    from tabulate import tabulate
+    result = tabulate(result, headers='keys', tablefmt='psql')
+    print(result)
+    """
         file_to_save += main_function
 
         with open(INTERMEDIATE_RESULTS_FILEPATH, "w") as f:
             f.write(file_to_save)
     
-    def save_advice(self, advice):
-        with open("advice.json", "w") as f:
-            json.dump(json.loads(advice), f, indent=4)
+    def save_advice(self, advice, pipeline_index):
+        if pipeline_index != None:
+            with open("advice.json", "w") as f:
+                json.dump(json.loads(advice), f, indent=4)
+        else:
+            with open(f"advice_{pipeline_index}.json", "w") as f:
+                json.dump(json.loads(advice), f, indent=4)
             
     def chain_of_thoughs(self, x, generator_chain_output):
         suggestor_chain = self.suggestor.get_chain()
@@ -186,7 +219,7 @@ if __name__ == "__main__":
                         "advices" : x["pipeline"][1]
                     }),
                     exe = RunnableLambda(lambda x:
-                        self.save_advice(x["pipeline"][1])
+                        self.save_advice(x["pipeline"][1], pipeline_index)
                     )
                 )
                 | RunnableLambda(lambda x: {
@@ -367,13 +400,13 @@ if __name__ == "__main__":
             print(new_evidence)
             return new_evidence
         
-    def get_chain(self) -> Runnable:
+    def get_chain(self, pipeline_index = None) -> Runnable:
         
         print(self.mode)
         print(self.second_mode)
         
         generator_chain = self.generator.get_chain()
-        runner_chain = self.runner.get_chain()
+        runner_chain = self.runner.get_chain(pipeline_index)
         
         generator_chain_output = {
             "pipeline": generator_chain,
@@ -396,7 +429,7 @@ if __name__ == "__main__":
                 lambda x: {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
-                    "example": self.get_example(x["pipeline_search"]["output"]),
+                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index),
                     "data_services": self.get_data_services()
                 }
             )
@@ -414,7 +447,7 @@ if __name__ == "__main__":
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
-                (lambda x: self.mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output)),
+                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableParallel(
@@ -427,7 +460,7 @@ if __name__ == "__main__":
                     "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
+                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"], pipeline_index)
                 )
             )
             | RunnableLambda(lambda x: {
@@ -459,6 +492,12 @@ if __name__ == "__main__":
 
         # return the chain
         return chain
+    
+    def get_chain_all(self, num_of_pipelines):
+        chains = []
+        for pipe in range(num_of_pipelines):
+            chains.append(self.get_chain(pipe))
+        return chains
     
     def get_chain_wrong(self) -> Runnable:
         generator_chain = self.generator.get_chain()

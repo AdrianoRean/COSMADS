@@ -31,6 +31,10 @@ class PipelineGeneratorAgent:
         # define the prompt
         if mode == "standard":
             prompt_template = TEMPLATE_WITH_DOCUMENT
+        elif mode == "standard_view":
+            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW
+        elif mode == "standard_view_wrong":
+            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW
         elif mode == "chain_of_error":
             prompt_template = TEMPLATE_WITH_DOCUMENT_RETRY
         elif mode == "chain_of_tables":

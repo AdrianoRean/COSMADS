@@ -33,13 +33,18 @@ class PipelineRunner:
         result = tabulate(result, headers='keys', tablefmt='psql')
         return result
 
-    def get_chain(self) -> Runnable:
+    def get_chain(self, pipeline_index) -> Runnable:
+        if pipeline_index == None:
+            path = str(PIPELINE_RESULT_FILEPATH)
+        else:
+            path = str(PIPELINE_RESULT_FILEPATH)[:-5] + f"_{pipeline_index}.json"
+            
         runner_chain = (
             RunnableLambda(lambda x: {
                 "execution_ok": self.run_pipeline(x["pipeline_filepath"])
             })
             | RunnableBranch(
-                (lambda x: x["execution_ok"], RunnableLambda(lambda x: self.parse_pipeline_result(str(PIPELINE_RESULT_FILEPATH)))),
+                (lambda x: x["execution_ok"], RunnableLambda(lambda x: self.parse_pipeline_result(path))),
                 (RunnableLambda(lambda x: "The pipeline did not run successfully"))
             )
         )

@@ -110,7 +110,7 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["wo_pipeline_view"]
+    modes = ["standard_view"]
     second_mode = "added_evidence"
     for mode in modes:
         run_evaluation(mode, second_mode)
