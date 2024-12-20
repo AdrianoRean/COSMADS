@@ -6,6 +6,7 @@ import os
 import ast
 import glob
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough, RunnableBranch
+from data_service_generator import get_sample_data
 
 # append the path to the parent directory to the system path
 import sys
@@ -19,12 +20,13 @@ from document_manager_db import DocumentManagerDB
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
 class LLMAgent:
-    def __init__(self, mode = "standard"):
+    def __init__(self, mode = "standard", second_mode = "standard_evidence"):
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         self.key = OPENAI_API_KEY
         print(mode)
         self.mode = mode
+        self.second_mode = second_mode
 
         self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
         self.document_manager = DocumentManagerDB()
@@ -333,6 +335,21 @@ if __name__ == "__main__":
                 
         return x
     
+    def chain_view(self, database, x, generator_output_chain):
+        database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
+        data_samples = []
+        for table in database['tables']:
+            data_samples.append(
+                {
+                    "table_name" : table,
+                    "table_data_samples" : get_sample_data(database_location, table).to_string()
+                }
+            )
+            
+        x["data_samples"] = data_samples
+        
+        return self.run_chain(x, generator_output_chain)
+    
     def run_chain(self, x, generator_output_chain):
         return (
             RunnableLambda(
@@ -340,10 +357,20 @@ if __name__ == "__main__":
             |
             generator_output_chain
             ).invoke(x)
-
+        
+    def add_evidence(self, second_mode, database_name, query_evidence):
+        if second_mode != "added_evidence":
+            return query_evidence
+        else:
+            further_evidence = "Salaries may be strings needing to be parsed."
+            new_evidence =  query_evidence + "\n" + further_evidence
+            print(new_evidence)
+            return new_evidence
+        
     def get_chain(self) -> Runnable:
         
         print(self.mode)
+        print(self.second_mode)
         
         generator_chain = self.generator.get_chain()
         runner_chain = self.runner.get_chain()
@@ -368,7 +395,7 @@ if __name__ == "__main__":
             | RunnableLambda( 
                 lambda x: {
                     "query": x["query"],
-                    "evidence": x["evidence"],
+                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
                     "example": self.get_example(x["pipeline_search"]["output"]),
                     "data_services": self.get_data_services()
                 }
@@ -387,6 +414,7 @@ if __name__ == "__main__":
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
+                (lambda x: self.mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableParallel(
@@ -510,7 +538,7 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    llm = LLMAgent(mode="wo_pipeline")
+    llm = LLMAgent(mode="wo_pipeline_view", second_mode = "added_evidence")
     
     mode = "bird" # test or bird
     

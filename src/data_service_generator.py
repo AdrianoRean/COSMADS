@@ -160,6 +160,13 @@ class GetDataFromEmployee:
         df = pd.read_sql_query(query, self.connection)
         return df
 """
+    
+def get_sample_data(database_location, table):
+    connection = sqlite3.connect(database_location)
+    query = f"SELECT * FROM {table} LIMIT 10"
+    df = pd.read_sql_query(query, connection)
+    connection.close()
+    return df
 
 class CustomOutputParser(BaseOutputParser):
     """The output parser for the LLM."""
@@ -201,13 +208,6 @@ class DataServiceGenerator:
     def __init__(self):
         dotenv.load_dotenv()
         self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-    
-    def get_sample_data(self, database_location, table):
-        connection = sqlite3.connect(database_location)
-        query = f"SELECT * FROM {table} LIMIT 10"
-        df = pd.read_sql_query(query, connection)
-        connection.close()
-        return df
 
     def create_data_services(self, database, database_location):
         database_name = database["db_id"]
@@ -275,7 +275,7 @@ class DataServiceGenerator:
             #print(f"Primary Keys {primary_key_text}")
             #print(f"Foreign Keys {foreign_key_text}")
             
-            data_samples = self.get_sample_data(database_location, table[1]).to_string()
+            data_samples = get_sample_data(database_location, table[1]).to_string()
             
             database_table_list.append({
                 "table_name" : table[1],

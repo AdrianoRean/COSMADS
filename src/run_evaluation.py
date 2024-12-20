@@ -7,8 +7,8 @@ from data_service_bird.database import GetDataFromDatabase
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 
-def run_evaluation(mode):
-    llm = LLMAgent(mode)
+def run_evaluation(mode, second_mode):
+    llm = LLMAgent(mode, second_mode)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
@@ -34,7 +34,10 @@ def run_evaluation(mode):
             example_query = res["example_query"]
             example_pipeline = res["example_pipeline"]
             
-            advice = json.loads(open("advice.json", "r").read())
+            try:
+                advice = json.loads(open("advice.json", "r").read())
+            except:
+                advice = "No advice or error"
             output_json = json.loads(open("result.json", "r").read())
 
             res_elem = [index, question, data_services, advice, pipeline, output, output_json, example_query, example_pipeline]
@@ -94,6 +97,12 @@ def evaluate_results(mode):
     return
 
 if __name__ == "__main__":
+    with open("advice.json", "w") as file:
+    # Use the `truncate()` method to clear the file's content
+        file.truncate()
+    with open("result.json", "w") as file:
+    # Use the `truncate()` method to clear the file's content
+        file.truncate()
     '''modes = ["standard", "wo_pipeline", "wrong"]
     for mode in modes:
         run_evaluation(mode)
@@ -101,7 +110,8 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["wo_pipeline"]
+    modes = ["wo_pipeline_view"]
+    second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(mode)
+        run_evaluation(mode, second_mode)
         evaluate_results(mode)

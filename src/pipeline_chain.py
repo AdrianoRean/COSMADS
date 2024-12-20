@@ -39,6 +39,8 @@ class PipelineGeneratorAgent:
             prompt_template = TEMPLATE_WITH_DOCUMENT_POST_REASONING
         elif mode == "chain_of_thoughs":
             prompt_template = TEMPLATE_WITH_DOCUMENT_PRE_REASONING
+        elif mode == "wo_pipeline_view":
+            prompt_template = TEMPLATE_WITHOUT_PIPELINE_BUT_VIEW
         elif mode == "wo_pipeline":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE
         elif mode == "wrong":
