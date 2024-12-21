@@ -43,7 +43,7 @@ def run_evaluation(mode, second_mode, num_of_pipelines):
             except Exception as e:
                 print(f"Error in query {index} pipe {index_pipeline}: {e}")
                 res_elem = [index, index_pipeline, question, None, None, None, None, None, None, None]
-        res_eval.append(res_elem)
+            res_eval.append(res_elem)
 
     res_df = pd.DataFrame(res_eval, columns=["index", "index_pipeline", "question", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
     res_df.to_csv(f"evaluation/evaluation_results_{mode}.csv", sep=',', index=False)
@@ -66,6 +66,7 @@ def evaluate_results(mode, num_of_pipelines):
             df1 = db.call(query=query["SQL"])
             print(f"Query {question} index {index}")
             res = eval_results[(eval_results["index"] == index) & (eval_results["index_pipeline"] == pipe)]
+            print(res)
             #Check if pipeline completely failed like query 35 eval_26-11-24
             if type(res["output_json"].values[0]) != str:
                 output_json = "[]"

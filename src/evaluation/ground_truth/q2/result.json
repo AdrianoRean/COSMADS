@@ -1,0 +1,62 @@
+[
+    {
+        "window": 1,
+        "average_speed": 5.7,
+        "start_timestamp": "2024-07-08 08:18:03",
+        "end_timestamp": "2024-07-08 08:18:13"
+    },
+    {
+        "window": 2,
+        "average_speed": 4.3,
+        "start_timestamp": "2024-07-08 08:18:13",
+        "end_timestamp": "2024-07-08 08:18:24"
+    },
+    {
+        "window": 3,
+        "average_speed": 6.1,
+        "start_timestamp": "2024-07-08 08:18:24",
+        "end_timestamp": "2024-07-08 08:18:35"
+    },
+    {
+        "window": 4,
+        "average_speed": 4.8,
+        "start_timestamp": "2024-07-08 08:18:35",
+        "end_timestamp": "2024-07-08 08:18:46"
+    },
+    {
+        "window": 5,
+        "average_speed": 5.1,
+        "start_timestamp": "2024-07-08 08:18:46",
+        "end_timestamp": "2024-07-08 08:18:56"
+    },
+    {
+        "window": 6,
+        "average_speed": 4.6,
+        "start_timestamp": "2024-07-08 08:18:56",
+        "end_timestamp": "2024-07-08 08:19:07"
+    },
+    {
+        "window": 7,
+        "average_speed": 4.2,
+        "start_timestamp": "2024-07-08 08:19:07",
+        "end_timestamp": "2024-07-08 08:19:18"
+    },
+    {
+        "window": 8,
+        "average_speed": 3.8,
+        "start_timestamp": "2024-07-08 08:19:18",
+        "end_timestamp": "2024-07-08 08:19:28"
+    },
+    {
+        "window": 9,
+        "average_speed": 4.4,
+        "start_timestamp": "2024-07-08 08:19:28",
+        "end_timestamp": "2024-07-08 08:19:39"
+    },
+    {
+        "window": 10,
+        "average_speed": 5.5,
+        "start_timestamp": "2024-07-08 08:19:39",
+        "end_timestamp": "2024-07-08 08:19:50"
+    }
+]

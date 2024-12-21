@@ -1,0 +1,82 @@
+[
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 1,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": false,
+        "error_type": 0,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": false,
+        "error_type": 0,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 1,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 1,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": false,
+        "error_type": 0,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:47",
+        "session_id": 88,
+        "has_error": false,
+        "error_type": 0,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:48",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 2,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:48",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 1,
+        "speed": 9,
+        "temperature": 0
+    },
+    {
+        "timestamp": "2024-07-08 08:23:48",
+        "session_id": 88,
+        "has_error": true,
+        "error_type": 2,
+        "speed": 4,
+        "temperature": 4
+    }
+]
