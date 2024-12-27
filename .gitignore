@@ -137,8 +137,8 @@ src/data_service_bird_automatic/
 
 # temporary files
 intermediate_results.json
-#result*
-#advice*
+result*
+advice*
 stored_pipelines.py
 temp_pipeline.py
 

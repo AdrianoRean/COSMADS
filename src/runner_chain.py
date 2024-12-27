@@ -6,6 +6,7 @@ from tabulate import tabulate
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnableBranch
 
 PIPELINE_RESULT_FILEPATH = Path(__file__).parent / "result.json"
+PIPELINE_RESULT_FILEPATH_COMBINATORY = Path(__file__).parent / "results/result"
 
 class PipelineRunner:
 
@@ -33,11 +34,13 @@ class PipelineRunner:
         result = tabulate(result, headers='keys', tablefmt='psql')
         return result
 
-    def get_chain(self, pipeline_index) -> Runnable:
+    def get_chain(self, pipeline_index = None, pipeline_index_2 = None) -> Runnable:
         if pipeline_index == None:
             path = str(PIPELINE_RESULT_FILEPATH)
-        else:
+        elif pipeline_index_2 == None:
             path = str(PIPELINE_RESULT_FILEPATH)[:-5] + f"_{pipeline_index}.json"
+        else:
+            path = str(PIPELINE_RESULT_FILEPATH_COMBINATORY) + f"_{pipeline_index}_{pipeline_index_2}.json"
             
         runner_chain = (
             RunnableLambda(lambda x: {

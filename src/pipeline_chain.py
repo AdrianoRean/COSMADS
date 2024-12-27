@@ -26,10 +26,12 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, openai_key, mode = "standard"):
+    def __init__(self, openai_key, mode = "standard", combinatory = False):
         """Initialize the agent."""
         # define the prompt
-        if mode == "standard":
+        if combinatory:
+            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW_COMBINATORY
+        elif mode == "standard":
             prompt_template = TEMPLATE_WITH_DOCUMENT
         elif mode == "standard_view":
             prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW

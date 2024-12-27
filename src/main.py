@@ -20,7 +20,7 @@ from document_manager_db import DocumentManagerDB
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
 class LLMAgent:
-    def __init__(self, mode = "standard", second_mode = "standard_evidence"):
+    def __init__(self, mode = "standard", second_mode = "standard_evidence", combinatory = False):
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         self.key = OPENAI_API_KEY
@@ -35,7 +35,7 @@ class LLMAgent:
             self.suggestor = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs")
             self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs_post")
         else:
-            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode)
+            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode, combinatory=combinatory)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -45,9 +45,12 @@ class LLMAgent:
         self.current_production = "cardboard_production"
         self.sep: str = " - "
 
-    def get_example(self, res_search, pipeline_index):
-        if pipeline_index != None:
+    def get_example(self, res_search, pipeline_index, pipeline_index_2):
+        if pipeline_index != None and pipeline_index_2 == None:
             return self.get_example_wrong_all(pipeline_index)
+        elif pipeline_index_2 != None:
+            #print("searching combinatory")
+            return self.get_example_wrong_combinatory(pipeline_index, pipeline_index_2)
         
         simil_query = res_search.page_content
         pipeline_id = res_search.metadata["pipeline"]
@@ -83,6 +86,21 @@ class LLMAgent:
         pipeline_text = open(pipeline).read()
         
         return [query, pipeline_text]
+    
+    def get_example_wrong_combinatory(self, pipeline_index, pipeline_index_2):
+        f = json.load(open("queries/queries_pipelines_human_resources.json"))
+        
+        query = f[f"q{pipeline_index}"]["query"]
+        pipeline = f[f"q{pipeline_index}"]["pipeline"]
+        query_2 = f[f"q{pipeline_index_2}"]["query"]
+        pipeline_2 = f[f"q{pipeline_index_2}"]["pipeline"]
+            
+        if self.mode == "chain_of_tables":
+            pipeline = "pipelines_bird/chain_of_tables" + pipeline[len("pipelines_bird"):]
+        pipeline_text = open(pipeline).read()
+        pipeline_text_2 = open(pipeline_2).read()
+        
+        return [(query, query_2), (pipeline_text, pipeline_text_2)]
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -136,7 +154,7 @@ class LLMAgent:
         document_str = self.sep.join([f"{key}: {value}" for key, value in document.items()])
         return document_str
 
-    def save_intermediate_result_to_json(self, pipeline, data_services, pipeline_index) -> str:
+    def save_intermediate_result_to_json(self, pipeline, data_services, pipeline_index = None, pipeline_index_2 = None) -> str:
         file_to_save = ""
         
         modules = []
@@ -172,13 +190,26 @@ if __name__ == "__main__":
     result = tabulate(result, headers='keys', tablefmt='psql')
     print(result)
     """
-        else:
+        elif pipeline_index_2 == None:
             main_function = f"""
 if __name__ == "__main__":
     result = pipeline_function()
     import json
     import pandas as pd
     with open("result_{pipeline_index}.json", "w") as f:
+        json.dump(result, f, indent=4)
+    result = pd.DataFrame(result)
+    from tabulate import tabulate
+    result = tabulate(result, headers='keys', tablefmt='psql')
+    print(result)
+    """
+        else:
+            main_function = f"""
+if __name__ == "__main__":
+    result = pipeline_function()
+    import json
+    import pandas as pd
+    with open("results/result_{pipeline_index}_{pipeline_index_2}.json", "w") as f:
         json.dump(result, f, indent=4)
     result = pd.DataFrame(result)
     from tabulate import tabulate
@@ -198,7 +229,7 @@ if __name__ == "__main__":
             with open(f"advice_{pipeline_index}.json", "w") as f:
                 json.dump(json.loads(advice), f, indent=4)
             
-    def chain_of_thoughs(self, x, generator_chain_output):
+    def chain_of_thoughs(self, x, generator_chain_output, pipeline_index = None):
         suggestor_chain = self.suggestor.get_chain()
         suggestor_chain_output = {
             "pipeline": suggestor_chain,
@@ -368,7 +399,7 @@ if __name__ == "__main__":
                 
         return x
     
-    def chain_view(self, database, x, generator_output_chain):
+    def chain_view(self, database, x, generator_output_chain, pipeline_index_2 = None):
         database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
         data_samples = []
         for table in database['tables']:
@@ -380,6 +411,13 @@ if __name__ == "__main__":
             )
             
         x["data_samples"] = data_samples
+        
+        if pipeline_index_2 != None:
+            #print("separating examples")
+            x["example_query_1"] = x["example_query"][0]
+            x["example_query_2"] = x["example_query"][1]
+            x["example_pipeline_1"] = x["example_pipeline"][0]
+            x["example_pipeline_2"] = x["example_pipeline"][1]
         
         return self.run_chain(x, generator_output_chain)
     
@@ -400,13 +438,13 @@ if __name__ == "__main__":
             print(new_evidence)
             return new_evidence
         
-    def get_chain(self, pipeline_index = None) -> Runnable:
+    def get_chain(self, pipeline_index = None, pipeline_index_2 = None) -> Runnable:
         
         print(self.mode)
         print(self.second_mode)
         
         generator_chain = self.generator.get_chain()
-        runner_chain = self.runner.get_chain(pipeline_index)
+        runner_chain = self.runner.get_chain(pipeline_index, pipeline_index_2)
         
         generator_chain_output = {
             "pipeline": generator_chain,
@@ -429,7 +467,7 @@ if __name__ == "__main__":
                 lambda x: {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
-                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index),
+                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
                     "data_services": self.get_data_services()
                 }
             )
@@ -447,7 +485,7 @@ if __name__ == "__main__":
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
-                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output)),
+                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output, pipeline_index_2)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableParallel(
@@ -460,7 +498,7 @@ if __name__ == "__main__":
                     "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"], pipeline_index)
+                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"], pipeline_index, pipeline_index_2)
                 )
             )
             | RunnableLambda(lambda x: {
@@ -497,6 +535,17 @@ if __name__ == "__main__":
         chains = []
         for pipe in range(num_of_pipelines):
             chains.append(self.get_chain(pipe))
+        return chains
+    
+    def get_chain_combinatory(self, num_of_pipelines):
+        chains = []
+        for pipe in range(num_of_pipelines):
+            chains_2 = []
+            for pipe_2 in range(num_of_pipelines):
+                if pipe == pipe_2:
+                    continue
+                chains_2.append(self.get_chain(pipe, pipe_2))
+            chains.append(chains_2)
         return chains
     
     def get_chain_wrong(self) -> Runnable:
