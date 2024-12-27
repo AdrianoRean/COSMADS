@@ -71,7 +71,6 @@ def evaluate_results(mode, num_of_pipelines):
                 if pipe == pipe_2:
                         continue
                 print(f"Pipeline {pipe} - {pipe_2}")
-                question = query["question"]
                 df1 = db.call(query=query["SQL"])
                 #print(f"Query {question} index {index}")
                 res = eval_results[(eval_results["index"] == index) & (eval_results["index_pipeline"] == pipe) & (eval_results["index_pipeline_2"] == pipe_2)]
@@ -95,26 +94,18 @@ def evaluate_results(mode, num_of_pipelines):
                     #print(f"Exception for query {index}")
                     #print(f"Exception for query {index}")
                     precision, recall, acc_cell, acc_row = 0, 0, 0, 0
-                metrics_res_q_pipes[len(num_of_pipelines) * pipe + pipe_2].append([precision, recall, acc_cell, acc_row])
+                metrics_res_q_pipes[num_of_pipelines * pipe + pipe_2].append([precision, recall, acc_cell, acc_row])
                 
     total_metric_res = []
     for pipe in range(num_of_pipelines):
         for pipe_2 in range(num_of_pipelines):
             
-            metrics_res = []
-            for index, query in enumerate(queries):
-                # average metrics
-                metrics_df = pd.DataFrame(metrics_res_q_pipes[len(num_of_pipelines) * pipe + pipe_2], columns=["precision", "recall", "acc_cell", "acc_row"])
-                metrics_df = metrics_df.mean()
-
-                # append to the final results with the query index
-                metrics_res_q_pipes = [index] + metrics_res_q_pipes.to_list()
-                metrics_res.append(metrics_res_q_pipes)
+            metrics_res = metrics_res_q_pipes[num_of_pipelines * pipe + pipe_2]
+            print(metrics_res)
+            metrics_df = pd.DataFrame(metrics_res, columns=["precision", "recall", "acc_cell", "acc_row"])
+            averages = metrics_df.mean()
 
             total_metric_res = total_metric_res + metrics_res
-            
-            metrics_res = pd.DataFrame(metrics_res, columns=["index", "precision", "recall", "acc_cell", "acc_row"])
-            averages = metrics_res[['acc_cell', 'acc_row', 'recall']].mean()
 
             # Printing the results
             print(f"Average values for {pipe} - {pipe_2}:")
@@ -122,9 +113,9 @@ def evaluate_results(mode, num_of_pipelines):
             print(f"Average acc_row: {averages['acc_row']:.6f}")
             print(f"Average recall: {averages['recall']:.6f}")
             
-            metrics_res.to_csv(f"evaluation/combinatory/metrics_results_{mode}_{pipe}_{pipe_2}.csv", sep=',', index=False)
+            metrics_df.to_csv(f"evaluation/combinatory/metrics_results_{mode}_{pipe}_{pipe_2}.csv", sep=',', index=False)
             
-    total_metric_res = pd.DataFrame(total_metric_res, columns=["index", "precision", "recall", "acc_cell", "acc_row"])
+    total_metric_res = pd.DataFrame(total_metric_res, columns=["precision", "recall", "acc_cell", "acc_row"])
     averages = total_metric_res[['acc_cell', 'acc_row', 'recall']].mean()
 
     # Printing the results
@@ -153,15 +144,15 @@ if __name__ == "__main__":
     pipe_dir = "pipelines_bird/human_resources"
     num_of_pipelines = len([name for name in os.listdir(pipe_dir) if os.path.isfile(os.path.join(pipe_dir, name))])
     
-    for pipe in range(num_of_pipelines):
+    '''for pipe in range(num_of_pipelines):
         for pipe_2 in range(num_of_pipelines):
             with open(f"results/advice_{pipe}_{pipe_2}.json", "w") as file:
             # Use the `truncate()` method to clear the file's content
                 file.truncate()
             with open(f"results/result_{pipe}_{pipe_2}.json", "w") as file:
             # Use the `truncate()` method to clear the file's content
-                file.truncate()
+                file.truncate()'''
     
     for mode in modes:
-        run_evaluation(mode, second_mode, num_of_pipelines)
+        #run_evaluation(mode, second_mode, num_of_pipelines)
         evaluate_results(mode, num_of_pipelines)
