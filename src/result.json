@@ -1,5 +1,11 @@
 [
     {
-        "ssn": "444-45-4444"
+        "locationcity": "Denver"
+    },
+    {
+        "locationcity": "Salt Lake City"
+    },
+    {
+        "locationcity": "Los Angeles"
     }
 ]

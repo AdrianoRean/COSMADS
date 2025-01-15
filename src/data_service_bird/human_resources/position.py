@@ -6,6 +6,7 @@ from data_service_bird.utilities import selectOperator
 class GetDataFromPosition:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
     connection = None
+    call_parameters_list = ["positionID", "positiontitle", "educationrequired", "minsalary", "maxsalary"]
     description = {
         "brief_description": "Data service that provides data in a dataframe format about job positions, their requirements and salaries.",
         

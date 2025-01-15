@@ -1,3 +1,4 @@
+from copy import deepcopy
 import sys
 import json
 from pathlib import Path
@@ -7,6 +8,8 @@ import ast
 import glob
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough, RunnableBranch
 from data_service_generator import get_sample_data
+import re
+from thefuzz import process
 
 # append the path to the parent directory to the system path
 import sys
@@ -19,14 +22,100 @@ from document_manager_db import DocumentManagerDB
 
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
+def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_words = [], similarity_treshold = 85):
+    function_changed = deepcopy(function_to_change)
+    
+    #find all call keys in the function
+    call_regex_string = re.compile(r"""
+                                        call\( #anything inside a call()
+                                        (.*)
+                                       
+                                       \)
+                                   """, re.VERBOSE)
+    
+    call_matches = list(set(call_regex_string.findall(function_changed)))  
+    
+    call_match_dict = {} 
+    inside_call_matches = []
+    
+    inside_call_regex_string = re.compile(r"""
+                                          \b
+                                          (\w+)
+                                            \s*
+                                            =
+                                          """, re.VERBOSE)
+    for index, match in enumerate(call_matches):
+        temp_inside_matches = inside_call_regex_string.findall(match)
+        inside_call_matches = inside_call_matches + temp_inside_matches
+        for inside_match in temp_inside_matches:
+            if inside_match not in call_match_dict:
+                call_match_dict[inside_match] = []
+            call_match_dict[inside_match].append(index)
+    
+    #check for each possible value if there are matches
+    for word in call_keys:
+        best_matches = process.extractBests(word, choices=inside_call_matches, score_cutoff=similarity_treshold)
+        print(f"Key: {word} - Matches: {best_matches}")
+        for match in best_matches:
+            if match[1] == 100: #perfect match
+                if word == match[0]: #also cases are equal, no need to change
+                    continue
+            #imperfect match or case difference, probable typo mistake
+            calls_indexes = call_match_dict[match[0]] #find calls to be replaced
+            for call_index in calls_indexes:
+                call = call_matches[call_index] #retrieve single call
+                print(f"Key: {word} - calls : {call}")
+                new_call = call.replace(match[0], word) #fix it
+                call_matches[call_index] = new_call #save bettered version for future use
+                function_changed = function_changed.replace(call, new_call) #replace in actual function
+                    
+    #find all hard coded words in function
+    hard_coded_regex_string = re.compile(r"\"([\w+\s]+)\"")
+    hard_coded_matches = list(set(hard_coded_regex_string.findall(function_changed)))  
+    print(hard_coded_matches)  
+    #check for each possible value if there are matches
+    for word in hard_coded_words:
+        best_matches = process.extractBests(word, choices=hard_coded_matches, score_cutoff=similarity_treshold)
+        print(f"Word: {word} - Matches: {best_matches}")
+        for match in best_matches:
+            if match[1] == 100: #perfect match
+                if word == match[0]: #also cases are equal, no need to change
+                    continue
+            #imperfect match or case difference, probable typo mistake
+            specific_hard_coded_regex = re.compile(f"\"{match[0]}\"")
+            function_changed = specific_hard_coded_regex.sub(f'"{word}"', function_changed)
+        
+    return function_changed
+
+def extract_tables(sql_query):
+    # Regular expressions to capture tables in FROM and JOIN clauses
+    from_pattern = re.compile(r'FROM\s+([^\s,]+(?:\s*,\s*[^\s,]+)*)', re.IGNORECASE)
+    join_pattern = re.compile(r'JOIN\s+([^\s]+)', re.IGNORECASE)
+    
+    # Extract tables from FROM clause, including comma-separated lists
+    from_matches = from_pattern.findall(sql_query)
+    if from_matches:
+        # Split by commas if multiple tables are listed
+        from_tables = [table.strip() for match in from_matches for table in match.split(',')]
+    else:
+        from_tables = []
+    
+    # Extract tables from JOIN clauses
+    join_matches = join_pattern.findall(sql_query)
+    
+    # Combine and return unique table names
+    all_tables = set(from_tables + join_matches)
+    return list(all_tables)
+
 class LLMAgent:
-    def __init__(self, mode = "standard", second_mode = "standard_evidence", combinatory = False):
+    def __init__(self, mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False):
         dotenv.load_dotenv()
         OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
         self.key = OPENAI_API_KEY
         print(mode)
         self.mode = mode
         self.second_mode = second_mode
+        self.services_mode = services_mode
 
         self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
         self.document_manager = DocumentManagerDB()
@@ -107,7 +196,7 @@ class LLMAgent:
         document_str = self.sep.join([f"{key}: {value}" for key, value in document.items()])
         return document_str
     
-    def get_data_services(self):
+    def get_data_services(self, sql = None):
         """ pipeline_text = self.get_example(res_search)[1]
         data_services = ""
         data_services_list = []
@@ -129,21 +218,33 @@ class LLMAgent:
         data_services_all = glob.glob(f"{self.ds_directory}/*.py")
         data_services = ""
         data_services_list = []
+        query_services_list = []
+        call_parameters_list = []
+        if sql != None:
+            query_services_list = extract_tables(sql)
+            print(f"Tables find from sql are: {query_services_list}")
         for data_service in data_services_all:
-            with open(f"{data_service}", mode="r") as f:
-                content = f.read()
-                tree = ast.parse(content)
-                class_objs = [node for node in tree.body if isinstance(node, ast.ClassDef)]
-                for class_obj in class_objs:
-                    name_ds = class_obj.name
-                    body = class_obj.body
-                    description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
-                    description_value = description[0].value
-                    description_dict = ast.literal_eval(description_value)
-                    description_dict["class_name"] = name_ds
-                    data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
-                    data_services_list.append(description_dict)    # data services for saving pipeline
-        return data_services, data_services_list
+            data_service_name = data_service[len("data_service_bird/human_resources/"):-3]
+            if sql == None or data_service_name in query_services_list: 
+                with open(f"{data_service}", mode="r") as f:
+                    content = f.read()
+                    tree = ast.parse(content)
+                    class_objs = [node for node in tree.body if isinstance(node, ast.ClassDef)]
+                    for class_obj in class_objs:
+                        name_ds = class_obj.name
+                        body = class_obj.body
+                        call_parameters = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "call_parameters_list"]
+                        call_parameters = call_parameters[0].value
+                        call_parameters = ast.literal_eval(call_parameters)
+                        description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
+                        description_value = description[0].value
+                        description_dict = ast.literal_eval(description_value)
+                        description_dict["class_name"] = name_ds
+                        data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
+                        call_parameters_list.extend(call_parameters)
+                        data_services_list.append(description_dict)    # data services for saving pipeline
+                
+        return data_services, data_services_list, query_services_list, call_parameters
     
     def get_relevant_document(self, query):
         document = self.document_manager.extract_document(query)
@@ -460,16 +561,23 @@ if __name__ == "__main__":
             RunnableLambda(lambda x: {
                 "query": x["query"],
                 "evidence": x["evidence"],
+                "ground_truth": x["ground_truth"],
                 "pipeline_search": self.pipeline_manager.pipeline_store.search(x["query"]),
                 }
             )
-            | RunnableLambda( 
-                lambda x: {
+            | RunnableBranch( 
+                (lambda x: self.services_mode == "ground_truth", lambda x : {
+                    "query": x["query"],
+                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
+                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
+                    "data_services": self.get_data_services(sql = x["ground_truth"])
+                }), lambda x : {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
                     "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
                     "data_services": self.get_data_services()
                 }
+                
             )
             | RunnableLambda( 
                 lambda x: {
@@ -477,6 +585,8 @@ if __name__ == "__main__":
                     "evidence": x["evidence"],
                     "data_services": x["data_services"][0],
                     "data_services_list": x["data_services"][1],
+                    "data_services_list_names": x["data_services"][2],
+                    "call_parameters": x["data_services"][3],
                     "example_query": x["example"][0],
                     "example_pipeline": x["example"][1],
                 }
@@ -485,20 +595,31 @@ if __name__ == "__main__":
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
-                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : ["employee", "location", "position"]}, x, generator_chain_output, pipeline_index_2)),
+                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : x["data_services_list_names"]}, x, generator_chain_output, pipeline_index_2)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
-            | RunnableParallel(
-                gen = RunnableLambda(lambda x: {
+            | RunnableLambda (
+                lambda x: {
                     "query": x["inputs"]["query"],
                     "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
+                    "data_services_list": x["inputs"]["data_services_list"],
                     "example_query": x["inputs"]["example_query"],
                     "example_pipeline": x["inputs"]["example_pipeline"],
-                    "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
+                    "pipeline": correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"])
+                }
+            )
+            | RunnableParallel(
+                gen = RunnableLambda(lambda x: {
+                    "query": x["query"],
+                    "evidence": x["evidence"],
+                    "data_services": x["data_services"],
+                    "example_query": x["example_query"],
+                    "example_pipeline": x["example_pipeline"],
+                    "pipeline": x["pipeline"]
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"], pipeline_index, pipeline_index_2)
+                    self.save_intermediate_result_to_json(x["pipeline"], x["data_services_list"], pipeline_index, pipeline_index_2)
                 )
             )
             | RunnableLambda(lambda x: {
@@ -623,29 +744,73 @@ if __name__ == "__main__":
 
         # return the chain
         return chain
+    
+    def get_chain_truth(self) -> Runnable:
+        
+        generator_chain = self.generator.get_chain()
+        
+        generator_chain_output = {
+            "tools": generator_chain,
+            "inputs": RunnablePassthrough()
+        }
+
+        chain = (
+            RunnableLambda(lambda x: {
+                "query": x["query"],
+                "evidence": x["evidence"],
+                "ground_truth": x["ground_truth"]
+                }
+            )
+            | RunnableLambda( 
+                lambda x : {
+                    "query": x["query"],
+                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
+                    "data_services": self.get_data_services()[0],
+                    "data_services_list": self.get_data_services(sql = x["ground_truth"])[2]
+                }
+            )
+            | generator_chain_output
+            | RunnableLambda(
+                lambda x: {
+                    "output" : x['tools'][1].strip(),
+                    "ground_truth": x['inputs']['data_services_list']
+                }
+            )
+        )
+        
+        return chain
 
 
 if __name__ == "__main__":
-    llm = LLMAgent(mode="wo_pipeline_view", second_mode = "added_evidence")
+    mode = "wo_pipeline_view"
+    llm = LLMAgent(mode=mode, second_mode = "added_evidence", services_mode="ground_truth")
     
-    mode = "bird" # test or bird
+    test_mode = "bird" # test or bird
     
-    if mode == "test":
+    if test_mode == "test":
         q = "q5"
         with open("queries/queries_pipelines_human_resources.json", "r") as f:
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 43
+        q = 45
         with open("queries/test/human_resources.json", "r") as f:
             queries = json.load(f)
             query = queries[q]["question"]
         
+    sql = queries[q]["SQL"]
     
     input_file = {
         "query" : query,
-        "evidence" : queries[q]["evidence"]
+        "evidence" : queries[q]["evidence"],
+        "ground_truth" : sql
     }
-    print(query)
-    result = llm.get_chain().invoke(input_file)
+    print(f"Natural language query is: {query}")
+    if sql != "":
+        print(f"SQL query is: {sql}")
+        
+    if mode == "check_ground_truth":
+        result = llm.get_chain_truth().invoke(input_file)
+    else:
+        result = llm.get_chain().invoke(input_file)
     print(result["output"])

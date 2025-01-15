@@ -21,6 +21,14 @@ def average_results(file_path):
     print(f"Average acc_row: {averages['acc_row']:.6f}")
     print(f"Average recall: {averages['recall']:.6f}")
     
+    '''# Calculating the average for the last three columns
+    averages = df[['accuracy', 'recall']].mean()
+
+    # Printing the results
+    print("Average values:")
+    print(f"Average accuracy: {averages['accuracy']:.6f}")
+    print(f"Average recall: {averages['recall']:.6f}")'''
+    
 ##average_results(file_path1)
 ##print("\n ----------- \n")
 average_results(file_path3)

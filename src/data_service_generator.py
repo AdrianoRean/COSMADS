@@ -17,8 +17,8 @@ DATA_SERVICE_EXAMPLE = """
         \"\"\"Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute "ssn" (which stands for social security number) is unique for each employee.
-        The attribute "hiredate" has format "dd-mm-yy".
-        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand.
+        The attribute "hiredate" has format "mm-dd-yy".
+        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand. To be parsed as number, it is needed to eliminate those elements.
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.\"\"\",
 
@@ -26,6 +26,8 @@ DATA_SERVICE_EXAMPLE = """
         - You may select data trough any combination of this attributes. They are all optional.
         - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         - If all attributes are left undeclared, it returns all the available data.
+        - You cannot pass a list as value for the attributes.
+        - Sometimes data may have missing values.
         - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.\"\"\",
         
         "usage_example": \"\"\"
@@ -110,6 +112,7 @@ from data_service_bird_automatic.utilities import selectOperator
 class GetDataFromEmployee:
     database_location = "data_service_bird_automatic/train_databases/{database}/{database}.sqlite"
     connection = None
+    call_parameters_list = {call_parameters_list}
     description = {{
         "brief_description": \"\"\"{brief_description}\"\"\",
         
@@ -119,6 +122,8 @@ class GetDataFromEmployee:
         - You may select data trough any combination of this attributes. They are all optional.
         - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         - If all attributes are left undeclared, it returns all the available data.
+        - You cannot pass a list as value for the attributes.
+        - Sometimes data may have missing values.
         - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.\"\"\",
 
         "usage_example": \"\"\"{example_usage}\"\"\",
@@ -238,10 +243,12 @@ class DataServiceGenerator:
             #Creating inputs list types
             table_inputs = "["
             table_parameters = ""
+            call_parameters_list = []
             for index in range(table[2], len(database_columns)):
                 if table[0] == database_columns[index][0]:
                     table_inputs += f"\"{database_columns[index][1]}:{database_types[index-1]}\", "
                     table_parameters += f"{database_columns[index][1]} = None, "
+                    call_parameters_list.append(database_columns[index][1])
                 else:
                     table_inputs = table_inputs[:-2] + "]"
                     table_parameters = table_parameters[:-2]
@@ -283,7 +290,8 @@ class DataServiceGenerator:
                 "table_primary_key" : primary_key,
                 "table_foreign_keys" : foreign_key_pairs,
                 "table_parameters" : table_parameters,
-                "table_data_samples" : data_samples
+                "table_data_samples" : data_samples,
+                "table_parameters_list" : call_parameters_list
             })
             
         #print(database_table_list)
@@ -324,7 +332,8 @@ class DataServiceGenerator:
                 example_usage = output["usage_example"],
                 input_parameters = table["table_columns"],
                 table_name = table["table_name"],
-                call_parameters = table["table_parameters"]
+                call_parameters = table["table_parameters"],
+                call_parameters_list = table["table_parameters_list"]
             )
             with open(file_location, "w") as f:
                 f.write(filled_template)

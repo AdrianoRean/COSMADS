@@ -6,6 +6,7 @@ from data_service_bird.utilities import selectOperator
 class GetDataFromEmployee:
     database_location = "data_service_bird/human_resources/human_resources.sqlite"
     connection = None
+    call_parameters_list = ["ssn", "lastname", "firstname", "hiredate", "salary", "gender", "performance", "positionID", "locationID"]
     description = {
         "brief_description": "Data service that provides data in a dataframe format about employees, their personal data and jobs.",
         
@@ -13,8 +14,8 @@ class GetDataFromEmployee:
         """Data service that provides data in a dataframe format about employees, their personal data and jobs.
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute "ssn" (which stands for social security number) is unique for each employee.
-        The attribute "hiredate" has format "dd-mm-yy".
-        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand.
+        The attribute "hiredate" has format "mm-dd-yy".
+        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand. To be parsed as number, it is needed to eliminate those elements.
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.""",
 
@@ -22,6 +23,8 @@ class GetDataFromEmployee:
         - You may select data trough any combination of this attributes. They are all optional.
         - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
         - If all attributes are left undeclared, it returns all the available data.
+        - You cannot pass a list as value for the attributes.
+        - Sometimes data may have missing values.
         - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
         
         "usage_example": """

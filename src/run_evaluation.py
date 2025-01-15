@@ -1,3 +1,4 @@
+import ast
 import json
 import re
 import pandas as pd
@@ -7,8 +8,69 @@ from data_service_bird.database import GetDataFromDatabase
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 
-def run_evaluation(mode, second_mode):
-    llm = LLMAgent(mode, second_mode)
+def run_evaluation_ground_truth():
+    llm = LLMAgent(mode="check_ground_truth")
+    llm_chain = llm.get_chain_truth()
+
+    main_queries = json.load(open("queries/test/human_resources.json"))
+
+    res_eval = []
+    for index, query in enumerate(main_queries):
+        sql = query["SQL"]
+    
+        input_file = {
+            "query" : query["question"],
+            "evidence" : query["evidence"],
+            "ground_truth" : sql
+        }
+        question = query["question"]
+        print(question)
+        res = llm_chain.invoke(input_file)
+        res_eval.append([index, res["output"], res["ground_truth"]])
+    res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
+    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth.csv", sep=',', index=False)
+    
+def evaluate_ground_truth():
+    metrics_res = []
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_fixed.csv")
+    
+    def modify_tools_prediction(row):
+        # Convert string to list
+        try:
+            words = row[1:-1].split(",")
+            # Add double quotes to each word
+            modified = [word.strip() for word in words]
+            # Convert back to string
+            return modified
+        except Exception as e:
+            print(f"Error processing row: {row}, error: {e}")
+            return []
+
+    for index, line in eval_results.iterrows():
+        ground_truth = ast.literal_eval(line["ground_truth"])
+        ground_num = len(ground_truth)
+        correct_choices = 0
+        wrong_choises = 0
+        
+        prediction = ast.literal_eval(line["tools_prediction"])
+        for tool in prediction:
+            if tool in ground_truth:
+                correct_choices += 1
+            else:
+                wrong_choises += 1
+        
+        accuracy = correct_choices/(ground_num + wrong_choises)
+        recall = correct_choices/ground_num
+    
+        metrics_res.append([index, accuracy, recall])
+    
+    metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
+    metrics_res.to_csv(f"evaluation/metrics_results_check_ground_truth.csv", sep=',', index=False)
+    print(metrics_res)
+        
+
+def run_evaluation(mode, second_mode, services_mode = None):
+    llm = LLMAgent(mode, second_mode, services_mode = services_mode)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
@@ -18,9 +80,12 @@ def run_evaluation(mode, second_mode):
 
     res_eval = []
     for index, query in enumerate(main_queries):
+        sql = query["SQL"]
+    
         input_file = {
             "query" : query["question"],
-            "evidence" : query["evidence"]
+            "evidence" : query["evidence"],
+            "ground_truth" : sql
         }
         question = query["question"]
         print(question)
@@ -40,13 +105,13 @@ def run_evaluation(mode, second_mode):
                 advice = "No advice or error"
             output_json = json.loads(open("result.json", "r").read())
 
-            res_elem = [index, question, data_services, advice, pipeline, output, output_json, example_query, example_pipeline]
+            res_elem = [index, question, sql, data_services, advice, pipeline, output, output_json, example_query, example_pipeline]
         except Exception as e:
             print(f"Error in query {index}: {e}")
-            res_elem = [index, question, None, None, None, None, None, None, None]
+            res_elem = [index, question, sql, None, None, None, None, None, None, None]
         res_eval.append(res_elem)
 
-    res_df = pd.DataFrame(res_eval, columns=["index", "question", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
+    res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
     res_df.to_csv(f"evaluation/evaluation_results_{mode}.csv", sep=',', index=False)
 
 
@@ -103,6 +168,7 @@ if __name__ == "__main__":
     with open("result.json", "w") as file:
     # Use the `truncate()` method to clear the file's content
         file.truncate()
+        
     '''modes = ["standard", "wo_pipeline", "wrong"]
     for mode in modes:
         run_evaluation(mode)
@@ -110,8 +176,11 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    modes = ["standard_view"]
+    modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(mode, second_mode)
+        run_evaluation(mode, second_mode, services_mode="ground_truth")
         evaluate_results(mode)
+        
+    #run_evaluation_ground_truth()
+    #evaluate_ground_truth()
