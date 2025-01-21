@@ -1,8 +1,37 @@
 import re
-from thefuzz import process
 from copy import deepcopy
+from transformers import BertTokenizer, BertModel
+import torch
+from sklearn.metrics.pairwise import cosine_similarity
 
-def correct_obvious_word_mistake(function_to_change, call_keys, hard_coded_words, similarity_treshold = 85):
+model = None
+
+def bert_cosine_similarity(sentence1, sentence2):
+    global model
+    global tokenizer
+    
+    # Tokenize the sentences
+    tokens1 = tokenizer.tokenize(sentence1)
+    tokens2 = tokenizer.tokenize(sentence2)
+    
+    # Convert tokens to input IDs
+    input_ids1 = torch.tensor(tokenizer.convert_tokens_to_ids(tokens1)).unsqueeze(0)  # Batch size 1
+    input_ids2 = torch.tensor(tokenizer.convert_tokens_to_ids(tokens2)).unsqueeze(0)  # Batch size 1
+
+    # Obtain the BERT embeddings
+    with torch.no_grad():
+        outputs1 = model(input_ids1)
+        outputs2 = model(input_ids2)
+        embeddings1 = outputs1.last_hidden_state[:, 0, :]  # [CLS] token
+        embeddings2 = outputs2.last_hidden_state[:, 0, :]  # [CLS] token
+
+    # Calculate similarity
+    similarity_score = cosine_similarity(embeddings1, embeddings2)
+    return similarity_score[0][0]
+
+def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_words = [], similarity_treshold = 0.85):
+    global model
+    global tokenizer
     function_changed = deepcopy(function_to_change)
     
     #find all call keys in the function
@@ -34,10 +63,14 @@ def correct_obvious_word_mistake(function_to_change, call_keys, hard_coded_words
     
     #check for each possible value if there are matches
     for word in call_keys:
-        best_matches = process.extractBests(word, choices=inside_call_matches, score_cutoff=similarity_treshold)
+        best_matches = []
+        for call_match in inside_call_matches:
+            similarity = bert_cosine_similarity(word, call_match)
+            if similarity >= similarity_treshold:
+                best_matches.append((call_match, similarity))
         print(f"Key: {word} - Matches: {best_matches}")
         for match in best_matches:
-            if match[1] == 100: #perfect match
+            if match[1] == 1: #perfect match
                 if word == match[0]: #also cases are equal, no need to change
                     continue
             #imperfect match or case difference, probable typo mistake
@@ -50,21 +83,25 @@ def correct_obvious_word_mistake(function_to_change, call_keys, hard_coded_words
                 function_changed = function_changed.replace(call, new_call) #replace in actual function
                     
     #find all hard coded words in function
-    hard_coded_regex_string = re.compile(f"\"([\w+\s]+)\"")
+    hard_coded_regex_string = re.compile(r"\"([\w+\s]+)\"")
     hard_coded_matches = list(set(hard_coded_regex_string.findall(function_changed)))  
     print(hard_coded_matches)  
     #check for each possible value if there are matches
     for word in hard_coded_words:
-        best_matches = process.extractBests(word, choices=hard_coded_matches, score_cutoff=similarity_treshold)
+        best_matches = []
+        for hard_match in hard_coded_words:
+            similarity = bert_cosine_similarity(word, hard_match)
+            if similarity >= similarity_treshold:
+                best_matches.append((hard_match, similarity))
         print(f"Word: {word} - Matches: {best_matches}")
         for match in best_matches:
-            if match[1] == 100: #perfect match
+            if match[1] == 1: #perfect match
                 if word == match[0]: #also cases are equal, no need to change
                     continue
             #imperfect match or case difference, probable typo mistake
             specific_hard_coded_regex = re.compile(f"\"{match[0]}\"")
             function_changed = specific_hard_coded_regex.sub(f'"{word}"', function_changed)
-        
+            
     return function_changed
 
 # Example usage
@@ -72,14 +109,15 @@ if __name__ == "__main__":
     FUNCTION_TO_CHECK = """def example_function():
     greeting = "Hello, World!"
     name = "Alice"
-    positionIds = blablabla.call(Position = ("SOno tuo amico", "EQUAL"), puppafava=(pippobaudo))
-    locationIds = blablabla.call(location = ("Gnappa", "Minor"), puppafava=(pippobaudo))
+    positionIds = blablabla.call(Position = ("I'm your friend", "EQUAL"), puppafava=(pippobaudo))
+    locationIds = blablabla.call(location = ("Activist", "Minor"), puppafava=(pippobaudo))
     pippeIds = blablabla.call(prugna = ("greade", "Minor"), puppafava=(mulino))
     mecojons = brururur.call(gregre = ("gragra", "EQUAL"), Cognomi=(pippobaudo))
     print(f"{greeting}, {name}!")
     return "Done" """
-    
-    print(correct_obvious_word_mistake(FUNCTION_TO_CHECK, ["position", "puppafave", "cognome"], ["Gnappetta", "Gral"], similarity_treshold=80))
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model = BertModel.from_pretrained('bert-base-uncased')
+    print(correct_obvious_word_mistake(FUNCTION_TO_CHECK, ["position", "puppafave", "cognome"], ["Gnappetta", "Gral"], similarity_treshold=0.5))
 
     '''strings, matches = extract_hardcoded_strings(FUNCTION_TO_CHECK)
     

@@ -9,7 +9,9 @@ import glob
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnableParallel, RunnablePassthrough, RunnableBranch
 from data_service_generator import get_sample_data
 import re
-from thefuzz import process
+from transformers import BertTokenizer, BertModel
+import torch
+from sklearn.metrics.pairwise import cosine_similarity
 
 # append the path to the parent directory to the system path
 import sys
@@ -22,7 +24,33 @@ from document_manager_db import DocumentManagerDB
 
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
-def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_words = [], similarity_treshold = 85):
+bert_tokenizer = None
+bert_model = None
+
+def bert_cosine_similarity(sentence1, sentence2):
+    global bert_model
+    global bert_tokenizer
+    
+    # Tokenize the sentences
+    tokens1 = bert_tokenizer.tokenize(sentence1)
+    tokens2 = bert_tokenizer.tokenize(sentence2)
+    
+    # Convert tokens to input IDs
+    input_ids1 = torch.tensor(bert_tokenizer.convert_tokens_to_ids(tokens1)).unsqueeze(0)  # Batch size 1
+    input_ids2 = torch.tensor(bert_tokenizer.convert_tokens_to_ids(tokens2)).unsqueeze(0)  # Batch size 1
+
+    # Obtain the BERT embeddings
+    with torch.no_grad():
+        outputs1 = bert_model(input_ids1)
+        outputs2 = bert_model(input_ids2)
+        embeddings1 = outputs1.last_hidden_state[:, 0, :]  # [CLS] token
+        embeddings2 = outputs2.last_hidden_state[:, 0, :]  # [CLS] token
+
+    # Calculate similarity
+    similarity_score = cosine_similarity(embeddings1, embeddings2)
+    return similarity_score[0][0]
+
+def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_words = [], similarity_treshold = 0.8):
     function_changed = deepcopy(function_to_change)
     
     #find all call keys in the function
@@ -51,13 +79,19 @@ def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_
             if inside_match not in call_match_dict:
                 call_match_dict[inside_match] = []
             call_match_dict[inside_match].append(index)
+            
+    print(inside_call_matches)
     
     #check for each possible value if there are matches
     for word in call_keys:
-        best_matches = process.extractBests(word, choices=inside_call_matches, score_cutoff=similarity_treshold)
+        best_matches = []
+        for call_match in inside_call_matches:
+            similarity = bert_cosine_similarity(word, call_match)
+            if similarity >= similarity_treshold:
+                best_matches.append((call_match, similarity))
         print(f"Key: {word} - Matches: {best_matches}")
         for match in best_matches:
-            if match[1] == 100: #perfect match
+            if match[1] == 1: #perfect match
                 if word == match[0]: #also cases are equal, no need to change
                     continue
             #imperfect match or case difference, probable typo mistake
@@ -75,16 +109,20 @@ def correct_obvious_word_mistake(function_to_change, call_keys = [], hard_coded_
     print(hard_coded_matches)  
     #check for each possible value if there are matches
     for word in hard_coded_words:
-        best_matches = process.extractBests(word, choices=hard_coded_matches, score_cutoff=similarity_treshold)
+        best_matches = []
+        for hard_match in hard_coded_words:
+            similarity = bert_cosine_similarity(word, hard_match)
+            if similarity >= similarity_treshold:
+                best_matches.append((hard_match, similarity))
         print(f"Word: {word} - Matches: {best_matches}")
         for match in best_matches:
-            if match[1] == 100: #perfect match
+            if match[1] == 1: #perfect match
                 if word == match[0]: #also cases are equal, no need to change
                     continue
             #imperfect match or case difference, probable typo mistake
             specific_hard_coded_regex = re.compile(f"\"{match[0]}\"")
             function_changed = specific_hard_coded_regex.sub(f'"{word}"', function_changed)
-        
+            
     return function_changed
 
 def extract_tables(sql_query):
@@ -812,5 +850,7 @@ if __name__ == "__main__":
     if mode == "check_ground_truth":
         result = llm.get_chain_truth().invoke(input_file)
     else:
+        bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        bert_model = BertModel.from_pretrained('bert-base-uncased')
         result = llm.get_chain().invoke(input_file)
     print(result["output"])

@@ -15,4 +15,5 @@ scikit-learn
 python-dotenv
 valentine
 yake
-thefuzz
+transformers
+torch
