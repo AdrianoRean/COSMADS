@@ -644,7 +644,7 @@ Guidelines:
 - You can define helper functions if necessary.
 - If you use libraries, be sure to call the correct functions.
 - If you need to parse strings or dates, be sure to parse them correctly (use information both from the tool description and the data samples to help you in these cases)
-- Ensure that the final result is json serializable.
+- Ensure that the final result is json serializable. 
 - The function should be generated with a fixed name, which is "pipeline_function".
 - Use the threading module whenever required to parallelize the data collection process based on the problem statement and the tools available to you.
 
