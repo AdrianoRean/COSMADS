@@ -19,6 +19,16 @@ pip install -r requirements.txt
 OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
 ```
 
+## Switch to Mistral
+
+You can switch to Mistral by installing requirements2.txt instead.
+Also, you need to decomment (and comment the GPT corresponding) lines in:
+- "from langchain_mistralai import ChatMistralAI" in data_service_generator
+- "from langchain_mistralai import ChatMistralAI" in pipeline_chain
+- "from langchain_mistralai import MistralAIEmbeddings" in pipeline_manager_db
+- "embedding_function = MistralAIEmbeddings( model="mistral-embed", api_key=key)" in pipeline_manager_db
+
+Also remember to change the "model" variable in the main function.
 
 ## Usage
 
