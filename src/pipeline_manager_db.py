@@ -1,6 +1,7 @@
 from langchain_community.vectorstores import DocArrayInMemorySearch
 from langchain_core.documents import Document
-from langchain_openai import OpenAIEmbeddings
+#from langchain_openai import OpenAIEmbeddings
+from langchain_mistralai import MistralAIEmbeddings
 import importlib.util
 import os
 import dotenv
@@ -64,9 +65,15 @@ class PipelineStore():
 
 class PipelineManagerDB:
 
-    def __init__(self, openai_key):
+    def __init__(self, model, key):
         self.pipeline_store = PipelineStore()
-        embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=openai_key)
+        if model == "GPT":
+            #embedding_function = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=key)
+            pass
+        elif model == "Mistral":
+            embedding_function = MistralAIEmbeddings( model="mistral-embed", api_key=key)
+            pass
+        
         self.pipeline_store.embed_docs(embedding_function)
 
     def command_line(self):

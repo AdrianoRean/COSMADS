@@ -1,7 +1,8 @@
 import ast
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-from langchain_openai import ChatOpenAI
+#from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnablePassthrough
 import dotenv
@@ -188,7 +189,7 @@ class CustomOutputParser(BaseOutputParser):
         return code
 
 class ChainGeneratorAgent:
-    def __init__(self, openai_key, mode):
+    def __init__(self, model, key, mode):
         """Initialize the agent."""
         if mode == "description":
             prompt_template = PROMPT_LLM_DESCRIPTION_GLOBAL
@@ -198,9 +199,16 @@ class ChainGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        self.llm = ChatOpenAI(model="gpt-4o",
-                              api_key=openai_key,
-                              temperature=0.0)
+        self.model = model
+        if model == "GPT":
+            self.llm = ChatOpenAI(model="gpt-4o",
+                                api_key=key,
+                                temperature=0.0)
+        elif model == "Mistral":
+            self.llm = ChatMistralAI(model="mistral-large-latest",
+                                api_key=key,
+                                temperature=0.0)
+        self.model = model
         # define the output parser
         self.output_parser = CustomOutputParser()
 
@@ -210,9 +218,13 @@ class ChainGeneratorAgent:
         return agent_chain
     
 class DataServiceGenerator:
-    def __init__(self):
+    def __init__(self, model):
         dotenv.load_dotenv()
-        self.OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+        self.model = model
+        if model == "GPT":
+            self.key = os.getenv("OPENAI_API_KEY")
+        elif model == "Mistral":
+            self.key = os.getenv("MISTRAL_API_KEY")
 
     def create_data_services(self, database, database_location):
         database_name = database["db_id"]
@@ -299,7 +311,7 @@ class DataServiceGenerator:
             
         #Get LLM description
         generator_chain_output = {
-            "output": ChainGeneratorAgent(self.OPENAI_API_KEY,mode="description").get_chain(),
+            "output": ChainGeneratorAgent(self.key, self.model, mode="description").get_chain(),
             "inputs": RunnablePassthrough()
             }
         

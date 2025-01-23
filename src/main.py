@@ -45,23 +45,25 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False):
+    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False):
         dotenv.load_dotenv()
-        OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-        self.key = OPENAI_API_KEY
+        if model == "GPT":
+            self.key = os.getenv("OPENAI_API_KEY")
+        elif model == "Mistral":
+            self.key = os.getenv("MISTRAL_API_KEY")
         print(mode)
         self.mode = mode
         self.second_mode = second_mode
         self.services_mode = services_mode
 
-        self.pipeline_manager = PipelineManagerDB(OPENAI_API_KEY)
+        self.pipeline_manager = PipelineManagerDB(model, self.key)
         self.document_manager = DocumentManagerDB()
         
         if mode == "chain_of_thoughs":
-            self.suggestor = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs")
-            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode="chain_of_thoughs_post")
+            self.suggestor = PipelineGeneratorAgent(model, self.key, mode="chain_of_thoughs")
+            self.generator = PipelineGeneratorAgent(model, self.key, mode="chain_of_thoughs_post")
         else:
-            self.generator = PipelineGeneratorAgent(OPENAI_API_KEY, mode=mode, combinatory=combinatory)
+            self.generator = PipelineGeneratorAgent(model, self.key, mode=mode, combinatory=combinatory)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -605,7 +607,7 @@ if __name__ == "__main__":
                 (lambda x: self.services_mode == "ground_truth", lambda x : {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
-                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
+                    "example": ["", ""],
                     "data_services": self.get_data_services(sql = x["ground_truth"])
                 }), lambda x : {
                     "query": x["query"],
@@ -818,8 +820,9 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
+    model = "Mistral"
     mode = "wo_pipeline_view"
-    llm = LLMAgent(mode=mode, second_mode = "added_evidence", services_mode="ground_truth")
+    llm = LLMAgent(model= model, mode=mode, second_mode = "added_evidence", services_mode="ground_truth")
     
     test_mode = "bird" # test or bird
     

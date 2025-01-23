@@ -1,6 +1,7 @@
 import ast
 import json
 import re
+import time
 import pandas as pd
 
 from data_service_bird.database import GetDataFromDatabase
@@ -69,8 +70,8 @@ def evaluate_ground_truth():
     print(metrics_res)
         
 
-def run_evaluation(mode, second_mode, services_mode = None):
-    llm = LLMAgent(mode, second_mode, services_mode = services_mode)
+def run_evaluation(model, mode, second_mode, services_mode = None):
+    llm = LLMAgent(model, mode, second_mode, services_mode = services_mode)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
@@ -80,6 +81,7 @@ def run_evaluation(mode, second_mode, services_mode = None):
 
     res_eval = []
     for index, query in enumerate(main_queries):
+        
         sql = query["SQL"]
     
         input_file = {
@@ -110,18 +112,21 @@ def run_evaluation(mode, second_mode, services_mode = None):
             print(f"Error in query {index}: {e}")
             res_elem = [index, question, sql, None, None, None, None, None, None, None]
         res_eval.append(res_elem)
+        
+        if model == "Mistral":
+            time.sleep(1)
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
-    res_df.to_csv(f"evaluation/evaluation_results_{mode}.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results_{model}_{mode}.csv", sep=',', index=False)
 
 
-def evaluate_results(mode):
+def evaluate_results(model, mode):
     queries = json.load(open("queries/test/human_resources.json"))
     db = GetDataFromDatabase()
     db.open_connection("data_service_bird/human_resources/human_resources.sqlite")
 
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_{model}_{mode}.csv")
     for index, query in enumerate(queries):
         metrics_res_q_idx = []
         question = query["question"]
@@ -130,15 +135,18 @@ def evaluate_results(mode):
         res = eval_results[(eval_results["index"] == index)]
         #Check if pipeline completely failed like query 35 eval_26-11-24
         if type(res["output_json"].values[0]) != str:
-            output_json = "[]"
+            output_json = ""
         else:
             output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
             pattern = r'(".+\$)".+"'
             output_json = re.sub(pattern, r'\1.+"', output_json)
         print(output_json)
-        output_res = json.loads(output_json)
-        df2 = pd.DataFrame(output_res)
-
+        if output_json != "":
+            output_res = json.loads(output_json)
+            df2 = pd.DataFrame(output_res)
+        else:
+            df2 = pd.DataFrame()
+        
         df1.name = "table_1"
         df2.name = "table_2"
         try:
@@ -157,11 +165,15 @@ def evaluate_results(mode):
         metrics_res.append(metrics_res_q_idx)
 
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "precision", "recall", "acc_cell", "acc_row"])
-    metrics_res.to_csv(f"evaluation/metrics_results_{mode}.csv", sep=',', index=False)
+    metrics_res.to_csv(f"evaluation/metrics_results_{model}_{mode}.csv", sep=',', index=False)
     print(metrics_res)
     return
 
 if __name__ == "__main__":
+    
+    model="Mistral"
+    print(f"Model: {model}")
+    
     with open("advice.json", "w") as file:
     # Use the `truncate()` method to clear the file's content
         file.truncate()
@@ -179,8 +191,8 @@ if __name__ == "__main__":
     modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(mode, second_mode, services_mode="ground_truth")
-        evaluate_results(mode)
+        run_evaluation(model, mode, second_mode, services_mode="ground_truth")
+        evaluate_results(model, mode)
         
     #run_evaluation_ground_truth()
     #evaluate_ground_truth()

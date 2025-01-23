@@ -1,6 +1,7 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-from langchain_openai import ChatOpenAI
+#from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from templates import *
 
@@ -26,7 +27,7 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, openai_key, mode = "standard", combinatory = False):
+    def __init__(self, model, key, mode = "standard", combinatory = False):
         """Initialize the agent."""
         # define the prompt
         if combinatory:
@@ -57,9 +58,14 @@ class PipelineGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        self.llm = ChatOpenAI(model="gpt-4o",
-                              api_key=openai_key,
-                              temperature=0.0)
+        if model == "GPT":
+            self.llm = ChatOpenAI(model="gpt-4o",
+                                api_key=key,
+                                temperature=0.0)
+        elif model == "Mistral":
+            self.llm = ChatMistralAI(model="mistral-large-latest",
+                                api_key=key,
+                                temperature=0.0)
         # define the output parser
         self.output_parser = CustomOutputParser()
 
