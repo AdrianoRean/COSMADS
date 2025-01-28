@@ -45,7 +45,7 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False):
+    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False, automatic=False, database="human_resources"):
         dotenv.load_dotenv()
         if model == "GPT":
             self.key = os.getenv("OPENAI_API_KEY")
@@ -55,6 +55,9 @@ class LLMAgent:
         self.mode = mode
         self.second_mode = second_mode
         self.services_mode = services_mode
+        
+        self.database = database
+        self.automatic = automatic
 
         self.pipeline_manager = PipelineManagerDB(model, self.key)
         self.document_manager = DocumentManagerDB()
@@ -67,8 +70,12 @@ class LLMAgent:
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
-        self.ds_directory = "data_service_bird/human_resources"
-        self.ds_directory_import = "data_service_bird.human_resources"
+        if automatic:
+            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services"
+            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services"
+        else:
+            self.ds_directory = f"data_service_bird/{database}"
+            self.ds_directory_import = f"data_service_bird.{database}"
         self.doc_directory = "documents"
         self.current_production = "cardboard_production"
         self.sep: str = " - "
@@ -96,6 +103,14 @@ class LLMAgent:
         # Calculate similarity
         similarity_score = cosine_similarity(embeddings1, embeddings2)
         return similarity_score[0][0]
+    
+    def check_word_simliarity(self, desired_word, words_to_check, similarity_treshold = 0.8):
+        best_matches = []
+        for word in words_to_check:
+            similarity = self.bert_cosine_similarity(desired_word, word)
+            if similarity >= similarity_treshold:
+                best_matches.append((word, similarity))
+        return best_matches
 
     def correct_obvious_word_mistake(self, function_to_change, call_keys = [], hard_coded_words = [], similarity_treshold = 0.8):
         function_changed = deepcopy(function_to_change)
@@ -131,11 +146,7 @@ class LLMAgent:
         
         #check for each possible value if there are matches
         for word in call_keys:
-            best_matches = []
-            for call_match in inside_call_matches:
-                similarity = self.bert_cosine_similarity(word, call_match)
-                if similarity >= similarity_treshold:
-                    best_matches.append((call_match, similarity))
+            best_matches = self.check_word_simliarity(word, inside_call_matches, similarity_treshold)
             print(f"Key: {word} - Matches: {best_matches}")
             for match in best_matches:
                 if match[1] == 1: #perfect match
@@ -156,11 +167,7 @@ class LLMAgent:
         print(hard_coded_matches)  
         #check for each possible value if there are matches
         for word in hard_coded_words:
-            best_matches = []
-            for hard_match in hard_coded_words:
-                similarity = self.bert_cosine_similarity(word, hard_match)
-                if similarity >= similarity_treshold:
-                    best_matches.append((hard_match, similarity))
+            best_matches = self.check_word_simliarity(word, hard_coded_words, similarity_treshold)
             print(f"Word: {word} - Matches: {best_matches}")
             for match in best_matches:
                 if match[1] == 1: #perfect match
@@ -262,7 +269,10 @@ class LLMAgent:
             query_services_list = extract_tables(sql)
             print(f"Tables find from sql are: {query_services_list}")
         for data_service in data_services_all:
-            data_service_name = data_service[len("data_service_bird/human_resources/"):-3]
+            if self.automatic:
+                data_service_name = data_service[len(f"data_service_bird_automatic/train_databases/{self.database}/data_services/"):-3]
+            else:
+                data_service_name = data_service[len(f"data_service_bird/{self.database}/"):-3]
             if sql == None or data_service_name in query_services_list: 
                 with open(f"{data_service}", mode="r") as f:
                     content = f.read()
@@ -282,7 +292,7 @@ class LLMAgent:
                         call_parameters_list.extend(call_parameters)
                         data_services_list.append(description_dict)    # data services for saving pipeline
                 
-        return data_services, data_services_list, query_services_list, call_parameters
+        return data_services, data_services_list, query_services_list, call_parameters_list
     
     def get_relevant_document(self, query):
         document = self.document_manager.extract_document(query)
@@ -295,6 +305,7 @@ class LLMAgent:
 
     def save_intermediate_result_to_json(self, pipeline, data_services, pipeline_index = None, pipeline_index_2 = None) -> str:
         file_to_save = ""
+        print(f"dataservices : {data_services}")
         
         modules = []
         classes = []
@@ -606,12 +617,12 @@ if __name__ == "__main__":
             | RunnableBranch( 
                 (lambda x: self.services_mode == "ground_truth", lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
+                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
                     "example": ["", ""],
                     "data_services": self.get_data_services(sql = x["ground_truth"])
                 }), lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
+                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
                     "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
                     "data_services": self.get_data_services()
                 }
@@ -633,7 +644,7 @@ if __name__ == "__main__":
                 (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
                 (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
-                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : "human_resources", "tables" : x["data_services_list_names"]}, x, generator_chain_output, pipeline_index_2)),
+                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output, pipeline_index_2)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableLambda (
@@ -802,7 +813,7 @@ if __name__ == "__main__":
             | RunnableLambda( 
                 lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, "human_resources", x["evidence"]),
+                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services()[0],
                     "data_services_list": self.get_data_services(sql = x["ground_truth"])[2]
                 }
@@ -820,9 +831,10 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    model = "Mistral"
+    database="european_football_1"
+    model = "GPT"
     mode = "wo_pipeline_view"
-    llm = LLMAgent(model= model, mode=mode, second_mode = "added_evidence", services_mode="ground_truth")
+    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", automatic=True, database="european_football_1")
     
     test_mode = "bird" # test or bird
     
@@ -833,7 +845,7 @@ if __name__ == "__main__":
             query = queries[q]["query"]
     else:
         q = 45
-        with open("queries/test/human_resources.json", "r") as f:
+        with open(f"queries/test/{database}.json", "r") as f:
             queries = json.load(f)
             query = queries[q]["question"]
         

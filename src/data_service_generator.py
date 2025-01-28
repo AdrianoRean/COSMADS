@@ -1,8 +1,8 @@
 import ast
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-#from langchain_openai import ChatOpenAI
-from langchain_mistralai import ChatMistralAI
+from langchain_openai import ChatOpenAI
+#from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnablePassthrough
 import dotenv
@@ -82,11 +82,14 @@ Here there is the list of tables of the database with their details:
 ======
 Each element of the list has the following structure:
 {{
+    "function_name" : <function_name>,
     "table_name": <table_name>,
     "table_columns": <table_columns>,
     "table_primary_key": <table_primary_keys>,
     "table_foreign_keys": <table_foreign_keys>,
+    "table_parameters" : <table_parameters>,
     "table_data_samples": <table_data_samples>
+    "table_parameters_list" : <table_parameters_list>
 }}
 The "table_foreign_keys" is a list where each element is a triplet with the following structure: [<table_column>, <referenced_column>, <referenced_table>]
 The "table_data_samples" is pandas dataframe converted to string.
@@ -110,7 +113,7 @@ import sqlite3
 import inspect
 from data_service_bird_automatic.utilities import selectOperator
 
-class GetDataFromEmployee:
+class GetDataFrom{function_name}:
     database_location = "data_service_bird_automatic/train_databases/{database}/{database}.sqlite"
     connection = None
     call_parameters_list = {call_parameters_list}
@@ -200,11 +203,11 @@ class ChainGeneratorAgent:
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
         self.model = model
-        if model == "GPT":
+        if self.model == "GPT":
             self.llm = ChatOpenAI(model="gpt-4o",
                                 api_key=key,
                                 temperature=0.0)
-        elif model == "Mistral":
+        elif self.model == "Mistral":
             self.llm = ChatMistralAI(model="mistral-large-latest",
                                 api_key=key,
                                 temperature=0.0)
@@ -297,6 +300,7 @@ class DataServiceGenerator:
             data_samples = get_sample_data(database_location, table[1]).to_string()
             
             database_table_list.append({
+                "function_name" : table[1].title(),
                 "table_name" : table[1],
                 "table_columns" : table_inputs,
                 "table_primary_key" : primary_key,
@@ -311,7 +315,7 @@ class DataServiceGenerator:
             
         #Get LLM description
         generator_chain_output = {
-            "output": ChainGeneratorAgent(self.key, self.model, mode="description").get_chain(),
+            "output": ChainGeneratorAgent(self.model, self.key, mode="description").get_chain(),
             "inputs": RunnablePassthrough()
             }
         
@@ -338,6 +342,7 @@ class DataServiceGenerator:
             output = result[index]
             
             filled_template = DATA_SERVICE_BIRD_TEMPLATE.format(
+                function_name = table["function_name"],
                 database = database_name,
                 brief_description = output["brief_description"],
                 detailed_description = output["detailed_description"],
@@ -351,6 +356,7 @@ class DataServiceGenerator:
                 f.write(filled_template)
     
 if __name__ == "__main__":
+    model = "GPT"
     databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
     databases = None
     with open(databases_description_location) as f:
@@ -360,7 +366,7 @@ if __name__ == "__main__":
     database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
     print(database['db_id'])
     
-    generator = DataServiceGenerator()
+    generator = DataServiceGenerator(model=model)
     generator.create_data_services(database, database_location)
     
     

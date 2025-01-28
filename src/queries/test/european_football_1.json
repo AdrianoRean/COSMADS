@@ -1,0 +1,343 @@
+[{
+    "db_id": "european_football_1",
+    "question": "What is the most consecutive games tied by Ebbsfleet as an away team in the 2008 season?",
+    "evidence": "consecutive games mean happen one after the other without interruption and refer to Date; tied refers to FTR = 'D';",
+    "SQL": "SELECT COUNT(*) FROM matchs WHERE season = 2008 AND AwayTeam = 'Ebbsfleet' AND FTR = 'D'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Of all the divisions in the world, what percentage of them belong to England?",
+    "evidence": "DIVIDE(COUNT(division where country = 'England'), COUNT(division)) as percentage;",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN country = 'England' THEN division ELSE NULL END) AS REAL) * 100 / COUNT(division) FROM divisions"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What percentage of games won, games lost and games drawn does Cittadella have as a home team in total?",
+    "evidence": "Percentage of games won = DIVIDE(COUNT(FTR = 'H' where HomeTeam = 'Cittadella'), COUNT(Div where HomeTeam = 'Cittadella')) as percentage; Percentage of games lost = DIVIDE(COUNT(FTR = 'A' where HomeTeam = 'Cittadella')), COUNT(Div where HomeTeam = 'Cittadella') as percentage; percentage of games drawn = DIVIDE(SUM(FTR = 'D'where HomeTeam = 'Cittadella'), COUNT(Div where HomeTeam = 'Cittadella')) as percentage;\n",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN FTR = 'H' THEN 1 ELSE NULL END) / COUNT(HomeTeam) AS REAL) * 100, CAST(COUNT(CASE WHEN FTR = 'A' THEN 1 ELSE NULL END) AS REAL) / COUNT(HomeTeam), CAST(COUNT(CASE WHEN FTR = 'D' THEN 1 ELSE NULL END) AS REAL) / COUNT(HomeTeam) FROM matchs WHERE HomeTeam = 'Cittadella'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Of all the teams that played as a team away against Caen in the 2010 season, which one has the highest winning percentage?",
+    "evidence": "Caen refers to HomeTeam; which one refers to AwayTeam; the highest winning percentage = MAX(DIVIDE(COUNT(FTR = 'A' where HomeTeam = 'Caen', season = '2010')), COUNT(Div where HomeTeam = 'Caen', season = '2010')) as percentage;",
+    "SQL": "SELECT AwayTeam FROM matchs WHERE HomeTeam = 'Caen' AND season = 2010 AND FTR = 'A' GROUP BY AwayTeam ORDER BY COUNT(AwayTeam) DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What percentage of matches played on 2005/07/30 belong to the F1 division?",
+    "evidence": "Division refers to Div; DIVIDE(COUNT(Div = 'F1', Date = '2005/07/30'), COUNT(Div, Date = '2005/07/30')) as percentage;",
+    "SQL": "SELECT CAST(SUM(CASE WHEN Div = 'F1' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(Div) FROM matchs WHERE Date = '2005-07-30' "
+},
+{
+    "db_id": "european_football_1",
+    "question": "What percentage of all tied games did the Sassuolo team play in?",
+    "evidence": "tied games refer FTR = 'D'; DIVIDE(COUNT(Div where FTR = 'D', HomeTeam = 'Sassuolo' or AwayTeam = 'Sassuolo'), COUNT(Div where HomeTeam = 'Sassuolo' or AwayTeam = 'Sassuolo')) as percentage;",
+    "SQL": "SELECT CAST(SUM(CASE WHEN HomeTeam = 'Sassuolo' OR AwayTeam = 'Sassuolo' THEN 1 ELSE 0 END) AS REAL) * 100 / COUNT(FTR) FROM matchs WHERE FTR = 'D'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the percentage whereby the away team scored 2 goals during the 2017 seasons?",
+    "evidence": "scored 2 goals refers to FTAG = 2, which is short name for Final-time Away-team Goals; DIVIDE(COUNT(Div where season = 2017, FTAG = '2'), COUNT(Div where season = 2017)) as percentage;",
+    "SQL": "SELECT CAST(SUM(CASE WHEN FTAG = 2 THEN 1 ELSE 0 END) / COUNT(FTAG) AS REAL) * 100 FROM matchs WHERE season = 2017"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the name of all the teams that played in the EFL League One division?",
+    "evidence": "all the teams include both HomeTeam and AwayTeam; name = 'EFL League One'; DIV = 'E2';",
+    "SQL": "SELECT T1.HomeTeam,T1.AwayTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div=T2.division WHERE T2.name = 'EFL League One' and T1.Div = 'E2' "
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many teams playing in divisions in Greece have ever scored 4 or more goals?",
+    "evidence": "teams include both HomeTeam and AwayTeam; country = 'Greece'; scored 4 or more goals refer to FTAG\u22654, which is short name for Final-time Away-team Goals;",
+    "SQL": "SELECT COUNT(DISTINCT CASE WHEN T1.FTHG >= 4 THEN HomeTeam ELSE NULL end) + COUNT(DISTINCT CASE WHEN T1.FTAG >= 4 THEN AwayTeam ELSE NULL end) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.country = 'Greece' "
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many matches played in the 2019 season of Scottish Championship league were ended with an equal result of 2-2?",
+    "evidence": "matches refer to Div; Scottish Championship is a name of the league; equal result of 2-2 refers to FTAG = 2 AND FTHG = 2;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2019 AND T2.name = 'Scottish Championship' AND T1.FTAG = 2 AND T1.FTHG = 2"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which 2 Scottish teams scored 10 goals playing as a local team and in which seasons?",
+    "evidence": "local team refers to HomeTeam; Scottish means belong to the country = 'Scotland'; scored 10 goals refer to FTHG = 10, which is short name for Final-time Away-team Goals;",
+    "SQL": "SELECT T1.HomeTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.country = 'Scotland' AND T1.FTHG = 10"
+},
+{
+    "db_id": "european_football_1",
+    "question": "From the Spanish LaLiga division in the 2017 season, which team won the most times as a local team and by what percentage?",
+    "evidence": "local team refers to HomeTeam; Spanish means belong to the country = 'Spain'; LaLiga is a name of division; won as a local team refers to FTR = 'H', where H stands for home victory; DIVIDE(COUNT(Div where name = 'LaLiga', country = 'Spain', season = 2017, FRT = 'H'), COUNT(Div where name = 'LaLiga', country = 'Spain', season = 2017)) as percentage;",
+    "SQL": "SELECT T1.HomeTeam HWHT , CAST(COUNT(CASE WHEN T1.FTR = 'H' THEN 1 ELSE NULL END) AS REAL) * 100 / COUNT(HomeTeam) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'LaLiga' AND T2.country = 'Spain' AND T1.season = 2017"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many teams that played in the 2012 season belong to any of the English divisions and what percentage play in each of the divisions?",
+    "evidence": "matches = Div",
+    "SQL": "SELECT ( SELECT COUNT(T1.Div) AS total FROM matchs T1 INNER JOIN divisions T2 ON T2.division = T1.Div WHERE T2.country = 'England' AND T1.season = 2012 ) AS num , CASE WHEN 1 THEN T.result END AS percentage FROM ( SELECT 100.0 * COUNT(T1.Div) / ( SELECT COUNT(T1.Div) FROM matchs T1 INNER JOIN divisions T2 ON T2.division = T1.Div WHERE T2.country = 'England' AND T1.season = 2012 ) AS result FROM matchs T1 INNER JOIN divisions T2 ON T2.division = T1.Div WHERE T2.country = 'England' AND T1.season = 2012 GROUP BY T2.division ) AS T"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the highest final-time score across all divisions in the 2021 season? Which team was the team that made up that score?",
+    "evidence": "MAX(SUM where FTHG, FTAG, season = 2021);",
+    "SQL": "SELECT ( SELECT MAX(MAX(FTAG), MAX(FTHG)) FROM matchs WHERE season = 2021 ) AS T1, AwayTeam FROM matchs WHERE season = 2021 AND FTHG = T1 OR FTAG = T1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the name of the home team in division P1 with the highest final time goal in all seasons?",
+    "evidence": "the highest final time goal refers to MAX(FTHG); P1 = Div;",
+    "SQL": "SELECT HomeTeam FROM matchs WHERE Div = 'P1' AND season = 2021 ORDER BY FTHG DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What was the difference in home team and away team win percentages across all divisions in 2010?",
+    "evidence": "2010 refers to season = 2010; SUBTRACT(DIVIDE(COUNT(Div where FTR = 'H', season = 2010), COUNT(Div where season = 2010)), COUNT(Div where FTR = 'A', season = 2010), COUNT(Div where season = 2010)) as percentage;",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN FTR = 'H' THEN 1 ELSE NULL END) AS REAL) * 100 / COUNT(FTR) - CAST(COUNT(CASE WHEN FTR = 'A' THEN 1 ELSE NULL END) AS REAL) * 100 / COUNT(FTR) DIFFERENCE FROM matchs WHERE season = 2010"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which division had the most draft matches in the 2008 season?",
+    "evidence": "the most draft matches refer to MAX(COUNT(Div)) where FTR = 'D';",
+    "SQL": "SELECT Div FROM matchs WHERE season = 2008 AND FTR = 'D' GROUP BY Div ORDER BY COUNT(FTR) DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team won the match in the EC division on January 20, 2008 at home?",
+    "evidence": "won at home refers to FTR = 'H'; January 20, 2008 refers to Date = '2008-01-20'; EC division refers to Div = 'EC';",
+    "SQL": "SELECT HomeTeam FROM matchs WHERE Div = 'EC' AND Date = '2008-01-20' AND FTR = 'H'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the name of the division in which Club Brugge and Genk competed on September 13, 2009?",
+    "evidence": "September 13, 2009 refers to Date = '2009-09-13'; Club Brugge refers to HomeTeam; Genk refers to AwayTeam;",
+    "SQL": "SELECT T2.name FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.Date = '2009-09-13' and T1.HomeTeam = 'Club Brugge' AND T1.AwayTeam = 'Genk'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many matches were played in the Scottish Premiership division from 2006 to 2008?",
+    "evidence": "Scottish Premiership is a name of division; from 2006 to 2008 means seasons between 2006 and 2008;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Scottish Premiership' AND (T1.season BETWEEN 2006 AND 2008)"
+},
+{
+    "db_id": "european_football_1",
+    "question": "In which division was the match between Hibernian, the away team, and Hearts, the home team, played? To which country does this division belong?",
+    "evidence": "FALSE;",
+    "SQL": "SELECT DISTINCT T2.division,T2.country FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.HomeTeam = 'Hearts' AND T1.AwayTeam = 'Hibernian'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which away team in the division of Bundesliga has the highest final time goals?",
+    "evidence": "Bundesliga is a name of division; the highest final time goals refers to MAX(FTAG);",
+    "SQL": "SELECT T1.AwayTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div=T2.division WHERE T2.name = 'Bundesliga' ORDER BY T1.FTAG DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Please provide the names of any three away teams that competed in the Italian divisions.",
+    "evidence": "Italian means belong to country = 'Italy\";",
+    "SQL": "SELECT T1.AwayTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div=T2.division WHERE T2.country = 'Italy' LIMIT 3"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What is the name of the division that has had the lowest number of draft matches in the 2019 season?",
+    "evidence": "the lowest number of draft matches refers to MIN(COUNT(FTR = 'D'));",
+    "SQL": "SELECT T2.name FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2019 AND T1.FTR = 'D' GROUP BY T2.division ORDER BY COUNT(FTR) LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many times did Valencia's home team win in the LaLiga division?",
+    "evidence": "LaLiga is a name of the division; Valencia's home team refers to HomeTeam = 'Valencia'; win refers to FTR = 'H';",
+    "SQL": "SELECT COUNT(T1.HomeTeam) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'LaLiga' AND T1.HomeTeam = 'Valencia' AND T1.FTR = 'H'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "In how many matches in the Seria A division did both teams have equal goals?",
+    "evidence": "Seria A is a name of division; equal goals refers to FTR = 'D', where D stands for draft;",
+    "SQL": "SELECT COUNT(T1.FTR) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Seria A' AND T1.FTR = 'D'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many football divisions does England have?",
+    "evidence": "England is the name of country;",
+    "SQL": "SELECT COUNT(division) FROM divisions WHERE country = 'England'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What's the name of the football division in the Netherlands?",
+    "evidence": "Netherlands is the name of country;",
+    "SQL": "SELECT name FROM divisions WHERE country = 'Netherlands'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Who is the winner of the game happened on 2009/10/10, between \"East Fife\" and \"Dumbarton\"?",
+    "evidence": "2009/10/10 is a date; the winner refers to FTR = 'A'; East Fife and Dumbarton are name of teams where HomeTeam = 'East Fife'; AwayTeam = 'Dumbarton';",
+    "SQL": "SELECT CASE WHEN FTR = 'H' THEN 'East Fife' ELSE 'Dumbarton' END WINNER FROM matchs WHERE Date = '2009-10-10' AND HomeTeam = 'East Fife' AND AwayTeam = 'Dumbarton'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What was the final score for the game Bursaspor vs Denizlispor on 2009/4/26?",
+    "evidence": "Bursaspor vs Denizlispor are names of teams where HomeTeam = 'Bursaspor' and AwayTeam = 'Denizlispor'; Date = '2009-04-26'; final score refers to FTHG, FTAG;",
+    "SQL": "SELECT FTHG, FTAG FROM matchs WHERE Date = '2009-04-26' AND HomeTeam = 'Bursaspor' AND AwayTeam = 'Denizlispor'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "When did the first match that score more than 10 goals happen?",
+    "evidence": "score more than 10 goals refers to SUM(FTHG, FTAG)>10, which are short names for Final-time Home-team Goals and Final-time Away-team Goals; the first means the earliest and refers to MIN(Date);",
+    "SQL": "SELECT MIN(Date) FROM matchs WHERE FTHG + FTAG > 10"
+},
+{
+    "db_id": "european_football_1",
+    "question": "For the Ligue 2 game that made the most goals, who is the winner of that game?",
+    "evidence": "Ligue 2 is the name of division; the most goals refer to MAX(SUM(FTHG, FTAG)) which are short names for Final-time Home-team Goals and Final-time Away-team Goals; winner refers to FTR = 'A';",
+    "SQL": "SELECT CASE WHEN T1.FTR = 'H' THEN T1.HomeTeam ELSE T1.AwayTeam END WINNER FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Ligue 2' ORDER BY T1.FTAG + T1.FTHG DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many Away Victories happened on 2016/3/27 in the LaLiga 2 division?",
+    "evidence": "Away victories refer to FTR = 'A'; LaLiga 2 is the name of division; Date = '2016-03-27';",
+    "SQL": "SELECT COUNT(T1.FTR) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'LaLiga 2' AND T1.Date = '2016-03-27' AND T1.FTR = 'A'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many draw games happened on 2018/8/7 for National League?",
+    "evidence": "National League is the name of division; Date = '2018-08-07'; draw refers to FTR = 'D'; games refer to Div;",
+    "SQL": "SELECT COUNT(T1.FTR) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'National League' AND T1.Date = '2018-08-07' AND T1.FTR = 'D'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which country had the game that Away team made the most goals?",
+    "evidence": "the most goals refer to MAX(FTAG), which is a short name for Final-time Away-team Goals;",
+    "SQL": "SELECT T2.country FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division GROUP BY T2.country ORDER BY SUM(T1.FTAG) DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "For a game had a score of 1-8 in the year of 2011, what division was that game in? Give the full name of the division.",
+    "evidence": "2011 refers to season; a score of 1-8 refers to FTHG = '1' and FTAG = '8';",
+    "SQL": "SELECT T2.division, T2.name FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2011 AND T1.FTHG = 1 AND T1.FTAG = 8"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which division had the most games with more than 5 total field goals on 2020/2/22? Give the full name of the division?",
+    "evidence": "more than 5 total field goals refers to SUM(FTHG, FTAG)>5, which are short names for Final-time Home-team Goals and Final-time Away-team Goals; 2020/2/22 is a date;",
+    "SQL": "SELECT T2.division, T2.name FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.Date = '2020-02-22' AND T1.FTAG + T1.FTHG > 5 ORDER BY T1.FTAG + T1.FTHG DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Give the full name of the divison that had the most 0-0 games.",
+    "evidence": "the most 0-0 games means a no-score draw and refers to MAX(COUNT(Div where FTHG = '0' and FTAG = '0'));",
+    "SQL": "SELECT T2.name FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.FTAG = 0 AND T1.FTHG = 0 GROUP BY T2.division ORDER BY COUNT(T1.FTAG) DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many Scottish League One games took place on the day that \"Pro Vercelli\" and \"Pescara\"had a 5-2 game?",
+    "evidence": "Pro Vercelli and Pescara are names of teams; HomeTeam = 'Pro Vercelli'; AwayTeam = 'Pescara'; 5-2 is a score where FTHG = '5' and FTAG = '2'; Scottish League One is a name of division; games refer to Div;",
+    "SQL": "SELECT COUNT(T1.Date) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Scottish League One' AND T1.Date = ( SELECT Date FROM matchs WHERE FTHG = 5 AND FTAG = 2 AND HomeTeam = 'Pro Vercelli' AND AwayTeam = 'Pescara' )"
+},
+{
+    "db_id": "european_football_1",
+    "question": "List the number of games that ended up with 5-0 in Greece.",
+    "evidence": "5-0 is a score where FTHG = '5' and FTAG = '0'; Greece is a name of country; games refer to Div;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.country = 'Greece' AND T1.FTHG = 5 AND T1.FTAG = 0"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which country did Bradford Team belongs to?",
+    "evidence": "Bradford team refers to HomeTeam = 'Bradford' or AwayTeam = 'Bradford';",
+    "SQL": "SELECT DISTINCT T2.country FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.HomeTeam = 'Bradford' OR T1.AwayTeam = 'Bradford'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many Eredivisie teams have played in 2008?",
+    "evidence": "Eredivisie is the name of division; 2008 refers to season; teams refer to HomeTeam;",
+    "SQL": "SELECT COUNT(DISTINCT T1.HomeTeam) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Eredivisie' AND T1.season = 2008"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What's the home win ratio of the Bundesliga division in 2021?",
+    "evidence": "home win refers to FTR = 'H', where H stands for home victory; season = '2021'; Bundesliga is a name of division; DIVIDE(COUNT(Div where FTR = 'H, season = '2021' and name = 'Bundesliga'), COUNT(Div where season = '2021' and name = 'Bundesliga')) as percentage;",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN T1.FTR = 'H' THEN 1 ELSE NULL END) AS REAL) * 100 / COUNT(T1.FTR) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T2.name = 'Bundesliga'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "For all the games ended up with 1-1, what percentage of them are from Liga NOS division?",
+    "evidence": "1-1 is a score where FTHG = '1' and FTAG = '1'; Liga NOS is the name of division; DIVIDE(COUNT(Div where FTHG = '1', FTAG = '1', name = 'Liga NOS'), COUNT(Div where FTHG = '1' and FTAG = '1')) as percentage;",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN T2.name = 'Liga NOS' THEN T1.Div ELSE NULL END) AS REAL) * 100 / COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.FTHG = 1 AND FTAG = 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many matches were held during the 2021 season's Premier League?",
+    "evidence": "Premier League is the name of division;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T2.name = 'Premier League'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team was the home team in the match of the Bundesliga division on 2020/10/2?",
+    "evidence": "Bundesliga is the name of division; Date = '2020/10/2';",
+    "SQL": "SELECT T1.HomeTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.Date = '2020-10-02' AND T2.name = 'Bundesliga'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team won the match of the Bundesliga division on 2020/10/2?",
+    "evidence": "Bundesliga is the name of division; Date = '2020/10/2'; won the match refers to FTR = 'H';",
+    "SQL": "SELECT CASE WHEN T1.FTR = 'H' THEN T1.HomeTeam WHEN T1.FTR = 'A' THEN T1.AwayTeam END WINNER FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.Date = '2020-10-02' AND T2.name = 'Bundesliga'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team has the most victories as the home team in matches of the Bundesliga division?",
+    "evidence": "Bundesliga is the name of division; the most victories as the home team refers to MAX(COUNT(FTR = 'H'));",
+    "SQL": "SELECT T1.HomeTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.FTR = 'H' GROUP BY T1.HomeTeam ORDER BY COUNT(T1.FTR) DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many times did the team Werder Bremen win as the away team in matches of the Bundesliga division?",
+    "evidence": "Bundesliga is the name of division; win as the away team refers to FTR = 'A', where 'A' stands for away victory;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.AwayTeam = 'Werder Bremen' AND T1.FTR = 'A'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many matches of the Bundesliga division ended with an away victory in the 2021 season?",
+    "evidence": "Bundesliga is the name of division; away victory refers to FTR = 'A', where 'A' stands for away victory;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.FTR = 'A' AND T1.season = 2021"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Of the matches in all seasons of the Bundesliga division, how many of them ended with a tie?",
+    "evidence": "Bundesliga is the name of division; tie refers to FTR = 'D', where D stands for draft;",
+    "SQL": "SELECT COUNT(T1.Div) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.FTR = 'D'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many home victories does the Bundesliga division have in more or less than the Premier League division in the 2021 season?",
+    "evidence": "Bundesliga and the Premier League are names of division; home victories refer to FTR = 'H', where H stands for home victory; SUBTRACT(COUNT(FTR = 'H' where season = 2021, name = 'Bundesliga'), COUNT(FTR = 'H' where season = 2021, name = 'Premier League'));",
+    "SQL": "SELECT COUNT(CASE WHEN T2.name = 'Bundesliga' THEN 1 ELSE NULL END) - COUNT(CASE WHEN T2.name = 'Premier League' THEN 1 ELSE NULL END) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T1.FTR = 'H'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Please list the home teams in the matches of the Bundesliga division that ended with a home victory in the 2021 season.",
+    "evidence": "Bundesliga is the name of division; home victory refers to refer to FTR = 'H', where H stands for home victory;",
+    "SQL": "SELECT DISTINCT T1.HomeTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T1.FTR = 'H' AND T2.name = 'Bundesliga'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team had more home victories in the 2021 season's matches of the Bundesliga division, Augsburg or Mainz?",
+    "evidence": "Bundesliga is the name of division; more home victories refer to MAX(FTR = 'H)'; Augsburg and Mainz are names of teams and refer to HomeTeam;",
+    "SQL": "SELECT CASE WHEN COUNT(CASE WHEN T1.HomeTeam = 'Augsburg' THEN 1 ELSE NULL END) - COUNT(CASE WHEN T1.HomeTeam = ' Mainz' THEN 1 ELSE NULL END) > 0 THEN 'Augsburg' ELSE 'Mainz' END FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T1.FTR = 'H'"
+},
+{
+    "db_id": "european_football_1",
+    "question": "Which team had the most final-time home-team goals in the 2021 season's matches of the Bundesliga division?",
+    "evidence": "Bundesliga is the name of division; the most final-time home-team goals refers to MAX(FTHG);",
+    "SQL": "SELECT T1.HomeTeam FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.season = 2021 ORDER BY T1.FTHG DESC LIMIT 1"
+},
+{
+    "db_id": "european_football_1",
+    "question": "How many final-time home-team goals were there in total in all the matches of the Bundesliga division in the 2021 season?",
+    "evidence": "Bundesliga is the name of division; final-time home-team goals refers to FTHG;",
+    "SQL": "SELECT SUM(T1.FTHG) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T2.name = 'Bundesliga' AND T1.season = 2021"
+},
+{
+    "db_id": "european_football_1",
+    "question": "What's the winning rate of Club Brugge in the 2021 Premier League?",
+    "evidence": "Premier League is name of division; season = 2021; Club Brugge is name of team; Club Brugge wins implies HomeTeam = 'Club Brugge' and FTR = 'H' and AwayTeam = 'Club Brugge' and FTR = 'A'; DIVIDE(SUM(COUNT(FTR = 'H' where HomeTeam = 'Club Brugge', name = 'Premier League', season = 2021), COUNT(FTR = 'A'where AwayTeam = 'Club Brugge', name = 'Premier League', season = 2021)), COUNT(Div where name = 'Premier League', season = 2021));",
+    "SQL": "SELECT CAST(COUNT(CASE WHEN T1.FTR = 'H' THEN 1 ELSE NULL END) + COUNT(CASE WHEN T1.FTR = 'A' THEN 1 ELSE NULL END) AS REAL) * 100 / COUNT(t1.FTR) FROM matchs AS T1 INNER JOIN divisions AS T2 ON T1.Div = T2.division WHERE T1.season = 2021 AND T1.AwayTeam = 'Club Brugge' OR T1.HomeTeam = 'Club Brugge'"
+}
+]

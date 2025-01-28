@@ -9,11 +9,11 @@ from data_service_bird.database import GetDataFromDatabase
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 
-def run_evaluation_ground_truth():
-    llm = LLMAgent(mode="check_ground_truth")
+def run_evaluation_ground_truth(database, model):
+    llm = LLMAgent(model=model, mode="check_ground_truth")
     llm_chain = llm.get_chain_truth()
 
-    main_queries = json.load(open("queries/test/human_resources.json"))
+    main_queries = json.load(open(f"queries/test/{database}.json"))
 
     res_eval = []
     for index, query in enumerate(main_queries):
@@ -29,11 +29,11 @@ def run_evaluation_ground_truth():
         res = llm_chain.invoke(input_file)
         res_eval.append([index, res["output"], res["ground_truth"]])
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
-    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{model}.csv", sep=',', index=False)
     
-def evaluate_ground_truth():
+def evaluate_ground_truth(database, model):
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_fixed.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_fixed_{database}_{model}.csv")
     
     def modify_tools_prediction(row):
         # Convert string to list
@@ -66,18 +66,18 @@ def evaluate_ground_truth():
         metrics_res.append([index, accuracy, recall])
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
-    metrics_res.to_csv(f"evaluation/metrics_results_check_ground_truth.csv", sep=',', index=False)
+    metrics_res.to_csv(f"evaluation/metrics_results_check_ground_truth_{database}_{model}.csv", sep=',', index=False)
     print(metrics_res)
         
 
-def run_evaluation(model, mode, second_mode, services_mode = None):
+def run_evaluation(database, model, mode, second_mode, services_mode = None, automatic=False):
     llm = LLMAgent(model, mode, second_mode, services_mode = services_mode)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
         llm_chain = llm.get_chain()
 
-    main_queries = json.load(open("queries/test/human_resources.json"))
+    main_queries = json.load(open(f"queries/test/{database}.json"))
 
     res_eval = []
     for index, query in enumerate(main_queries):
@@ -117,16 +117,17 @@ def run_evaluation(model, mode, second_mode, services_mode = None):
             time.sleep(1)
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
-    res_df.to_csv(f"evaluation/evaluation_results_{model}_{mode}.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results_{database}_{model}_{mode}.csv", sep=',', index=False)
 
 
-def evaluate_results(model, mode):
-    queries = json.load(open("queries/test/human_resources.json"))
+def evaluate_results(database, model, mode):
+    queries = json.load(open(f"queries/test/{database}.json"))
     db = GetDataFromDatabase()
-    db.open_connection("data_service_bird/human_resources/human_resources.sqlite")
+    db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
 
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_{model}_{mode}.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_{database}_{model}_{mode}.csv")
+    #eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
     for index, query in enumerate(queries):
         metrics_res_q_idx = []
         question = query["question"]
@@ -146,6 +147,18 @@ def evaluate_results(model, mode):
             df2 = pd.DataFrame(output_res)
         else:
             df2 = pd.DataFrame()
+            
+        #Full name extrapolation
+        agent = LLMAgent(model=model)
+        words = agent.check_word_simliarity("fullname", list(df2.columns), similarity_treshold=0.55)
+        if len(words) > 0 :
+            words = sorted(words, key=lambda x: x[1])
+            if 'fullname' != words[0][0]:
+                df2 = df2.rename(columns={words[0][0] : "fullname"})
+                df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
+                del df2["fullname"]
+                print(f"Changed {words[0][0]}")
+                print(df2)
         
         df1.name = "table_1"
         df2.name = "table_2"
@@ -171,8 +184,10 @@ def evaluate_results(model, mode):
 
 if __name__ == "__main__":
     
-    model="Mistral"
+    model="GPT"
     print(f"Model: {model}")
+    #database="human_resources"
+    database="european_football_1"
     
     with open("advice.json", "w") as file:
     # Use the `truncate()` method to clear the file's content
@@ -188,11 +203,13 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
+    run_evaluation_ground_truth(database, model)
+    evaluate_ground_truth(database, model)
+    
     modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(model, mode, second_mode, services_mode="ground_truth")
-        evaluate_results(model, mode)
+        run_evaluation(database, model, mode, second_mode, services_mode="ground_truth")
+        evaluate_results(database, model, mode)
         
-    #run_evaluation_ground_truth()
-    #evaluate_ground_truth()
+    

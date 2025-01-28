@@ -1,7 +1,7 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-#from langchain_openai import ChatOpenAI
-from langchain_mistralai import ChatMistralAI
+from langchain_openai import ChatOpenAI
+#from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from templates import *
 

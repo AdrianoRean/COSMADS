@@ -6,9 +6,9 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 model = None
 
+
+
 def bert_cosine_similarity(sentence1, sentence2):
-    global model
-    global tokenizer
     
     # Tokenize the sentences
     tokens1 = tokenizer.tokenize(sentence1)
@@ -117,7 +117,8 @@ if __name__ == "__main__":
     return "Done" """
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     model = BertModel.from_pretrained('bert-base-uncased')
-    print(correct_obvious_word_mistake(FUNCTION_TO_CHECK, ["position", "puppafave", "cognome"], ["Gnappetta", "Gral"], similarity_treshold=0.5))
+    #print(correct_obvious_word_mistake(FUNCTION_TO_CHECK, ["position", "puppafave", "cognome"], ["Gnappetta", "Gral"], similarity_treshold=0.5))
+    print(bert_cosine_similarity("fullname", "full name"))
 
     '''strings, matches = extract_hardcoded_strings(FUNCTION_TO_CHECK)
     
