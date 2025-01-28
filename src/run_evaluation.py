@@ -9,8 +9,8 @@ from data_service_bird.database import GetDataFromDatabase
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 
-def run_evaluation_ground_truth(database, model):
-    llm = LLMAgent(model=model, mode="check_ground_truth")
+def run_evaluation_ground_truth(database, model, automatic):
+    llm = LLMAgent(model=model, mode="check_ground_truth", automatic=automatic, database=database)
     llm_chain = llm.get_chain_truth()
 
     main_queries = json.load(open(f"queries/test/{database}.json"))
@@ -33,7 +33,7 @@ def run_evaluation_ground_truth(database, model):
     
 def evaluate_ground_truth(database, model):
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_fixed_{database}_{model}.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{model}.csv")
     
     def modify_tools_prediction(row):
         # Convert string to list
@@ -71,7 +71,7 @@ def evaluate_ground_truth(database, model):
         
 
 def run_evaluation(database, model, mode, second_mode, services_mode = None, automatic=False):
-    llm = LLMAgent(model, mode, second_mode, services_mode = services_mode)
+    llm = LLMAgent(model, mode, second_mode, services_mode = services_mode, automatic=automatic, database=database)
     if mode == "wrong":
         llm_chain = llm.get_chain_wrong()
     else:
@@ -120,10 +120,14 @@ def run_evaluation(database, model, mode, second_mode, services_mode = None, aut
     res_df.to_csv(f"evaluation/evaluation_results_{database}_{model}_{mode}.csv", sep=',', index=False)
 
 
-def evaluate_results(database, model, mode):
+def evaluate_results(database, model, mode, automatic):
     queries = json.load(open(f"queries/test/{database}.json"))
     db = GetDataFromDatabase()
-    db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
+    
+    if automatic:
+        db.open_connection(f"data_service_bird_automatic/train_databases/{database}/{database}.sqlite")
+    else:
+        db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
 
     metrics_res = []
     eval_results = pd.read_csv(f"evaluation/evaluation_results_{database}_{model}_{mode}.csv")
@@ -143,8 +147,11 @@ def evaluate_results(database, model, mode):
             output_json = re.sub(pattern, r'\1.+"', output_json)
         print(output_json)
         if output_json != "":
-            output_res = json.loads(output_json)
-            df2 = pd.DataFrame(output_res)
+            try:
+                output_res = json.loads(output_json)
+                df2 = pd.DataFrame(output_res)
+            except:
+                df2 = pd.DataFrame()
         else:
             df2 = pd.DataFrame()
             
@@ -184,10 +191,11 @@ def evaluate_results(database, model, mode):
 
 if __name__ == "__main__":
     
-    model="GPT"
+    model="Mistral"
     print(f"Model: {model}")
-    #database="human_resources"
-    database="european_football_1"
+    database="human_resources"
+    #database="european_football_1"
+    automatic = False
     
     with open("advice.json", "w") as file:
     # Use the `truncate()` method to clear the file's content
@@ -203,13 +211,14 @@ if __name__ == "__main__":
     
     evaluate_results("copilot")'''
     
-    run_evaluation_ground_truth(database, model)
-    evaluate_ground_truth(database, model)
+    #run_evaluation_ground_truth(database, model, automatic=automatic)
+    #evaluate_ground_truth(database, model)
+    
     
     modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(database, model, mode, second_mode, services_mode="ground_truth")
-        evaluate_results(database, model, mode)
-        
+        run_evaluation(database, model, mode, second_mode, services_mode="ground_truth", automatic=automatic)
+        evaluate_results(database, model, mode, automatic=automatic)
+        pass
     

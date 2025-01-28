@@ -1,8 +1,8 @@
 import ast
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-from langchain_openai import ChatOpenAI
-#from langchain_mistralai import ChatMistralAI
+#from langchain_openai import ChatOpenAI
+from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnablePassthrough
 import dotenv
@@ -356,7 +356,7 @@ class DataServiceGenerator:
                 f.write(filled_template)
     
 if __name__ == "__main__":
-    model = "GPT"
+    model = "Mistral"
     databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
     databases = None
     with open(databases_description_location) as f:

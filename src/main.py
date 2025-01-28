@@ -796,6 +796,12 @@ if __name__ == "__main__":
     
     def get_chain_truth(self) -> Runnable:
         
+        def stripAndPrint(x):
+            y = x['tools'][1].strip()
+            print(x)
+            print(y)
+            return y
+        
         generator_chain = self.generator.get_chain()
         
         generator_chain_output = {
@@ -821,7 +827,7 @@ if __name__ == "__main__":
             | generator_chain_output
             | RunnableLambda(
                 lambda x: {
-                    "output" : x['tools'][1].strip(),
+                    "output" : stripAndPrint(x),
                     "ground_truth": x['inputs']['data_services_list']
                 }
             )
@@ -833,7 +839,8 @@ if __name__ == "__main__":
 if __name__ == "__main__":
     database="european_football_1"
     model = "GPT"
-    mode = "wo_pipeline_view"
+    #mode = "wo_pipeline_view"
+    mode = "check_ground_truth"
     llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", automatic=True, database="european_football_1")
     
     test_mode = "bird" # test or bird
