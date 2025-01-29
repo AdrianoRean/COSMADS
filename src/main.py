@@ -17,10 +17,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 import sys
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
-from pipeline_manager_db import PipelineManagerDB
 from pipeline_chain import PipelineGeneratorAgent
 from runner_chain import PipelineRunner
-from document_manager_db import DocumentManagerDB
 
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
@@ -45,28 +43,23 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, combinatory = False, automatic=False, database="human_resources"):
+    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, automatic=False, database="human_resources", verbose = False):
         dotenv.load_dotenv()
         if model == "GPT":
             self.key = os.getenv("OPENAI_API_KEY")
         elif model == "Mistral":
             self.key = os.getenv("MISTRAL_API_KEY")
-        print(mode)
+        print(f"Mode is: {mode}")
         self.mode = mode
         self.second_mode = second_mode
         self.services_mode = services_mode
         
         self.database = database
         self.automatic = automatic
-
-        self.pipeline_manager = PipelineManagerDB(model, self.key)
-        self.document_manager = DocumentManagerDB()
         
-        if mode == "chain_of_thoughs":
-            self.suggestor = PipelineGeneratorAgent(model, self.key, mode="chain_of_thoughs")
-            self.generator = PipelineGeneratorAgent(model, self.key, mode="chain_of_thoughs_post")
-        else:
-            self.generator = PipelineGeneratorAgent(model, self.key, mode=mode, combinatory=combinatory)
+        self.verbose = verbose
+        
+        self.generator = PipelineGeneratorAgent(model, self.key, mode=mode)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -142,12 +135,14 @@ class LLMAgent:
                     call_match_dict[inside_match] = []
                 call_match_dict[inside_match].append(index)
                 
-        print(inside_call_matches)
+        if self.verbose:
+            print(f"Words inside the call: {inside_call_matches}")
         
         #check for each possible value if there are matches
         for word in call_keys:
             best_matches = self.check_word_simliarity(word, inside_call_matches, similarity_treshold)
-            print(f"Key: {word} - Matches: {best_matches}")
+            if self.verbose:
+                print(f"Key: {word} - Matches: {best_matches}")
             for match in best_matches:
                 if match[1] == 1: #perfect match
                     if word == match[0]: #also cases are equal, no need to change
@@ -156,7 +151,8 @@ class LLMAgent:
                 calls_indexes = call_match_dict[match[0]] #find calls to be replaced
                 for call_index in calls_indexes:
                     call = call_matches[call_index] #retrieve single call
-                    print(f"Key: {word} - calls : {call}")
+                    if self.verbose:
+                        print(f"Key: {word} - calls : {call}")
                     new_call = call.replace(match[0], word) #fix it
                     call_matches[call_index] = new_call #save bettered version for future use
                     function_changed = function_changed.replace(call, new_call) #replace in actual function
@@ -164,11 +160,13 @@ class LLMAgent:
         #find all hard coded words in function
         hard_coded_regex_string = re.compile(r"\"([\w+\s]+)\"")
         hard_coded_matches = list(set(hard_coded_regex_string.findall(function_changed)))  
-        print(hard_coded_matches)  
+        if self.verbose:
+            print(f"Hard coded words: {hard_coded_matches}")  
         #check for each possible value if there are matches
         for word in hard_coded_words:
             best_matches = self.check_word_simliarity(word, hard_coded_words, similarity_treshold)
-            print(f"Word: {word} - Matches: {best_matches}")
+            if self.verbose:
+                print(f"Word: {word} - Matches: {best_matches}")
             for match in best_matches:
                 if match[1] == 1: #perfect match
                     if word == match[0]: #also cases are equal, no need to change
@@ -178,63 +176,6 @@ class LLMAgent:
                 function_changed = specific_hard_coded_regex.sub(f'"{word}"', function_changed)
                 
         return function_changed
-
-    def get_example(self, res_search, pipeline_index, pipeline_index_2):
-        if pipeline_index != None and pipeline_index_2 == None:
-            return self.get_example_wrong_all(pipeline_index)
-        elif pipeline_index_2 != None:
-            #print("searching combinatory")
-            return self.get_example_wrong_combinatory(pipeline_index, pipeline_index_2)
-        
-        simil_query = res_search.page_content
-        pipeline_id = res_search.metadata["pipeline"]
-        if self.mode == "chain_of_tables":
-            pipeline_id = "pipelines_bird/chain_of_tables" + pipeline_id[len("pipelines_bird"):]
-        pipeline_text = open(pipeline_id).read()
-        return [simil_query, pipeline_text]
-    
-    def get_example_wrong(self, res_search):
-        simil_query = res_search.page_content
-        pipeline_id = res_search.metadata["pipeline"]
-        if pipeline_id == "pipelines/q0.py":
-            pipeline_id = "pipelines/q4.py"
-        elif pipeline_id == "pipelines/q1.py":
-            pipeline_id = "pipelines/q4.py"
-        elif pipeline_id == "pipelines/q2.py":
-            pipeline_id = "pipelines/q0.py"
-        elif pipeline_id == "pipelines/q3.py":
-            pipeline_id = "pipelines/q0.py"
-        elif pipeline_id == "pipelines/q4.py":
-            pipeline_id = "pipelines/q0.py"
-        pipeline_text = open(pipeline_id).read()
-        return [simil_query, pipeline_text]
-    
-    def get_example_wrong_all(self, pipeline_index):
-        f = json.load(open("queries/queries_pipelines_human_resources.json"))
-        
-        query = f[f"q{pipeline_index}"]["query"]
-        pipeline = f[f"q{pipeline_index}"]["pipeline"]
-            
-        if self.mode == "chain_of_tables":
-            pipeline = "pipelines_bird/chain_of_tables" + pipeline[len("pipelines_bird"):]
-        pipeline_text = open(pipeline).read()
-        
-        return [query, pipeline_text]
-    
-    def get_example_wrong_combinatory(self, pipeline_index, pipeline_index_2):
-        f = json.load(open("queries/queries_pipelines_human_resources.json"))
-        
-        query = f[f"q{pipeline_index}"]["query"]
-        pipeline = f[f"q{pipeline_index}"]["pipeline"]
-        query_2 = f[f"q{pipeline_index_2}"]["query"]
-        pipeline_2 = f[f"q{pipeline_index_2}"]["pipeline"]
-            
-        if self.mode == "chain_of_tables":
-            pipeline = "pipelines_bird/chain_of_tables" + pipeline[len("pipelines_bird"):]
-        pipeline_text = open(pipeline).read()
-        pipeline_text_2 = open(pipeline_2).read()
-        
-        return [(query, query_2), (pipeline_text, pipeline_text_2)]
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -267,7 +208,8 @@ class LLMAgent:
         call_parameters_list = []
         if sql != None:
             query_services_list = extract_tables(sql)
-            print(f"Tables find from sql are: {query_services_list}")
+            if self.verbose:
+                print(f"Tables find from sql are: {query_services_list}")
         for data_service in data_services_all:
             if self.automatic:
                 data_service_name = data_service[len(f"data_service_bird_automatic/train_databases/{self.database}/data_services/"):-3]
@@ -294,18 +236,13 @@ class LLMAgent:
                 
         return data_services, data_services_list, query_services_list, call_parameters_list
     
-    def get_relevant_document(self, query):
-        document = self.document_manager.extract_document(query)
-        return document
-    
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
         document_str = self.sep.join([f"{key}: {value}" for key, value in document.items()])
         return document_str
 
-    def save_intermediate_result_to_json(self, pipeline, data_services, pipeline_index = None, pipeline_index_2 = None) -> str:
+    def save_intermediate_result_to_json(self, pipeline, data_services) -> str:
         file_to_save = ""
-        print(f"dataservices : {data_services}")
         
         modules = []
         classes = []
@@ -327,8 +264,7 @@ class LLMAgent:
         
         file_to_save += f"{new_pipeline}\n"
 
-        if pipeline_index == None:
-            main_function = f"""
+        main_function = f"""
 if __name__ == "__main__":
     result = pipeline_function()
     import json
@@ -340,216 +276,13 @@ if __name__ == "__main__":
     result = tabulate(result, headers='keys', tablefmt='psql')
     print(result)
     """
-        elif pipeline_index_2 == None:
-            main_function = f"""
-if __name__ == "__main__":
-    result = pipeline_function()
-    import json
-    import pandas as pd
-    with open("result_{pipeline_index}.json", "w") as f:
-        json.dump(result, f, indent=4)
-    result = pd.DataFrame(result)
-    from tabulate import tabulate
-    result = tabulate(result, headers='keys', tablefmt='psql')
-    print(result)
-    """
-        else:
-            main_function = f"""
-if __name__ == "__main__":
-    result = pipeline_function()
-    import json
-    import pandas as pd
-    with open("results/result_{pipeline_index}_{pipeline_index_2}.json", "w") as f:
-        json.dump(result, f, indent=4)
-    result = pd.DataFrame(result)
-    from tabulate import tabulate
-    result = tabulate(result, headers='keys', tablefmt='psql')
-    print(result)
-    """
+        
         file_to_save += main_function
 
         with open(INTERMEDIATE_RESULTS_FILEPATH, "w") as f:
             f.write(file_to_save)
     
-    def save_advice(self, advice, pipeline_index):
-        if pipeline_index != None:
-            with open("advice.json", "w") as f:
-                json.dump(json.loads(advice), f, indent=4)
-        else:
-            with open(f"advice_{pipeline_index}.json", "w") as f:
-                json.dump(json.loads(advice), f, indent=4)
-            
-    def chain_of_thoughs(self, x, generator_chain_output, pipeline_index = None):
-        suggestor_chain = self.suggestor.get_chain()
-        suggestor_chain_output = {
-            "pipeline": suggestor_chain,
-            "inputs": RunnablePassthrough()
-        }
-        
-        chain = ( 
-                 suggestor_chain_output
-                 |
-                 RunnableParallel(
-                    gen = RunnableLambda(lambda x: {
-                        "query": x["inputs"]["query"],
-                        "evidence": x["inputs"]["evidence"],
-                        "data_services": x["inputs"]["data_services"],
-                        "data_services_list": x["inputs"]["data_services_list"],
-                        "example_query": x["inputs"]["example_query"],
-                        "example_pipeline": x["inputs"]["example_pipeline"],
-                        "advices" : x["pipeline"][1]
-                    }),
-                    exe = RunnableLambda(lambda x:
-                        self.save_advice(x["pipeline"][1], pipeline_index)
-                    )
-                )
-                | RunnableLambda(lambda x: {
-                        "query": x["gen"]["query"],
-                        "evidence": x["gen"]["evidence"],
-                        "data_services": x["gen"]["data_services"],
-                        "data_services_list": x["gen"]["data_services_list"],
-                        "example_query": x["gen"]["example_query"],
-                        "example_pipeline": x["gen"]["example_pipeline"],
-                        "advices" : x["gen"]["advices"]
-                    })
-                | generator_chain_output
-        )
-        
-        return chain.invoke(x)
-    
-    def chain_of_tables(self, x, generator_chain_output):
-        
-        x["action"] = "NONE"
-        x["pipeline"] = ""
-        
-        chain = ( 
-                 generator_chain_output
-                 | RunnableBranch(
-                    (lambda x: x["pipeline"][0] != "STOP", lambda x: {
-                        "query": x["inputs"]["query"],
-                        "evidence": x["inputs"]["evidence"],
-                        "data_services": x["inputs"]["data_services"],
-                        "data_services_list": x["inputs"]["data_services_list"],
-                        "example_query": x["inputs"]["example_query"],
-                        "example_pipeline": x["inputs"]["example_pipeline"],
-                        "pipeline" : x["pipeline"][1],
-                        "action" : x["pipeline"][0]
-                        }),
-                    lambda x: {
-                        "inputs": x["inputs"],
-                        "action" : x["pipeline"][0]
-                        }
-                    )
-        )
-        
-        while x["action"] != "STOP":   
-            print("**********************")
-            print(f"Last action is: {x['action'].strip()}")            
-            print(f"Actual pipeline is: {x['pipeline']}")
-            x = chain.invoke(x)
-        
-        return x
-    
-    def chain_of_error(self, x, generator_chain_output, runner_chain_output):
-        
-        first = True
-        
-        self.first_trier = PipelineGeneratorAgent(self.key, mode="standard")
-        
-        first_trier_chain_output = {
-            "pipeline": self.first_trier.get_chain(),
-            "inputs": RunnablePassthrough()
-        }
-        
-        chain = ( 
-                 RunnableBranch(
-                    (lambda x: first, lambda x: self.run_chain(x, first_trier_chain_output)),
-                    lambda x: self.run_chain(x, generator_chain_output)
-                 )
-                 | RunnableParallel(
-                    gen = RunnableLambda(lambda x: {
-                        "query": x["inputs"]["query"],
-                        "evidence": x["inputs"]["evidence"],
-                        "data_services": x["inputs"]["data_services"],
-                        "data_services_list": x["inputs"]["data_services_list"],
-                        "example_query": x["inputs"]["example_query"],
-                        "example_pipeline": x["inputs"]["example_pipeline"],
-                        "pipeline": x["pipeline"][1].strip()[len("python"):].strip(),
-                        "analysis": x["pipeline"][0]
-                    }),
-                    exe = RunnableLambda(lambda x:
-                        self.save_intermediate_result_to_json(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["data_services_list"])
-                )
-                )
-                | RunnableLambda(lambda x: {
-                    "inputs": x,
-                    "pipeline_filepath": str(INTERMEDIATE_RESULTS_FILEPATH)
-                })
-                | RunnableParallel(
-                    inputs = RunnableLambda(lambda x: {
-                        "query": x["inputs"]["gen"]["query"],
-                        "evidence": x["inputs"]["gen"]["evidence"],
-                        "data_services": x["inputs"]["gen"]["data_services"],
-                        "data_services_list": x["inputs"]["gen"]["data_services_list"],
-                        "example_query": x["inputs"]["gen"]["example_query"],
-                        "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
-                        "pipeline": x["inputs"]["gen"]["pipeline"],
-                        "analysis": x["inputs"]["gen"]["analysis"],
-                    }),
-                    output = runner_chain_output
-                )
-                | RunnableLambda(lambda x: {
-                    "query": x["inputs"]["query"],
-                    "evidence": x["inputs"]["evidence"],
-                    "data_services": x["inputs"]["data_services"],
-                    "data_services_list": x["inputs"]["data_services_list"],
-                    "example_query": x["inputs"]["example_query"],
-                    "example_pipeline": x["inputs"]["example_pipeline"],
-                    "pipeline": x["inputs"]["pipeline"],
-                    "analysis": x["inputs"]["analysis"],
-                    "output": x["output"]["output"],
-                })
-            )
-        
-        for i in range (0,3):   
-            x = chain.invoke(x)
-            analysis = x['analysis'].strip()
-            
-            if x['output'][0] == "+":
-                x["inputs"] = {
-                    "query" : x["query"],
-                    "evidence" : x["evidence"],
-                    "data_services" : x["data_services"],
-                    "data_services_list": x["data_services_list"],
-                    "example_query" : x["example_query"],
-                    "example_pipeline" : x["example_pipeline"],
-                }
-                x["pipeline"] = [None, x["pipeline"]]
-                x["pipeline"][1] = "python" + x["pipeline"][1]
-                break
-            else:
-                print("**********************")
-                print(f"Last analysis is: {analysis}")            
-                print(f"Last pipeline is: {x['pipeline']}")        
-                print(f"Output 0: {x['output'][0]}")  
-                print("------------------------ OUTPUT -----------------")   
-                print(x["output"])   
-                first = False
-        
-        x["inputs"] = {
-            "query" : x["query"],
-            "evidence" : x["evidence"],
-            "data_services" : x["data_services"],
-            "data_services_list": x["data_services_list"],
-            "example_query" : x["example_query"],
-            "example_pipeline" : x["example_pipeline"],
-        }
-        x["pipeline"] = [None, x["pipeline"]]
-        x["pipeline"][1] = "python" + x["pipeline"][1]
-                
-        return x
-    
-    def chain_view(self, database, x, generator_output_chain, pipeline_index_2 = None):
+    def chain_view(self, database, x, generator_output_chain):
         database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
         data_samples = []
         for table in database['tables']:
@@ -561,13 +294,6 @@ if __name__ == "__main__":
             )
             
         x["data_samples"] = data_samples
-        
-        if pipeline_index_2 != None:
-            #print("separating examples")
-            x["example_query_1"] = x["example_query"][0]
-            x["example_query_2"] = x["example_query"][1]
-            x["example_pipeline_1"] = x["example_pipeline"][0]
-            x["example_pipeline_2"] = x["example_pipeline"][1]
         
         return self.run_chain(x, generator_output_chain)
     
@@ -585,16 +311,14 @@ if __name__ == "__main__":
         else:
             further_evidence = "Salaries may be strings needing to be parsed."
             new_evidence =  query_evidence + "\n" + further_evidence
-            print(new_evidence)
+            if self.verbose:
+                print(f"Added evidence: {new_evidence}")
             return new_evidence
         
-    def get_chain(self, pipeline_index = None, pipeline_index_2 = None) -> Runnable:
-        
-        print(self.mode)
-        print(self.second_mode)
+    def get_chain(self) -> Runnable:
         
         generator_chain = self.generator.get_chain()
-        runner_chain = self.runner.get_chain(pipeline_index, pipeline_index_2)
+        runner_chain = self.runner.get_chain()
         
         generator_chain_output = {
             "pipeline": generator_chain,
@@ -611,19 +335,16 @@ if __name__ == "__main__":
                 "query": x["query"],
                 "evidence": x["evidence"],
                 "ground_truth": x["ground_truth"],
-                "pipeline_search": self.pipeline_manager.pipeline_store.search(x["query"]),
                 }
             )
             | RunnableBranch( 
                 (lambda x: self.services_mode == "ground_truth", lambda x : {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
-                    "example": ["", ""],
                     "data_services": self.get_data_services(sql = x["ground_truth"])
                 }), lambda x : {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
-                    "example": self.get_example(x["pipeline_search"]["output"], pipeline_index, pipeline_index_2),
                     "data_services": self.get_data_services()
                 }
                 
@@ -636,15 +357,10 @@ if __name__ == "__main__":
                     "data_services_list": x["data_services"][1],
                     "data_services_list_names": x["data_services"][2],
                     "call_parameters": x["data_services"][3],
-                    "example_query": x["example"][0],
-                    "example_pipeline": x["example"][1],
                 }
             )
             | RunnableBranch(
-                (lambda x: self.mode == "chain_of_thoughs", lambda x: self.chain_of_thoughs(x, generator_chain_output)),
-                (lambda x: self.mode == "chain_of_tables", lambda x: self.chain_of_tables(x, generator_chain_output)),
-                (lambda x: self.mode == "chain_of_error", lambda x: self.chain_of_error(x, generator_chain_output, runner_chain_output)),
-                (lambda x: self.mode in ["wo_pipeline_view", "standard_view"], lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output, pipeline_index_2)),
+                (lambda x: self.mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableLambda (
@@ -653,8 +369,6 @@ if __name__ == "__main__":
                     "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
                     "data_services_list": x["inputs"]["data_services_list"],
-                    "example_query": x["inputs"]["example_query"],
-                    "example_pipeline": x["inputs"]["example_pipeline"],
                     "pipeline": self.correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"])
                 }
             )
@@ -663,12 +377,10 @@ if __name__ == "__main__":
                     "query": x["query"],
                     "evidence": x["evidence"],
                     "data_services": x["data_services"],
-                    "example_query": x["example_query"],
-                    "example_pipeline": x["example_pipeline"],
                     "pipeline": x["pipeline"]
                 }),
                 exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"], x["data_services_list"], pipeline_index, pipeline_index_2)
+                    self.save_intermediate_result_to_json(x["pipeline"], x["data_services_list"])
                 )
             )
             | RunnableLambda(lambda x: {
@@ -680,8 +392,6 @@ if __name__ == "__main__":
                     "query": x["inputs"]["gen"]["query"],
                     "evidence": x["inputs"]["gen"]["evidence"],
                     "data_services": x["inputs"]["gen"]["data_services"],
-                    "example_query": x["inputs"]["gen"]["example_query"],
-                    "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
                     "pipeline": x["inputs"]["gen"]["pipeline"],
                 }),
                 output = runner_chain_output
@@ -690,8 +400,6 @@ if __name__ == "__main__":
                 "query": x["inputs"]["query"],
                 "evidence": x["inputs"]["evidence"],
                 "data_services": x["inputs"]["data_services"],
-                "example_query": x["inputs"]["example_query"],
-                "example_pipeline": x["inputs"]["example_pipeline"],
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
@@ -701,106 +409,7 @@ if __name__ == "__main__":
         # return the chain
         return chain
     
-    def get_chain_all(self, num_of_pipelines):
-        chains = []
-        for pipe in range(num_of_pipelines):
-            chains.append(self.get_chain(pipe))
-        return chains
-    
-    def get_chain_combinatory(self, num_of_pipelines):
-        chains = []
-        for pipe in range(num_of_pipelines):
-            chains_2 = []
-            for pipe_2 in range(num_of_pipelines):
-                if pipe == pipe_2:
-                    continue
-                chains_2.append(self.get_chain(pipe, pipe_2))
-            chains.append(chains_2)
-        return chains
-    
-    def get_chain_wrong(self) -> Runnable:
-        generator_chain = self.generator.get_chain()
-        runner_chain = self.runner.get_chain()
-
-        generator_chain_output = {
-            "pipeline": generator_chain,
-            "inputs": RunnablePassthrough()
-        }
-
-        runner_chain_output = {
-            "output": runner_chain,
-            "inputs": RunnablePassthrough()
-        }
-
-        chain = (
-            RunnableLambda(lambda x: {
-                "query": x,
-                "pipeline_search": self.pipeline_manager.pipeline_store.search(x),
-                }
-            )
-            | RunnableLambda( 
-                lambda x: {
-                    "query": x["query"],
-                    "example": self.get_example_wrong(x["pipeline_search"]["output"]),
-                    "data_services": self.get_data_services()
-                }
-            )
-            | RunnableLambda( 
-                lambda x: {
-                    "query": x["query"],
-                    "data_services": x["data_services"][0],
-                    "data_services_list": x["data_services"][1],
-                    "example_query": x["example"][0],
-                    "example_pipeline": x["example"][1],
-                }
-            )
-            | generator_chain_output
-            | RunnableParallel(
-                gen = RunnableLambda(lambda x: {
-                    "query": x["inputs"]["query"],
-                    "data_services": x["inputs"]["data_services"],
-                    "example_query": x["inputs"]["example_query"],
-                    "example_pipeline": x["inputs"]["example_pipeline"],
-                    "pipeline": x["pipeline"]
-                }),
-                exe = RunnableLambda(lambda x:
-                    self.save_intermediate_result_to_json(x["pipeline"], x["inputs"]["data_services_list"])
-                )
-            )
-            | RunnableLambda(lambda x: {
-                "inputs": x,
-                "pipeline_filepath": str(INTERMEDIATE_RESULTS_FILEPATH)
-            })
-            | RunnableParallel(
-                inputs = RunnableLambda(lambda x: {
-                    "query": x["inputs"]["gen"]["query"],
-                    "data_services": x["inputs"]["gen"]["data_services"],
-                    "example_query": x["inputs"]["gen"]["example_query"],
-                    "example_pipeline": x["inputs"]["gen"]["example_pipeline"],
-                    "pipeline": x["inputs"]["gen"]["pipeline"],
-                }),
-                output = runner_chain_output
-            )
-            | RunnableLambda(lambda x: {
-                "query": x["inputs"]["query"],
-                "data_services": x["inputs"]["data_services"],
-                "example_query": x["inputs"]["example_query"],
-                "example_pipeline": x["inputs"]["example_pipeline"],
-                "pipeline": x["inputs"]["pipeline"],
-                "output": x["output"]["output"],
-            })
-        )
-
-        # return the chain
-        return chain
-    
     def get_chain_truth(self) -> Runnable:
-        
-        def stripAndPrint(x):
-            y = x['tools'][1].strip()
-            print(x)
-            print(y)
-            return y
         
         generator_chain = self.generator.get_chain()
         
@@ -827,7 +436,7 @@ if __name__ == "__main__":
             | generator_chain_output
             | RunnableLambda(
                 lambda x: {
-                    "output" : stripAndPrint(x),
+                    "output" : x['tools'][1].strip(),
                     "ground_truth": x['inputs']['data_services_list']
                 }
             )
@@ -838,13 +447,11 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     database="european_football_1"
-    model = "GPT"
-    #mode = "wo_pipeline_view"
-    mode = "check_ground_truth"
-    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", automatic=True, database="european_football_1")
+    model = "Mistral"
+    mode = "wo_pipeline_view"
+    #mode = "check_ground_truth"
     
     test_mode = "bird" # test or bird
-    
     if test_mode == "test":
         q = "q5"
         with open("queries/queries_pipelines_human_resources.json", "r") as f:
@@ -858,11 +465,15 @@ if __name__ == "__main__":
         
     sql = queries[q]["SQL"]
     
+    
+    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", automatic=True, database="european_football_1", verbose=False)
+    
     input_file = {
         "query" : query,
         "evidence" : queries[q]["evidence"],
         "ground_truth" : sql
     }
+    
     print(f"Natural language query is: {query}")
     if sql != "":
         print(f"SQL query is: {sql}")
@@ -871,4 +482,5 @@ if __name__ == "__main__":
         result = llm.get_chain_truth().invoke(input_file)
     else:
         result = llm.get_chain().invoke(input_file)
+    
     print(result["output"])

@@ -27,33 +27,15 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, model, key, mode = "standard", combinatory = False):
+    def __init__(self, model, key, mode = "standard"):
         """Initialize the agent."""
         # define the prompt
-        if combinatory:
-            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW_COMBINATORY
-        elif mode == "standard":
-            prompt_template = TEMPLATE_WITH_DOCUMENT
-        elif mode == "standard_view":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW
-        elif mode == "standard_view_wrong":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_VIEW
-        elif mode == "chain_of_error":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_RETRY
-        elif mode == "chain_of_tables":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_TABLES
-        elif mode == "chain_of_thoughs_post":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_POST_REASONING
-        elif mode == "chain_of_thoughs":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_PRE_REASONING
-        elif mode == "check_ground_truth":
+        if mode == "check_ground_truth":
             prompt_template = TEMPLATE_WITH_DOCUMENT_TOOLS
         elif mode == "wo_pipeline_view":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE_BUT_VIEW
         elif mode == "wo_pipeline":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE
-        elif mode == "wrong":
-            prompt_template = TEMPLATE_WITH_DOCUMENT
         else:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)

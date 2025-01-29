@@ -5,6 +5,7 @@ import time
 import pandas as pd
 
 from data_service_bird.database import GetDataFromDatabase
+from result_averager import average_results
 
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
@@ -25,7 +26,7 @@ def run_evaluation_ground_truth(database, model, automatic):
             "ground_truth" : sql
         }
         question = query["question"]
-        print(question)
+        print(f"Question is: {question}")
         res = llm_chain.invoke(input_file)
         res_eval.append([index, res["output"], res["ground_truth"]])
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
@@ -34,18 +35,6 @@ def run_evaluation_ground_truth(database, model, automatic):
 def evaluate_ground_truth(database, model):
     metrics_res = []
     eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{model}.csv")
-    
-    def modify_tools_prediction(row):
-        # Convert string to list
-        try:
-            words = row[1:-1].split(",")
-            # Add double quotes to each word
-            modified = [word.strip() for word in words]
-            # Convert back to string
-            return modified
-        except Exception as e:
-            print(f"Error processing row: {row}, error: {e}")
-            return []
 
     for index, line in eval_results.iterrows():
         ground_truth = ast.literal_eval(line["ground_truth"])
@@ -66,16 +55,18 @@ def evaluate_ground_truth(database, model):
         metrics_res.append([index, accuracy, recall])
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
-    metrics_res.to_csv(f"evaluation/metrics_results_check_ground_truth_{database}_{model}.csv", sep=',', index=False)
+    averages = average_results(metrics_res)
+    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{database}_{model}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{database}_{model}.csv", sep=',', index=False)
+    print("Detailed metrics are:")
     print(metrics_res)
+    print("Summarized metrics are:")
+    print(averages)
         
 
 def run_evaluation(database, model, mode, second_mode, services_mode = None, automatic=False):
     llm = LLMAgent(model, mode, second_mode, services_mode = services_mode, automatic=automatic, database=database)
-    if mode == "wrong":
-        llm_chain = llm.get_chain_wrong()
-    else:
-        llm_chain = llm.get_chain()
+    llm_chain = llm.get_chain()
 
     main_queries = json.load(open(f"queries/test/{database}.json"))
 
@@ -90,33 +81,23 @@ def run_evaluation(database, model, mode, second_mode, services_mode = None, aut
             "ground_truth" : sql
         }
         question = query["question"]
-        print(question)
+        print(f"Question is: {question}")
         try:
             res = llm_chain.invoke(input_file)
 
             data_services = res['data_services']
             pipeline =  res["pipeline"]
             output = res["output"]
-
-            example_query = res["example_query"]
-            example_pipeline = res["example_pipeline"]
             
-            try:
-                advice = json.loads(open("advice.json", "r").read())
-            except:
-                advice = "No advice or error"
             output_json = json.loads(open("result.json", "r").read())
 
-            res_elem = [index, question, sql, data_services, advice, pipeline, output, output_json, example_query, example_pipeline]
+            res_elem = [index, question, sql, data_services, pipeline, output, output_json]
         except Exception as e:
             print(f"Error in query {index}: {e}")
-            res_elem = [index, question, sql, None, None, None, None, None, None, None]
+            res_elem = [index, question, sql, None, None, None, None]
         res_eval.append(res_elem)
-        
-        if model == "Mistral":
-            time.sleep(1)
 
-    res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "advice", "pipeline", "output", "output_json", "example_query", "example_pipeline"])
+    res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "pipeline", "output", "output_json"])
     res_df.to_csv(f"evaluation/evaluation_results_{database}_{model}_{mode}.csv", sep=',', index=False)
 
 
@@ -145,6 +126,7 @@ def evaluate_results(database, model, mode, automatic):
             output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
             pattern = r'(".+\$)".+"'
             output_json = re.sub(pattern, r'\1.+"', output_json)
+        print("Raw JSON output is:")
         print(output_json)
         if output_json != "":
             try:
@@ -165,7 +147,7 @@ def evaluate_results(database, model, mode, automatic):
                 df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
                 del df2["fullname"]
                 print(f"Changed {words[0][0]}")
-                print(df2)
+                #print(df2)
         
         df1.name = "table_1"
         df2.name = "table_2"
@@ -185,8 +167,13 @@ def evaluate_results(database, model, mode, automatic):
         metrics_res.append(metrics_res_q_idx)
 
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "precision", "recall", "acc_cell", "acc_row"])
-    metrics_res.to_csv(f"evaluation/metrics_results_{model}_{mode}.csv", sep=',', index=False)
+    averages = average_results(metrics_res)
+    metrics_res.to_csv(f"evaluation/metrics_results_{database}_{model}_{mode}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_{database}_{model}_{mode}.csv", sep=',', index=False)
+    print("Detailed metrics are:")
     print(metrics_res)
+    print("Summarized metrics are:")
+    print(averages)
     return
 
 if __name__ == "__main__":
@@ -197,23 +184,12 @@ if __name__ == "__main__":
     #database="european_football_1"
     automatic = False
     
-    with open("advice.json", "w") as file:
-    # Use the `truncate()` method to clear the file's content
-        file.truncate()
     with open("result.json", "w") as file:
     # Use the `truncate()` method to clear the file's content
         file.truncate()
-        
-    '''modes = ["standard", "wo_pipeline", "wrong"]
-    for mode in modes:
-        run_evaluation(mode)
-        evaluate_results(mode)
-    
-    evaluate_results("copilot")'''
     
     #run_evaluation_ground_truth(database, model, automatic=automatic)
     #evaluate_ground_truth(database, model)
-    
     
     modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
