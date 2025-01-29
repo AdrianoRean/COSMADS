@@ -18,14 +18,6 @@ class GetDataFromEmployee:
         The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand. To be parsed as number, it is needed to eliminate those elements.
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.""",
-
-        "useful_info": """
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        - If all attributes are left undeclared, it returns all the available data.
-        - You cannot pass a list as value for the attributes.
-        - Sometimes data may have missing values.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
         
         "usage_example": """
         # If I want to obtain all the information from the employee with ssn 123 I can write:

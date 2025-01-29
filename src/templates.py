@@ -1,3 +1,32 @@
+DATA_SERVICE_SECTION = """
+Each tool is represented by a JSON string having the following structure:
+{{
+    "name": <name>,
+    "brief_description": <brief_description>,
+    "detailed_description": <description>,
+    "usage_example": <usage_example>,
+    "input_parameters": <input_parameters>,
+    "output_values": <output_values>,
+    "module": <module>
+}}
+where:
+    - <name> is the name of the callable python class
+    - <brief_description> is a string representing a brief description of the callable python class
+    - <detailed_description> is a string representing a detailed description of the callable python class
+    - <usage_example> is a multiline string which contains an example on how to use the tool
+    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
+    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
+    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+
+All tools share the following useful informations:
+    - You may select data trough any combination of this attributes. They are all optional.
+    - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
+    - If all attributes are left undeclared, it returns all the available data.
+    - You cannot pass a list as value for the attributes.
+    - Sometimes data may have missing values.
+    - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.
+"""
+
 TEMPLATE_WITH_DOCUMENT_TOOLS = """
 You are a proficient python developer is able to code a python function that solves a natural language query.
 
@@ -11,24 +40,7 @@ Your goal is to determine which of the following tools should be used to generat
 ======
 {data_services}
 ======
-Each tool is represented by a JSON string having the following structure:
-{{
-    "name": <name>,
-    "brief_description": <brief_description>,
-    "detailed_description": <description>,
-    "useful_info": <useful_info>,
-    "usage_example": <usage_example>,
-    "input_parameters": <input_parameters>,
-    "output_values": <output_values>,
-    "module": <module>
-}}
-where:
-    - <name> is the name of the callable python class
-    - <brief_description> is a string representing a brief description of the callable python class
-    - <detailed_description> is a string representing a detailed description of the callable python class
-    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
-    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
-    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+{DATA_SERVICE_SECTION}
     
 You have been provided also some evidence to help you in your task.
 ======
@@ -62,24 +74,7 @@ Your goal is to generate a valid Python function that correctly generates the da
 ======
 {data_services}
 ======
-Each tool is represented by a JSON string having the following structure:
-{{
-    "name": <name>,
-    "brief_description": <brief_description>,
-    "detailed_description": <description>,
-    "useful_info": <useful_info>,
-    "usage_example": <usage_example>,
-    "input_parameters": <input_parameters>,
-    "output_values": <output_values>,
-    "module": <module>
-}}
-where:
-    - <name> is the name of the callable python class
-    - <brief_description> is a string representing a brief description of the callable python class
-    - <detailed_description> is a string representing a detailed description of the callable python class
-    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
-    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
-    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.    
+{DATA_SERVICE_SECTION}
 
 You have been provided also some evidence to help you in your task.
 ======
@@ -130,26 +125,9 @@ Your goal is to generate a valid Python function that correctly generates the da
 ======
 {data_services}
 ======
-Each tool is represented by a JSON string having the following structure:
-{{
-    "name": <name>,
-    "brief_description": <brief_description>,
-    "detailed_description": <description>,
-    "useful_info": <useful_info>,
-    "usage_example": <usage_example>,
-    "input_parameters": <input_parameters>,
-    "output_values": <output_values>,
-    "module": <module>
-}}
-where:
-    - <name> is the name of the callable python class
-    - <brief_description> is a string representing a brief description of the callable python class
-    - <detailed_description> is a string representing a detailed description of the callable python class
-    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
-    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
-    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.    
+{DATA_SERVICE_SECTION}
 
-    You have been provided also some evidence to help you in your task.
+You have been provided also some evidence to help you in your task.
 ======
 {evidence}
 ======

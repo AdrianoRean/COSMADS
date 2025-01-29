@@ -20,12 +20,6 @@ class GetDataFromLocation:
         The attribute "zipcode" is the postal code of the office.
         The attribute "officephone" is the telephone number of the office.""",
 
-        "useful_info": """
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
-
         "usage_example":"""
         # If I want to obtain all the information from the office with locationID 123 I can write:
         locationID = (123, "EQUAL")

@@ -10,6 +10,7 @@ import os
 import json
 import pandas as pd
 import sqlite3
+from templates import DATA_SERVICE_SECTION
 
 DATA_SERVICE_EXAMPLE = """
         "brief_description": "Data service that provides data in a dataframe format about employees, their personal data and jobs.",
@@ -22,14 +23,6 @@ DATA_SERVICE_EXAMPLE = """
         The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand. To be parsed as number, it is needed to eliminate those elements.
         The attriute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.\"\"\",
-
-        "useful_info": \"\"\"
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        - If all attributes are left undeclared, it returns all the available data.
-        - You cannot pass a list as value for the attributes.
-        - Sometimes data may have missing values.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.\"\"\",
         
         "usage_example": \"\"\"
         - If I want to obtain all the information from the employee with ssn 123 I can write:
@@ -57,24 +50,7 @@ Here an example of such wrapper:
 ======
 {data_service_example}
 ======
-Each wrapper is represented by a JSON string having the following structure:
-{{
-    "name": <name>,
-    "brief_description": <brief_description>,
-    "detailed_description": <description>,
-    "useful_info": <useful_info>,
-    "usage_example": <usage_example>,
-    "input_parameters": <input_parameters>,
-    "output_values": <output_values>,
-    "module": <module>
-}}
-where:
-    - <name> is the name of the callable python class
-    - <brief_description> is a string representing a brief description of the callable python class
-    - <detailed_description> is a string representing a detailed description of the callable python class
-    - <input_parameters> is the list of input parameters of the data service, separated by a comma. Each input parameter has the following structure <name>:<type> where <name> is the name of the input parameter and <type> is the type of the input parameter. 
-    - <output_values> is the list of output values of the data service, separated by a comma. Each output value has the following structure <name>:<type> where <name> is the name of the output value and <type> is the type of the output value.
-    - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
+{DATA_SERVICE_SECTION}
     
 Here there is the list of tables of the database with their details:
 ======
@@ -121,14 +97,6 @@ class GetDataFrom{function_name}:
         "brief_description": \"\"\"{brief_description}\"\"\",
         
         "detailed_description": \"\"\"{detailed_description}\"\"\",
-        
-        "useful_info": \"\"\"
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        - If all attributes are left undeclared, it returns all the available data.
-        - You cannot pass a list as value for the attributes.
-        - Sometimes data may have missing values.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.\"\"\",
 
         "usage_example": \"\"\"{example_usage}\"\"\",
         
@@ -324,7 +292,8 @@ class DataServiceGenerator:
                     lambda x: {
                         "database_name": x[0],
                         "database_table_list": x[1],
-                        "data_service_example": x[2]
+                        "data_service_example": x[2],
+                        "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                     }
                 )
                 | generator_chain_output

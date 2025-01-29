@@ -20,12 +20,6 @@ class GetDataFromPosition:
         The attribute "maxsalary" is maximum salary that an employee with this job position can have.
         The term "job position" and "position title" are often used interchangeably.""",
 
-        "useful_info": """
-        - You may select data trough any combination of this attributes. They are all optional.
-        - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
-        - If all attributes are left undeclared, it returns all the available data.
-        - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.""",
-
         "usage_example":"""
         #If I want to obtain all the information from the job position with positionID 123 I can write:
         positionID = (123, "EQUAL")

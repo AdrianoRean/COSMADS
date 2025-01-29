@@ -12,6 +12,7 @@ import re
 from transformers import BertTokenizer, BertModel
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
+from templates import DATA_SERVICE_SECTION
 
 # append the path to the parent directory to the system path
 import sys
@@ -43,7 +44,7 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, automatic=False, database="human_resources", verbose = False):
+    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
         dotenv.load_dotenv()
         if model == "GPT":
             self.key = os.getenv("OPENAI_API_KEY")
@@ -57,6 +58,7 @@ class LLMAgent:
         self.database = database
         self.automatic = automatic
         
+        self.similarity_treshold = similarity_treshold
         self.verbose = verbose
         
         self.generator = PipelineGeneratorAgent(model, self.key, mode=mode)
@@ -357,6 +359,7 @@ if __name__ == "__main__":
                     "data_services_list": x["data_services"][1],
                     "data_services_list_names": x["data_services"][2],
                     "call_parameters": x["data_services"][3],
+                    "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
             )
             | RunnableBranch(
@@ -369,7 +372,7 @@ if __name__ == "__main__":
                     "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
                     "data_services_list": x["inputs"]["data_services_list"],
-                    "pipeline": self.correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"])
+                    "pipeline": self.correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"], similarity_treshold=self.similarity_treshold)
                 }
             )
             | RunnableParallel(
@@ -466,7 +469,7 @@ if __name__ == "__main__":
     sql = queries[q]["SQL"]
     
     
-    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", automatic=True, database="european_football_1", verbose=False)
+    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", similarity_treshold=0.9, automatic=True, database="european_football_1", verbose=False)
     
     input_file = {
         "query" : query,
