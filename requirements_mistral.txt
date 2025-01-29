@@ -1,0 +1,17 @@
+langchain
+langchain-community
+langchain_mistralai
+langserve[all]
+langsmith
+docarray
+tiktoken
+pandas
+tabulate
+codebleu
+tqdm
+scikit-learn
+python-dotenv
+valentine
+yake
+transformers
+torch

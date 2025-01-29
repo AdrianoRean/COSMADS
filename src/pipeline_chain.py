@@ -1,9 +1,8 @@
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-#from langchain_openai import ChatOpenAI
-from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from templates import *
+from model import getModel
 
 class CustomOutputParser(BaseOutputParser):
     """The output parser for the LLM."""
@@ -40,14 +39,7 @@ class PipelineGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        if model == "GPT":
-            self.llm = ChatOpenAI(model="gpt-4o",
-                                api_key=key,
-                                temperature=0.0)
-        elif model == "Mistral":
-            self.llm = ChatMistralAI(model="mistral-large-latest",
-                                api_key=key,
-                                temperature=0.0)
+        self.llm = getModel(model, key)
         # define the output parser
         self.output_parser = CustomOutputParser()
 
@@ -58,12 +50,17 @@ class PipelineGeneratorAgent:
 
 
 if __name__ == "__main__":
-    generator = PipelineGeneratorAgent()
+    import os
+    import dotenv
+    dotenv.load_dotenv()
+    generator = PipelineGeneratorAgent(model="Mistral", key=os.getenv("MISTRAL_API_KEY"), mode="wo_pipeline")
     chain = generator.get_chain()
     
     query ={
         "query": "Generate a table containing the max speed of the diemachine with id 25 over a time span of 30 seconds.",
-        "data_services": []
+        "data_services": [],
+        "evidence" : "",
+        "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
     }
 
     result = chain.invoke(query)

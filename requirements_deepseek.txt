@@ -1,7 +1,5 @@
-pydantic
 langchain
 langchain-community
-langchain_mistralai
 langserve[all]
 langsmith
 docarray
@@ -16,3 +14,4 @@ valentine
 yake
 transformers
 torch
+langchain-deepseek-official

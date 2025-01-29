@@ -46,10 +46,7 @@ def extract_tables(sql_query):
 class LLMAgent:
     def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
         dotenv.load_dotenv()
-        if model == "GPT":
-            self.key = os.getenv("OPENAI_API_KEY")
-        elif model == "Mistral":
-            self.key = os.getenv("MISTRAL_API_KEY")
+        self.key = os.getenv(f"{model.upper()}_API_KEY")
         print(f"Mode is: {mode}")
         self.mode = mode
         self.second_mode = second_mode
@@ -348,8 +345,7 @@ if __name__ == "__main__":
                     "query": x["query"],
                     "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services()
-                }
-                
+                }   
             )
             | RunnableLambda( 
                 lambda x: {
@@ -450,7 +446,7 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     database="european_football_1"
-    model = "Mistral"
+    model = "Deepseek"
     mode = "wo_pipeline_view"
     #mode = "check_ground_truth"
     
@@ -461,7 +457,7 @@ if __name__ == "__main__":
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 45
+        q = 40
         with open(f"queries/test/{database}.json", "r") as f:
             queries = json.load(f)
             query = queries[q]["question"]

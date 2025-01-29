@@ -180,7 +180,7 @@ if __name__ == "__main__":
     
     model="Mistral"
     print(f"Model: {model}")
-    database="human_resources"
+    databases=["human_resources"]
     #database="european_football_1"
     automatic = False
     
@@ -194,7 +194,8 @@ if __name__ == "__main__":
     modes = ["wo_pipeline_view"]
     second_mode = "added_evidence"
     for mode in modes:
-        run_evaluation(database, model, mode, second_mode, services_mode="ground_truth", automatic=automatic)
-        evaluate_results(database, model, mode, automatic=automatic)
+        for database in databases:
+            run_evaluation(database, model, mode, second_mode, services_mode="ground_truth", automatic=automatic)
+            evaluate_results(database, model, mode, automatic=automatic)
         pass
     

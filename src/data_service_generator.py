@@ -1,8 +1,6 @@
 import ast
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import BaseOutputParser
-#from langchain_openai import ChatOpenAI
-from langchain_mistralai import ChatMistralAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain.schema.runnable import Runnable, RunnableLambda, RunnablePassthrough
 import dotenv
@@ -11,6 +9,7 @@ import json
 import pandas as pd
 import sqlite3
 from templates import DATA_SERVICE_SECTION
+from model import getModel
 
 DATA_SERVICE_EXAMPLE = """
         "brief_description": "Data service that provides data in a dataframe format about employees, their personal data and jobs.",
@@ -171,15 +170,7 @@ class ChainGeneratorAgent:
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
         self.model = model
-        if self.model == "GPT":
-            self.llm = ChatOpenAI(model="gpt-4o",
-                                api_key=key,
-                                temperature=0.0)
-        elif self.model == "Mistral":
-            self.llm = ChatMistralAI(model="mistral-large-latest",
-                                api_key=key,
-                                temperature=0.0)
-        self.model = model
+        self.llm = getModel(model, key)
         # define the output parser
         self.output_parser = CustomOutputParser()
 
