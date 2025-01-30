@@ -11,6 +11,8 @@ import sqlite3
 from templates import DATA_SERVICE_SECTION
 from model import getModel
 
+databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
+
 DATA_SERVICE_EXAMPLE = """
         "brief_description": "Data service that provides data in a dataframe format about employees, their personal data and jobs.",
         
@@ -254,7 +256,7 @@ class DataServiceGenerator:
             data_samples = get_sample_data(database_location, table[1]).to_string()
             
             database_table_list.append({
-                "function_name" : table[1].title(),
+                "function_name" : table[1].replace("_", "").title(),
                 "table_name" : table[1],
                 "table_columns" : table_inputs,
                 "table_primary_key" : primary_key,
@@ -288,7 +290,8 @@ class DataServiceGenerator:
         result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
         result = ast.literal_eval(result)
         
-        dir_location = f"data_service_bird_automatic/train_databases/{database_name}/data_services/{self.enterprise}/{self.model}"
+        safe_model = self.model.replace("-", "_")
+        dir_location = f"data_service_bird_automatic/train_databases/{database_name}/data_services/{self.enterprise}/{safe_model}"
         
         os.makedirs(dir_location, exist_ok=True) 
         
@@ -313,15 +316,14 @@ class DataServiceGenerator:
 if __name__ == "__main__":
     enterprise = "Mistral"
     model = "mistral-large-latest"
-    databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
+    database = "chicago_crime"
+    
     databases = None
     with open(databases_description_location) as f:
         databases = json.load(f)
-    
-    database = databases[0]
-    print(database['db_id'])
+    database_info = [db for db in databases if db["db_id"] == database][0]
     
     generator = DataServiceGenerator(enterprise=enterprise, model=model)
-    generator.create_data_services(database)
+    generator.create_data_services(database_info)
     
     

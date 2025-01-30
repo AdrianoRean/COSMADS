@@ -23,6 +23,10 @@ from runner_chain import PipelineRunner
 
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
+def get_queries(database):
+    all_queries = json.load(open(f"queries/train.json"))
+    return [query for query in all_queries if query["db_id"] == database]
+
 def extract_tables(sql_query):
     # Regular expressions to capture tables in FROM and JOIN clauses
     from_pattern = re.compile(r'FROM\s+([^\s,]+(?:\s*,\s*[^\s,]+)*)', re.IGNORECASE)
@@ -44,11 +48,11 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, enterprise, model, mode = "standard", second_mode = "standard_evidence", services_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
-        print(f"Mode is: {mode}")
-        self.mode = mode
-        self.second_mode = second_mode
-        self.services_mode = services_mode
+    def __init__(self, enterprise, model, pipeline_mode = "standard", evidence_mode = "standard_evidence", dataservice_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
+        print(f"Mode is: {pipeline_mode}")
+        self.pipeline_mode = pipeline_mode
+        self.evidence_mode = evidence_mode
+        self.dataservice_mode = dataservice_mode
         
         self.enterprise = enterprise
         self.model = model
@@ -59,16 +63,21 @@ class LLMAgent:
         self.similarity_treshold = similarity_treshold
         self.verbose = verbose
         
-        self.generator = PipelineGeneratorAgent(enterprise, model, mode=mode)
+        self.generator = PipelineGeneratorAgent(enterprise, model, mode=pipeline_mode)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
+        safe_model = str(model.replace("-", "_"))
         if automatic:
-            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{model}"
-            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{enterprise}.{model}"
+            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{safe_model}"
+            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{enterprise}.{safe_model}"
         else:
             self.ds_directory = f"data_service_bird/{database}"
             self.ds_directory_import = f"data_service_bird.{database}"
+            
+        if self.verbose:
+            print(f"Content of directory: {os.listdir(self.ds_directory)}")
+            
         self.doc_directory = "documents"
         self.current_production = "cardboard_production"
         self.sep: str = " - "
@@ -201,7 +210,9 @@ class LLMAgent:
                     description_dict["class_name"] = name_ds
                     data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
                     data_services_list.append(description_dict)    # data services for saving pipeline """
-        data_services_all = glob.glob(f"{self.ds_directory}/*.py")
+        data_services_all = os.listdir(self.ds_directory)
+        if self.verbose:
+            print(f"Avaible dataservices are: {data_services_all}")
         data_services = ""
         data_services_list = []
         query_services_list = []
@@ -211,12 +222,11 @@ class LLMAgent:
             if self.verbose:
                 print(f"Tables find from sql are: {query_services_list}")
         for data_service in data_services_all:
-            if self.automatic:
-                data_service_name = data_service[len(self.ds_directory):-3]
-            else:
-                data_service_name = data_service[len(self.ds_directory):-3]
+            data_service_name = data_service[:-3]
+            if self.verbose:
+                print(f"Dataservice name: {data_service_name}")
             if sql == None or data_service_name in query_services_list: 
-                with open(f"{data_service}", mode="r") as f:
+                with open(f"{self.ds_directory}/{data_service}", mode="r") as f:
                     content = f.read()
                     tree = ast.parse(content)
                     class_objs = [node for node in tree.body if isinstance(node, ast.ClassDef)]
@@ -249,6 +259,9 @@ class LLMAgent:
         for data_service in data_services:
             modules.append(data_service['module'])
             classes.append(data_service['class_name'])
+        
+        if self.verbose:
+            print(f"Dataservices to add as import: {modules}")
         
         new_pipeline = ""
         for line in pipeline.split('\n'):
@@ -338,13 +351,13 @@ if __name__ == "__main__":
                 }
             )
             | RunnableBranch( 
-                (lambda x: self.services_mode == "ground_truth", lambda x : {
+                (lambda x: self.dataservice_mode == "ground_truth", lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services(sql = x["ground_truth"])
                 }), lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services()
                 }   
             )
@@ -360,7 +373,7 @@ if __name__ == "__main__":
                 }
             )
             | RunnableBranch(
-                (lambda x: self.mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output)),
+                (lambda x: self.pipeline_mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableLambda (
@@ -428,9 +441,10 @@ if __name__ == "__main__":
             | RunnableLambda( 
                 lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.second_mode, self.database, x["evidence"]),
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services()[0],
-                    "data_services_list": self.get_data_services(sql = x["ground_truth"])[2]
+                    "data_services_list": self.get_data_services(sql = x["ground_truth"])[2],
+                    "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
             )
             | generator_chain_output
@@ -446,7 +460,7 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    database="european_football_1"
+    database="chicago_crime"
     enterprise = "Mistral"
     model = "mistral-large-latest"
     mode = "wo_pipeline_view"
@@ -459,15 +473,14 @@ if __name__ == "__main__":
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 40
-        with open(f"queries/test/{database}.json", "r") as f:
-            queries = json.load(f)
-            query = queries[q]["question"]
+        q = 30
+        queries = get_queries(database)
+        query = queries[q]["question"]
         
     sql = queries[q]["SQL"]
     
     
-    llm = LLMAgent(enterprise=enterprise, model= model, mode=mode, services_mode="ground_truth", similarity_treshold=0.9, automatic=True, database="european_football_1", verbose=False)
+    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode="ground_truth", similarity_treshold=0.9, automatic=True, database=database, verbose=True)
     
     input_file = {
         "query" : query,

@@ -8,17 +8,15 @@ import pandas as pd
 from data_service_bird.database import GetDataFromDatabase
 from result_averager import average_results
 
-from data_service_generator import DataServiceGenerator
-from main import LLMAgent
+from data_service_generator import DataServiceGenerator, databases_description_location
+from main import LLMAgent, get_queries
 from evaluation.match_similarity import match_similarity
 
-def get_queries(database):
-    all_queries = json.load(open(f"queries/train.json"))
-    return [query for query in all_queries if query["db_id"] == database]
-
-def run_evaluation_ground_truth(database, enterprise, model, queries, automatic):
-    llm = LLMAgent(enterprise=enterprise, model=model, mode="check_ground_truth", automatic=automatic, database=database)
+def run_evaluation_ground_truth(database, enterprise, model, queries, automatic, verbose = False):
+    llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain_truth()
+    
+    num_queries = len(queries)
 
     res_eval = []
     for index, query in enumerate(queries):
@@ -30,15 +28,20 @@ def run_evaluation_ground_truth(database, enterprise, model, queries, automatic)
             "ground_truth" : sql
         }
         question = query["question"]
-        print(f"Question is: {question}")
+        print(f"Index {index} of {num_queries}, Question: {question}")
         res = llm_chain.invoke(input_file)
         res_eval.append([index, res["output"], res["ground_truth"]])
+        
+        if enterprise == "Mistral":
+            time.sleep(0.2)
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
-    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{model}.csv", sep=',', index=False)
+    safe_model = str(model.replace("-", "_"))
+    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
     
 def evaluate_ground_truth(database, enterprise, model):
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{model}.csv")
+    safe_model = str(model.replace("-", "_"))
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv")
 
     for index, line in eval_results.iterrows():
         ground_truth = ast.literal_eval(line["ground_truth"])
@@ -60,17 +63,19 @@ def evaluate_ground_truth(database, enterprise, model):
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
     averages = average_results(metrics_res, "ground_truth_check")
-    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{database}_{enterprise}_{model}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{database}_{enterprise}_{model}.csv", sep=',', index=False)
+    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
     print("Detailed metrics are:")
     print(metrics_res)
     print("Summarized metrics are:")
     print(averages)
         
 
-def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False):
-    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, services_mode = dataservice_mode, automatic=automatic, database=database)
+def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False):
+    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain()
+    
+    num_queries = len(queries)
 
     res_eval = []
     for index, query in enumerate(queries):
@@ -83,7 +88,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
             "ground_truth" : sql
         }
         question = query["question"]
-        print(f"Question is: {question}")
+        print(f"Index {index} of {num_queries}, Question: {question}")
         try:
             res = llm_chain.invoke(input_file)
 
@@ -98,13 +103,18 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
             print(f"Error in query {index}: {e}")
             res_elem = [index, question, sql, None, None, None, None]
         res_eval.append(res_elem)
+        
+        if enterprise == "Mistral":
+            time.sleep(0.2)
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "pipeline", "output", "output_json"])
-    res_df.to_csv(f"evaluation/evaluation_results_{database}_{enterprise}_{model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
+    safe_model = str(model.replace("-", "_"))
+    res_df.to_csv(f"evaluation/evaluation_results_{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
 
 
 def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic):
     db = GetDataFromDatabase()
+    agent = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="wo_pipeline")
     
     if automatic:
         db.open_connection(f"data_service_bird_automatic/train_databases/{database}/{database}.sqlite")
@@ -112,13 +122,15 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
 
     metrics_res = []
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_{database}_{enterprise}_{model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv")
+    safe_model = str(model.replace("-", "_"))
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv")
     #eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
+    num_queries = len(queries)
     for index, query in enumerate(queries):
         metrics_res_q_idx = []
         question = query["question"]
         df1 = db.call(query=query["SQL"])
-        print(f"Query {question} index {index}")
+        print(f"Index {index} of {num_queries}, Question: {question}")
         res = eval_results[(eval_results["index"] == index)]
         #Check if pipeline completely failed like query 35 eval_26-11-24
         if type(res["output_json"].values[0]) != str:
@@ -127,8 +139,9 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
             output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
             pattern = r'(".+\$)".+"'
             output_json = re.sub(pattern, r'\1.+"', output_json)
-        print("Raw JSON output is:")
-        print(output_json)
+        if verbose:
+            print("Raw JSON output is:")
+            print(output_json)
         if output_json != "":
             try:
                 output_res = json.loads(output_json)
@@ -139,16 +152,19 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
             df2 = pd.DataFrame()
             
         #Full name extrapolation
-        agent = LLMAgent(model=model)
         words = agent.check_word_simliarity("fullname", list(df2.columns), similarity_treshold=0.55)
         if len(words) > 0 :
             words = sorted(words, key=lambda x: x[1])
             if 'fullname' != words[0][0]:
-                df2 = df2.rename(columns={words[0][0] : "fullname"})
-                df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
-                del df2["fullname"]
-                print(f"Changed {words[0][0]}")
-                #print(df2)
+                try:
+                    df2 = df2.rename(columns={words[0][0] : "fullname"})
+                    df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
+                    del df2["fullname"]
+                    print(f"Changed {words[0][0]}")
+                    #print(df2)
+                except:
+                    print("Cannot decompose fullname column")
+                    pass
         
         df1.name = "table_1"
         df2.name = "table_2"
@@ -168,9 +184,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         metrics_res.append(metrics_res_q_idx)
 
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "precision", "recall", "acc_cell", "acc_row"])
-    averages = average_results(metrics_res, "pipelines")
-    metrics_res.to_csv(f"evaluation/metrics_results_{database}_{enterprise}_{model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_{database}_{enterprise}_{model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
+    averages = average_results(metrics_res, "pipeline")
+    safe_model = str(model.replace("-", "_"))
+    metrics_res.to_csv(f"evaluation/metrics_results_{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
     print("Detailed metrics are:")
     print(metrics_res)
     print("Summarized metrics are:")
@@ -185,28 +202,35 @@ if __name__ == "__main__":
     print(f"Model: {model}, Database: {database}")
     
     generation = True
-    force_generation = True
-    ground_truth_check = True
+    force_generation = False
+    ground_truth_check = False
     pipeline_check = True
     automatic = True
+    verbose = False
     
     pipeline_mode = "wo_pipeline_view"
-    evidence_mode = "added_evidence"
+    evidence_mode = "standard_evidence"
     dataservice_mode = "ground_truth"
+    similarity_treshold = 0.9
     
     queries = get_queries(database)
-    print("Got queries")
+    print(f"Got {len(queries)} queries")
     
     if generation:
-        exist = os.path.exists(f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{model}/")
+        safe_model = str(model.replace("-", "_"))
+        exist = os.path.exists(f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{safe_model}/")
         if not exist or (exist and force_generation):
             print("Generating Data services")
+            databases = None
+            with open(databases_description_location) as f:
+                databases = json.load(f)
+            database_info = [db for db in databases if db["db_id"] == database][0]
             dataservice_generator = DataServiceGenerator(enterprise, model)
-            dataservice_generator.create_data_services(database)
+            dataservice_generator.create_data_services(database_info)
 
     if ground_truth_check:
         print("Performing ground truth check")
-        run_evaluation_ground_truth(database, enterprise, model, queries, automatic=automatic)
+        run_evaluation_ground_truth(database, enterprise, model, queries, automatic=automatic, verbose = verbose)
         evaluate_ground_truth(database, enterprise, model)
         
     if pipeline_check:
@@ -216,7 +240,7 @@ if __name__ == "__main__":
         # Use the `truncate()` method to clear the file's content
             file.truncate()
         
-        run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode=dataservice_mode, automatic=automatic)
+        #run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode=dataservice_mode, automatic=automatic, similarity_treshold=similarity_treshold, verbose=verbose)
         evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic)
     
     
