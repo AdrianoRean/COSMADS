@@ -44,13 +44,14 @@ def extract_tables(sql_query):
     return list(all_tables)
 
 class LLMAgent:
-    def __init__(self, model="GPT", mode = "standard", second_mode = "standard_evidence", services_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
-        dotenv.load_dotenv()
-        self.key = os.getenv(f"{model.upper()}_API_KEY")
+    def __init__(self, enterprise, model, mode = "standard", second_mode = "standard_evidence", services_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
         print(f"Mode is: {mode}")
         self.mode = mode
         self.second_mode = second_mode
         self.services_mode = services_mode
+        
+        self.enterprise = enterprise
+        self.model = model
         
         self.database = database
         self.automatic = automatic
@@ -58,13 +59,13 @@ class LLMAgent:
         self.similarity_treshold = similarity_treshold
         self.verbose = verbose
         
-        self.generator = PipelineGeneratorAgent(model, self.key, mode=mode)
+        self.generator = PipelineGeneratorAgent(enterprise, model, mode=mode)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
         if automatic:
-            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services"
-            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services"
+            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{model}"
+            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{enterprise}.{model}"
         else:
             self.ds_directory = f"data_service_bird/{database}"
             self.ds_directory_import = f"data_service_bird.{database}"
@@ -211,9 +212,9 @@ class LLMAgent:
                 print(f"Tables find from sql are: {query_services_list}")
         for data_service in data_services_all:
             if self.automatic:
-                data_service_name = data_service[len(f"data_service_bird_automatic/train_databases/{self.database}/data_services/"):-3]
+                data_service_name = data_service[len(self.ds_directory):-3]
             else:
-                data_service_name = data_service[len(f"data_service_bird/{self.database}/"):-3]
+                data_service_name = data_service[len(self.ds_directory):-3]
             if sql == None or data_service_name in query_services_list: 
                 with open(f"{data_service}", mode="r") as f:
                     content = f.read()
@@ -446,7 +447,8 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     database="european_football_1"
-    model = "Deepseek"
+    enterprise = "Mistral"
+    model = "mistral-large-latest"
     mode = "wo_pipeline_view"
     #mode = "check_ground_truth"
     
@@ -465,7 +467,7 @@ if __name__ == "__main__":
     sql = queries[q]["SQL"]
     
     
-    llm = LLMAgent(model= model, mode=mode, services_mode="ground_truth", similarity_treshold=0.9, automatic=True, database="european_football_1", verbose=False)
+    llm = LLMAgent(enterprise=enterprise, model= model, mode=mode, services_mode="ground_truth", similarity_treshold=0.9, automatic=True, database="european_football_1", verbose=False)
     
     input_file = {
         "query" : query,

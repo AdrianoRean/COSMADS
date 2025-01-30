@@ -159,18 +159,16 @@ class CustomOutputParser(BaseOutputParser):
         return code
 
 class ChainGeneratorAgent:
-    def __init__(self, model, key, mode):
+    def __init__(self, enterprise, model, mode):
         """Initialize the agent."""
         if mode == "description":
             prompt_template = PROMPT_LLM_DESCRIPTION_GLOBAL
-        elif mode == "data_service":
-            prompt_template = DATA_SERVICE_BIRD_TEMPLATE
         else: 
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
         self.model = model
-        self.llm = getModel(model, key)
+        self.llm = getModel(enterprise, model)
         # define the output parser
         self.output_parser = CustomOutputParser()
 
@@ -180,15 +178,12 @@ class ChainGeneratorAgent:
         return agent_chain
     
 class DataServiceGenerator:
-    def __init__(self, model):
-        dotenv.load_dotenv()
+    def __init__(self, enterprise, model):
+        self.enterprise = enterprise
         self.model = model
-        if model == "GPT":
-            self.key = os.getenv("OPENAI_API_KEY")
-        elif model == "Mistral":
-            self.key = os.getenv("MISTRAL_API_KEY")
 
-    def create_data_services(self, database, database_location):
+    def create_data_services(self, database):
+        database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
         database_name = database["db_id"]
         database_table_names = database["table_names_original"]
         database_columns = database["column_names_original"]
@@ -274,7 +269,7 @@ class DataServiceGenerator:
             
         #Get LLM description
         generator_chain_output = {
-            "output": ChainGeneratorAgent(self.model, self.key, mode="description").get_chain(),
+            "output": ChainGeneratorAgent(self.enterprise, self.model, mode="description").get_chain(),
             "inputs": RunnablePassthrough()
             }
         
@@ -293,9 +288,9 @@ class DataServiceGenerator:
         result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
         result = ast.literal_eval(result)
         
-        dir_location = f"data_service_bird_automatic/train_databases/{database_name}/data_services"
+        dir_location = f"data_service_bird_automatic/train_databases/{database_name}/data_services/{self.enterprise}/{self.model}"
         
-        os.makedirs(f"data_service_bird_automatic/train_databases/{database_name}/data_services", exist_ok=True) 
+        os.makedirs(dir_location, exist_ok=True) 
         
         for index, table in enumerate(database_table_list):
             file_location = dir_location + f"/{table['table_name']}.py"
@@ -316,17 +311,17 @@ class DataServiceGenerator:
                 f.write(filled_template)
     
 if __name__ == "__main__":
-    model = "Mistral"
+    enterprise = "Mistral"
+    model = "mistral-large-latest"
     databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
     databases = None
     with open(databases_description_location) as f:
         databases = json.load(f)
     
     database = databases[0]
-    database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
     print(database['db_id'])
     
-    generator = DataServiceGenerator(model=model)
-    generator.create_data_services(database, database_location)
+    generator = DataServiceGenerator(enterprise=enterprise, model=model)
+    generator.create_data_services(database)
     
     

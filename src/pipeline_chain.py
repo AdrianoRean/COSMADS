@@ -26,7 +26,7 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, model, key, mode = "standard"):
+    def __init__(self, enterprise, model, mode = "standard"):
         """Initialize the agent."""
         # define the prompt
         if mode == "check_ground_truth":
@@ -39,7 +39,7 @@ class PipelineGeneratorAgent:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
-        self.llm = getModel(model, key)
+        self.llm = getModel(enterprise, model)
         # define the output parser
         self.output_parser = CustomOutputParser()
 

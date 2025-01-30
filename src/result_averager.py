@@ -2,17 +2,24 @@ import pandas as pd
 
 file_path = "data.csv"
 
-def average_results(df = None):
+def average_results(df = None, mode = "pipeline"):
 
     # File path to the .txt file
      # Replace with your actual file name
 
     # Reading the .txt file into a DataFrame
     if df == None:
-        df = pd.read_csv(file_path)
+        if mode == "pipeline":
+            df = pd.read_csv(file_path)
+        else:
+            df = pd.DataFrame(data=[[],[]], columns=["accuracy", "recall"])
+    
 
     # Calculating the average for the last three columns
-    averages = df[['acc_cell', 'acc_row', 'recall']].mean()
+    if mode == "pipeline":
+        averages = df[['acc_cell', 'acc_row', 'recall']].mean()
+    else:
+        averages = df[["accuracy", "recall"]].mean()
     
     return averages
     
