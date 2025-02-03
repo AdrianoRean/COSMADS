@@ -44,8 +44,10 @@ def extract_tables(sql_query):
     join_matches = join_pattern.findall(sql_query)
     
     # Combine and return unique table names
-    all_tables = set(from_tables + join_matches)
-    return list(all_tables)
+    all_tables = list(set(from_tables + join_matches))
+    #clean = re.compile(r'[^a-zA-Z0-9, _]')
+    #all_tables = [tb for tb in all_tables if clean.sub("", tb) != ""]
+    return all_tables
 
 class LLMAgent:
     def __init__(self, enterprise, model, pipeline_mode = "standard", evidence_mode = "standard_evidence", dataservice_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
@@ -211,6 +213,7 @@ class LLMAgent:
                     data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
                     data_services_list.append(description_dict)    # data services for saving pipeline """
         data_services_all = os.listdir(self.ds_directory)
+        data_services_all = [ds[:-3] for ds in data_services_all if ds[0:2] != "__"]
         if self.verbose:
             print(f"Avaible dataservices are: {data_services_all}")
         data_services = ""
@@ -221,30 +224,31 @@ class LLMAgent:
             query_services_list = extract_tables(sql)
             if self.verbose:
                 print(f"Tables find from sql are: {query_services_list}")
-        for data_service in data_services_all:
-            data_service_name = data_service[:-3]
+            data_service_to_process = [tb for tb in query_services_list if tb in data_services_all]
             if self.verbose:
-                print(f"Dataservice name: {data_service_name}")
-            if sql == None or data_service_name in query_services_list: 
-                with open(f"{self.ds_directory}/{data_service}", mode="r") as f:
-                    content = f.read()
-                    tree = ast.parse(content)
-                    class_objs = [node for node in tree.body if isinstance(node, ast.ClassDef)]
-                    for class_obj in class_objs:
-                        name_ds = class_obj.name
-                        body = class_obj.body
-                        call_parameters = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "call_parameters_list"]
-                        call_parameters = call_parameters[0].value
-                        call_parameters = ast.literal_eval(call_parameters)
-                        description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
-                        description_value = description[0].value
-                        description_dict = ast.literal_eval(description_value)
-                        description_dict["class_name"] = name_ds
-                        data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
-                        call_parameters_list.extend(call_parameters)
-                        data_services_list.append(description_dict)    # data services for saving pipeline
+                print(f"Services to process: {data_service_to_process}")
+        else:
+            data_service_to_process = data_services_all
+        for data_service in data_service_to_process:
+            with open(f"{self.ds_directory}/{data_service}.py", mode="r") as f:
+                content = f.read()
+                tree = ast.parse(content)
+                class_objs = [node for node in tree.body if isinstance(node, ast.ClassDef)]
+                for class_obj in class_objs:
+                    name_ds = class_obj.name
+                    body = class_obj.body
+                    call_parameters = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "call_parameters_list"]
+                    call_parameters = call_parameters[0].value
+                    call_parameters = ast.literal_eval(call_parameters)
+                    description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
+                    description_value = description[0].value
+                    description_dict = ast.literal_eval(description_value)
+                    description_dict["class_name"] = name_ds
+                    data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
+                    call_parameters_list.extend(call_parameters)
+                    data_services_list.append(description_dict)    # data services for saving pipeline
                 
-        return data_services, data_services_list, query_services_list, call_parameters_list
+        return data_services, data_services_list, data_service_to_process, call_parameters_list
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -464,7 +468,7 @@ if __name__ == "__main__":
     enterprise = "Mistral"
     model = "mistral-large-latest"
     mode = "wo_pipeline_view"
-    #mode = "check_ground_truth"
+    dataservice_mode = "ground_truth"
     
     test_mode = "bird" # test or bird
     if test_mode == "test":
@@ -473,14 +477,14 @@ if __name__ == "__main__":
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 30
+        q = 7
         queries = get_queries(database)
         query = queries[q]["question"]
         
     sql = queries[q]["SQL"]
     
     
-    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode="ground_truth", similarity_treshold=0.9, automatic=True, database=database, verbose=True)
+    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode=dataservice_mode, similarity_treshold=0.9, automatic=True, database=database, verbose=True)
     
     input_file = {
         "query" : query,

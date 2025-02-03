@@ -17,7 +17,7 @@ def average_results(df = pd.DataFrame(), mode = "pipeline"):
 
     # Calculating the average for the last three columns
     if mode == "pipeline":
-        averages = df[['acc_cell', 'acc_row', 'recall']].mean()
+        averages = df[['precision', 'acc_cell', 'acc_row', 'recall']].mean()
     else:
         averages = df[["accuracy", "recall"]].mean()
     
