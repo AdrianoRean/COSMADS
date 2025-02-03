@@ -12,6 +12,23 @@ from data_service_generator import DataServiceGenerator, databases_description_l
 from main import LLMAgent, get_queries
 from evaluation.match_similarity import match_similarity
 
+def remove_nbsp(data):
+    """
+    Recursively traverse the JSON data and remove non-breaking spaces from strings.
+    """
+    if isinstance(data, dict):
+        # Process each key-value pair in dictionaries.
+        return {key: remove_nbsp(value) for key, value in data.items()}
+    elif isinstance(data, list):
+        # Process each element in lists.
+        return [remove_nbsp(element) for element in data]
+    elif isinstance(data, str):
+        # Replace the non-breaking space with an empty string.
+        return data.replace('\u00a0', '')
+    else:
+        # For numbers, booleans, None, etc., return as is.
+        return data
+
 def run_evaluation_ground_truth(database, enterprise, model, queries, automatic, verbose = False):
     llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain_truth()
@@ -136,43 +153,55 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         if type(res["output_json"].values[0]) != str:
             output_json = ""
         else:
-            output_json = res["output_json"].values[0].replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+            output_json = str(res["output_json"].values[0])
+            output_json = output_json.replace('\\xa0', '')
+            output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
             pattern = r'(".+\$)".+"'
             output_json = re.sub(pattern, r'\1.+"', output_json)
         if verbose:
             print("Raw JSON output is:")
             print(output_json)
+            
         if output_json != "":
             try:
                 output_res = json.loads(output_json)
                 df2 = pd.DataFrame(output_res)
-            except:
+            except Exception as e:
+                print("Exception while load json")
+                print(e)
                 df2 = pd.DataFrame()
         else:
             df2 = pd.DataFrame()
+
+        if not df2.empty:
+            #Full name extrapolation
+            words = agent.check_word_simliarity("fullname", list(df2.columns), similarity_treshold=0.55)
+            if len(words) > 0 :
+                words = sorted(words, key=lambda x: x[1])
+                if 'fullname' != words[0][0]:
+                    try:
+                        df2 = df2.rename(columns={words[0][0] : "fullname"})
+                        df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
+                        del df2["fullname"]
+                        print(f"Changed {words[0][0]}")
+                        #print(df2)
+                    except:
+                        print("Cannot decompose fullname column")
+                        pass
             
-        #Full name extrapolation
-        words = agent.check_word_simliarity("fullname", list(df2.columns), similarity_treshold=0.55)
-        if len(words) > 0 :
-            words = sorted(words, key=lambda x: x[1])
-            if 'fullname' != words[0][0]:
-                try:
-                    df2 = df2.rename(columns={words[0][0] : "fullname"})
-                    df2[['firstname','lastname']] = df2["fullname"].str.split(expand=True)
-                    del df2["fullname"]
-                    print(f"Changed {words[0][0]}")
-                    #print(df2)
-                except:
-                    print("Cannot decompose fullname column")
-                    pass
-        
-        df1.name = "table_1"
-        df2.name = "table_2"
-        try:
-            precision, recall, acc_cell, acc_row = match_similarity(df1, df2)
-        except:
-            print(f"Exception for query {index}")
+            df1.name = "table_1"
+            df2.name = "table_2"
+            
+            try:
+                precision, recall, acc_cell, acc_row = match_similarity(df1, df2)
+            except Exception as e:
+                print(f"Exception for query {index}")
+                print(f"Exception: {e}")
+                precision, recall, acc_cell, acc_row = 0, 0, 0, 0
+        else:
+            print("Empty pipeline result, probably failed execution. Not performing any match.")
             precision, recall, acc_cell, acc_row = 0, 0, 0, 0
+            
         metrics_res_q_idx.append([precision, recall, acc_cell, acc_row])
         
         # average metrics
@@ -240,7 +269,7 @@ if __name__ == "__main__":
         # Use the `truncate()` method to clear the file's content
             file.truncate()
         
-        #run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode=dataservice_mode, automatic=automatic, similarity_treshold=similarity_treshold, verbose=verbose)
+        run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode=dataservice_mode, automatic=automatic, similarity_treshold=similarity_treshold, verbose=verbose)
         evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic)
     
     

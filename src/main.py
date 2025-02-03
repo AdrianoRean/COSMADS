@@ -218,12 +218,14 @@ class LLMAgent:
             print(f"Avaible dataservices are: {data_services_all}")
         data_services = ""
         data_services_list = []
+        tables = []
         query_services_list = []
         call_parameters_list = []
         if sql != None:
-            query_services_list = extract_tables(sql)
+            tables = extract_tables(sql)
+            query_services_list = [tb.replace("_", "") for tb in tables]
             if self.verbose:
-                print(f"Tables find from sql are: {query_services_list}")
+                print(f"Tables find from sql are: {tables}, As services_list: {query_services_list}")
             data_service_to_process = [tb for tb in query_services_list if tb in data_services_all]
             if self.verbose:
                 print(f"Services to process: {data_service_to_process}")
@@ -248,7 +250,7 @@ class LLMAgent:
                     call_parameters_list.extend(call_parameters)
                     data_services_list.append(description_dict)    # data services for saving pipeline
                 
-        return data_services, data_services_list, data_service_to_process, call_parameters_list
+        return tables, data_services, data_services_list, data_service_to_process, call_parameters_list
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -303,12 +305,15 @@ if __name__ == "__main__":
         database_location = f"data_service_bird_automatic/train_databases/{database['db_id']}/{database['db_id']}.sqlite"
         data_samples = []
         for table in database['tables']:
-            data_samples.append(
-                {
-                    "table_name" : table,
-                    "table_data_samples" : get_sample_data(database_location, table).to_string()
-                }
-            )
+            try:
+                data_samples.append(
+                    {
+                        "table_name" : table,
+                        "table_data_samples" : get_sample_data(database_location, table).to_string()
+                    }
+                )
+            except:
+                print(f"Exception during view extraction. Probably unexisting table: {table}")
             
         x["data_samples"] = data_samples
         
@@ -369,15 +374,16 @@ if __name__ == "__main__":
                 lambda x: {
                     "query": x["query"],
                     "evidence": x["evidence"],
-                    "data_services": x["data_services"][0],
-                    "data_services_list": x["data_services"][1],
-                    "data_services_list_names": x["data_services"][2],
-                    "call_parameters": x["data_services"][3],
+                    "tables": x["data_services"][0],
+                    "data_services": x["data_services"][1],
+                    "data_services_list": x["data_services"][2],
+                    "data_services_list_names": x["data_services"][3],
+                    "call_parameters": x["data_services"][4],
                     "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
             )
             | RunnableBranch(
-                (lambda x: self.pipeline_mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["data_services_list_names"]}, x, generator_chain_output)),
+                (lambda x: self.pipeline_mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["tables"]}, x, generator_chain_output)),
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableLambda (
@@ -446,7 +452,7 @@ if __name__ == "__main__":
                 lambda x : {
                     "query": x["query"],
                     "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
-                    "data_services": self.get_data_services()[0],
+                    "data_services": self.get_data_services()[1],
                     "data_services_list": self.get_data_services(sql = x["ground_truth"])[2],
                     "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
@@ -477,7 +483,7 @@ if __name__ == "__main__":
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 7
+        q = 2
         queries = get_queries(database)
         query = queries[q]["question"]
         

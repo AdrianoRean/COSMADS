@@ -9,3 +9,5 @@ def selectOperator(operator):
         return "<"
     elif operator == "MINOR OR EQUAL":
         return "<="
+    elif operator == "LIKE":
+        return "LIKE"

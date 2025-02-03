@@ -1,11 +1,12 @@
 from valentine import valentine_match
-from valentine.algorithms import Coma
+from valentine.algorithms import DistributionBased, Coma
 import numpy as np
 
 
 def match_similarity(df1, df2):
 
-    matcher = Coma(use_instances=True, java_xmx='1024m')
+    #matcher = DistributionBased()
+    matcher = Coma(use_instances=True)
     matches = valentine_match(df1, df2, matcher)
     #print("matches\n",matches)
     #print()

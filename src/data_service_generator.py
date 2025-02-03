@@ -105,7 +105,7 @@ class GetDataFrom{function_name}:
         
         "output_values": ["{table_name}_df:pandas.DataFrame"],
         
-        "module": "{table_name}"
+        "module": "{function_name}"
     }}
     
     def open_connection(self):
@@ -256,7 +256,7 @@ class DataServiceGenerator:
             data_samples = get_sample_data(database_location, table[1]).to_string()
             
             database_table_list.append({
-                "function_name" : table[1].replace("_", "").title(),
+                "function_name" : table[1].replace("_", ""),
                 "table_name" : table[1],
                 "table_columns" : table_inputs,
                 "table_primary_key" : primary_key,
@@ -296,7 +296,7 @@ class DataServiceGenerator:
         os.makedirs(dir_location, exist_ok=True) 
         
         for index, table in enumerate(database_table_list):
-            file_location = dir_location + f"/{table['table_name']}.py"
+            file_location = dir_location + f"/{table['function_name']}.py"
             output = result[index]
             
             filled_template = DATA_SERVICE_BIRD_TEMPLATE.format(
@@ -314,8 +314,8 @@ class DataServiceGenerator:
                 f.write(filled_template)
     
 if __name__ == "__main__":
-    enterprise = "Mistral"
-    model = "mistral-large-latest"
+    enterprise = "Openai"
+    model = "gpt-4o"
     database = "chicago_crime"
     
     databases = None
