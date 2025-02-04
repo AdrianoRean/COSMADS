@@ -1,5 +1,6 @@
 import ast
 import json
+import math
 import os
 import re
 import time
@@ -199,6 +200,12 @@ def averaging_saving_print_results(results, columns, averaging_mode, partial_fil
     print(averages)
     return df_results
 
+def check_all_zeros(list):
+    for value in list:
+        if value > 0:
+            return False
+    return True
+
 def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False):
     
     safe_model = str(model.replace("-", "_"))
@@ -216,7 +223,7 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         metrics_res = []
         
     if llm:
-        judge = Judge(enterprise, model)
+        judge = Judge(enterprise, model, mode="verdict")
         verdict_res = []
 
     #eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
@@ -235,9 +242,18 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                 metrics_res.append(metrics_valentine(index, sql, db, res, fullname_split, agent, verbose))
             
             if llm:
-                verdict_res.append([index, judge.judge(res["pipeline"], sql, question)])
+                try:
+                    verdict = judge.judge(res["pipeline"], sql, question)
+                    verdict_res.append([index, verdict])
+                except:
+                    print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
+                    time.sleep(2)
+                    verdict = judge.judge(res["pipeline"], sql, question)
+                    verdict_res.append([index, verdict])
+                    
+                print(f"Verdict is: {verdict}")
                 if enterprise == "Mistral":
-                    time.sleep(0.2)
+                    time.sleep(0.3)
         
     if valentine:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
@@ -258,11 +274,17 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         unified_metric_res = []
         for index in range(num_queries):
             verdict = verdict_res.iloc[index]["verdict"]
+            metrics = metrics_res.iloc[index][["precision", "recall", "acc_cell", "acc_row"]].to_list()
             
-            if verdict == "MISLEADING":
+            if verdict == "SQL-WRONG" and check_all_zeros(metrics):
                 continue
-            elif verdict == "True":
-                unified_metric_res.append([index, 1, 1, 1, 1])
+            elif verdict == "EQUIVALENT":
+                metrics = metrics_res.iloc[index].to_list()
+                new_metrics = [index,1,1,1,1]
+                for i in range(1, len(metrics)):
+                    if not math.isnan(metrics[i]):
+                        new_metrics[i] = new_metrics[i]*0.5 + metrics[i]*0.5
+                unified_metric_res.append(new_metrics)
             else:
                 unified_metric_res.append(metrics_res.iloc[index].to_list())
         
@@ -301,10 +323,10 @@ if __name__ == "__main__":
     unified = True
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Unified metrics: {unified}")
 
-    
     pipeline_mode = "wo_pipeline_view"
     evidence_mode = "standard_evidence"
     dataservice_mode = "ground_truth"
+    print(f"Pipeline mode: {pipeline_mode}, Evidence mode: {evidence_mode}, Data service mode: {dataservice_mode}")
     
     queries = get_queries(database)
     print(f"Got {len(queries)} queries")
