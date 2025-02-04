@@ -1,3 +1,36 @@
+JUDGE_PROMPT = """
+You are a proficient Python and SQL programmer. Your job is to judge if the following python function is leading to equivalent results of a SQL query.
+
+You are also provided with a natural language question which correspond to the intent of both the function and the query.
+Question:
+======
+{query}
+======
+
+Here's the python function to judge.
+Function:
+======
+{pipeline}
+======
+
+Here's the SQL query to use as baseline:
+Query:
+======
+{sql}
+======
+
+Guidelines:
+- Remember that results may still be considered equivalent as long as they both contain the same information in a different number of columns (such as a normalized vs not-normalized table) or if the python function return a superset of information of the SQL query.
+- If the python function and the SQL query do not yield equivalent results, answer "FALSE".
+- If the python function and the SQL query return equivalent results, answer "TRUE".
+- Rarely, the SQL query may not match the intent of the natural language query. In those cases, since it is impossible to judge the python function, answer "MISLEADING".
+- Write down just with one of the special words mentioned beforehand.
+- Before and after the answer, always put a newline character and a triple backtick (```).
+- Do not add any other information between the answer and the triple backtick (```).
+
+Answer:
+"""
+
 DATA_SERVICE_SECTION = """
 Each tool is represented by a JSON string having the following structure:
 {{
@@ -136,6 +169,7 @@ notes:
 - The evidence is always useful, but be careful in using it as it is.
 
 Guidelines:
+
 - Make sure to generate a correct and concise python function.
 - Generate the function within the ```python and ``` delimiters after the "Answer:" line.
 - Always end the script with a newline character and a triple backtick (```). It is important that after the return statement there is a newline character, followed by a triple backtick (```). 
@@ -144,7 +178,9 @@ Guidelines:
 - The python function should use the available tools to answer the query. To invoke a tool, just call the class name of the tool and pass the input parameters to it, e.g. ToolName(input_parameter1=input_value1, input_parameter2=input_value2, ...).
 - Import the correct tools from the correct modules to use them in the python function. The modules are in the database folder. To import a tool, use the following syntax: from data_services.<module> import <name>.
 - You can define helper functions if necessary.
-- Ensure that the final result is json serializable.
+- If you use libraries, be sure to call the correct functions.
+- If you need to parse strings or dates, be sure to parse them correctly (use information both from the tool description and the data samples to help you in these cases)
+- Ensure that the final result is json serializable. 
 - The function should be generated with a fixed name, which is "pipeline_function".
 
 Answer:
