@@ -14,25 +14,8 @@ from main import LLMAgent, get_queries
 from evaluation.match_similarity import match_similarity
 from judge import Judge
 
-def remove_nbsp(data):
-    """
-    Recursively traverse the JSON data and remove non-breaking spaces from strings.
-    """
-    if isinstance(data, dict):
-        # Process each key-value pair in dictionaries.
-        return {key: remove_nbsp(value) for key, value in data.items()}
-    elif isinstance(data, list):
-        # Process each element in lists.
-        return [remove_nbsp(element) for element in data]
-    elif isinstance(data, str):
-        # Replace the non-breaking space with an empty string.
-        return data.replace('\u00a0', '')
-    else:
-        # For numbers, booleans, None, etc., return as is.
-        return data
-
-def run_evaluation_ground_truth(database, enterprise, model, queries, automatic, verbose = False):
-    llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", automatic=automatic, database=database, verbose=verbose)
+def run_evaluation_ground_truth(database, enterprise, mode, model, queries, automatic, verbose = False):
+    llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", dataservice_mode=mode, automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain_truth()
     
     num_queries = len(queries)
@@ -44,23 +27,31 @@ def run_evaluation_ground_truth(database, enterprise, model, queries, automatic,
         input_file = {
             "query" : query["question"],
             "evidence" : query["evidence"],
-            "ground_truth" : sql
+            "sql" : sql
         }
         question = query["question"]
         print(f"Index {index} of {num_queries}, Question: {question}")
-        res = llm_chain.invoke(input_file)
+        
+        try:
+            res = llm_chain.invoke(input_file)
+        except:
+            print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
+            time.sleep(2)
+            res = llm_chain.invoke(input_file)
+            
         res_eval.append([index, res["output"], res["ground_truth"]])
+        
         
         if enterprise == "Mistral":
             time.sleep(0.2)
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
     safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
     
-def evaluate_ground_truth(database, enterprise, model):
+def evaluate_ground_truth(database, enterprise, model, mode):
     metrics_res = []
     safe_model = str(model.replace("-", "_"))
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv")
 
     for index, line in eval_results.iterrows():
         ground_truth = ast.literal_eval(line["ground_truth"])
@@ -82,8 +73,8 @@ def evaluate_ground_truth(database, enterprise, model):
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
     averages = average_results(metrics_res, "ground_truth_check")
-    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
     print("Detailed metrics are:")
     print(metrics_res)
     print("Summarized metrics are:")
@@ -109,7 +100,12 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
         question = query["question"]
         print(f"Index {index} of {num_queries}, Question: {question}")
         try:
-            res = llm_chain.invoke(input_file)
+            try:
+                res = llm_chain.invoke(input_file)
+            except:
+                print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
+                time.sleep(2)
+                res = llm_chain.invoke(input_file)
 
             data_services = res['data_services']
             pipeline =  res["pipeline"]
@@ -300,13 +296,9 @@ if __name__ == "__main__":
     database="chicago_crime"
     print(f"Model: {model}, Database: {database}")
     
-    generation = True
+    generation = False
     force_generation = False
     print(f"Generation: {generation}, Forcing regeneration: {force_generation}")
-    
-    ground_truth_check = False
-    pipeline_check = True
-    print(f"Data service selection evaluation: {ground_truth_check}, Pipeline evaluation: {pipeline_check}")
     
     automatic = True
     print(f"Data Services are generated: {automatic}")
@@ -317,16 +309,21 @@ if __name__ == "__main__":
     verbose = False
     print(f"Verbose: {verbose}")
     
-    only_metrics = True
-    valentine = False
+    only_metrics = False
+    valentine = True
     llm = False
-    unified = True
+    unified = False
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Unified metrics: {unified}")
 
-    pipeline_mode = "wo_pipeline_view"
+    ground_truth_check = True
+    ground_truth_check_mode = "no_view" # "no_view"
+    print(f"Data service selection evaluation: {ground_truth_check}, Data service selection mode: {ground_truth_check_mode}")
+    
+    pipeline_check = False
+    pipeline_mode = "wo_pipeline_view" # "wo_pipeline"
     evidence_mode = "standard_evidence"
     dataservice_mode = "ground_truth"
-    print(f"Pipeline mode: {pipeline_mode}, Evidence mode: {evidence_mode}, Data service mode: {dataservice_mode}")
+    print(f"Pipeline evaluation: {pipeline_check}, Pipeline mode: {pipeline_mode}, Evidence mode: {evidence_mode}, Data service mode: {dataservice_mode}")
     
     queries = get_queries(database)
     print(f"Got {len(queries)} queries")
@@ -346,8 +343,8 @@ if __name__ == "__main__":
     if ground_truth_check:
         print("Performing ground truth check")
         if not only_metrics:
-            run_evaluation_ground_truth(database, enterprise, model, queries, automatic=automatic, verbose = verbose)
-        evaluate_ground_truth(database, enterprise, model)
+            run_evaluation_ground_truth(database, enterprise, ground_truth_check_mode, model, queries, automatic=automatic, verbose = verbose)
+        evaluate_ground_truth(database, enterprise, model, ground_truth_check_mode)
         
     if pipeline_check:
         print("Performing pipeline check")

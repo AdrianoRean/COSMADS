@@ -1,0 +1,189 @@
+index,tools_prediction,ground_truth
+0,"[""CommunityArea""]",['Community_Area']
+1,"[""CommunityArea"", ""District""]",['Community_Area']
+2,"[""CommunityArea"", ""District""]",['Community_Area']
+3,"[""CommunityArea""]",['Community_Area']
+4,"[""District"", ""Crime""]",['District']
+5,"[""District""]",['District']
+6,"[""Neighborhood"", ""CommunityArea""]","['Neighborhood', 'Community_Area']"
+7,"[""CommunityArea"", ""Neighborhood""]","['(', 'Neighborhood', 'Community_Area']"
+8,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+9,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+10,"[""Crime"", ""District""]","['Crime', 'District']"
+11,"[""Crime"", ""District""]","['Crime', 'District']"
+12,"[""Crime"", ""District""]","['Crime', 'District']"
+13,"[""Crime"", ""District""]","['Crime', 'District']"
+14,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+15,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+16,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+17,"[""Crime"", ""District""]","['Crime', 'District']"
+18,"[""CommunityArea"", ""Crime"", ""Neighborhood""]","['Crime', 'Community_Area']"
+19,"[""Crime"", ""District""]","['Crime', 'District']"
+20,"[""CommunityArea""]",['Community_Area']
+21,"[""District""]",['District']
+22,"[""Crime"", ""District""]","['Crime', 'District']"
+23,"[""Crime"", ""District""]","['Crime', 'District']"
+24,"[""Crime"", ""District""]","['Crime', 'District']"
+25,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+26,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+27,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+28,"[""CommunityArea"", ""Crime"", ""IUCR""]","['Crime', 'Community_Area', 'IUCR']"
+29,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+30,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+31,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+32,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+33,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+34,"[""CommunityArea"", ""Crime"", ""IUCR""]","['Crime', 'Community_Area', 'IUCR']"
+35,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+36,"[""Crime""]",['Crime']
+37,"[""CommunityArea""]",['Community_Area']
+38,"[""Crime""]",['Crime']
+39,"[""CommunityArea""]",['Community_Area']
+40,"[""Crime""]",['Crime']
+41,"[""FBICode"", ""Crime""]",['FBI_Code']
+42,"[""Crime"", ""District"", ""FBICode""]","['FBI_Code', 'Crime', 'District']"
+43,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+44,"[""Neighborhood"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'District']"
+45,"[""Crime"", ""CommunityArea""]","['FBI_Code', 'Crime', 'Community_Area']"
+46,"[""CommunityArea"", ""Crime"", ""IUCR""]","['Crime', 'Community_Area', 'IUCR']"
+47,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime']"
+48,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+49,"[""Ward"", ""Crime""]","['Ward', 'Crime']"
+50,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+51,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+52,"[""CommunityArea"", ""Crime"", ""IUCR""]","['Crime', 'Community_Area', 'IUCR']"
+53,"[""Ward"", ""Crime""]","['FBI_Code', 'Ward', 'Crime']"
+54,"[""Crime""]",['Crime']
+55,"[""Crime"", ""IUCR""]",['IUCR']
+56,"[""District""]",['District']
+57,"[""CommunityArea"", ""Ward""]",['Ward']
+58,"[""CommunityArea""]",['Community_Area']
+59,"[""Crime"", ""FBICode""]",['FBI_Code']
+60,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+61,"[""Crime"", ""District""]","['Ward', 'Crime']"
+62,"[""Crime"", ""District""]","['Crime', 'District']"
+63,"[""Crime"", ""Ward"", ""District""]","['Ward', 'Crime', 'District']"
+64,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+65,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+66,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+67,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+68,"[""Crime"", ""Ward"", ""IUCR""]","['Ward', 'Crime', 'IUCR']"
+69,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+70,"[""Crime"", ""District""]","['FBI_Code', 'Crime', 'District']"
+71,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+72,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+73,"[""Ward""]",['Ward']
+74,"[""Crime""]",['Crime']
+75,"[""CommunityArea""]",['Community_Area']
+76,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime', 'Community_Area']"
+77,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+78,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+79,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+80,"[""Ward"", ""Crime""]","['Ward', 'Crime']"
+81,"[""Crime"", ""CommunityArea""]","['Crime', 'Community_Area']"
+82,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+83,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+84,"[""Ward"", ""Crime""]","['Ward', 'Crime']"
+85,"[""Crime"", ""District""]","['Crime', 'District']"
+86,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+87,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+88,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+89,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime']"
+90,"[""CommunityArea""]",['Community_Area']
+91,"[""Crime""]",['Crime']
+92,"[""District""]",['District']
+93,"[""FBICode""]",['FBI_Code']
+94,"[""Crime"", ""IUCR""]",['IUCR']
+95,"[""Crime""]","['Crime', 'District']"
+96,"[""CommunityArea""]","['Ward', 'Crime', 'Community_Area']"
+97,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+98,"[""Crime"", ""District""]","['IUCR', 'Crime', 'District']"
+99,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+100,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+101,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area', 'IUCR']"
+102,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+103,"[""Crime"", ""IUCR""]","['FBI_Code', 'Crime', 'IUCR']"
+104,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+105,"[""CommunityArea"", ""Crime"", ""IUCR""]","['Crime', 'Community_Area', 'IUCR']"
+106,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'District']"
+107,"[""Crime"", ""District"", ""IUCR""]","['District', 'Crime', 'IUCR']"
+108,"[""Crime""]",['Crime']
+109,"[""Crime"", ""IUCR""]",['IUCR']
+110,"[""CommunityArea"", ""Ward""]",['Ward']
+111,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+112,"[""Crime"", ""District""]","['District', 'Crime', 'IUCR']"
+113,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+114,"[""Neighborhood"", ""Crime"", ""IUCR""]","['Neighborhood', 'Crime', 'Community_Area', 'IUCR']"
+115,"[""Crime"", ""District""]","['Crime', 'District']"
+116,"[""Crime"", ""District"", ""FBICode""]","['FBI_Code', 'Crime', 'District']"
+117,"[""Ward"", ""District"", ""Crime""]","['Ward', 'Crime', 'District']"
+118,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+119,"[""Crime"", ""District""]","['District', 'Crime', 'IUCR']"
+120,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+121,"[""CommunityArea"", ""Crime"", ""IUCR"", ""Ward""]","['Ward', 'Crime', 'IUCR']"
+122,"[""Crime"", ""District""]","['District', 'Crime', 'IUCR']"
+123,"[""Crime"", ""District""]","['Crime', 'District']"
+124,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+125,"[""CommunityArea"", ""Ward""]",['Ward']
+126,"[""Crime"", ""FBICode""]",['FBI_Code']
+127,"[""District""]",['District']
+128,"[""FBICode"", ""Crime""]",['FBI_Code']
+129,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+130,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+131,"[""Crime"", ""District""]","['Crime', 'District']"
+132,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+133,"[""Crime"", ""District""]","['Crime', 'District']"
+134,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+135,"[""Crime"", ""District""]","['Crime', 'District']"
+136,"[""CommunityArea"", ""Crime""]","['Crime', 'Community_Area']"
+137,"[""Crime""]","['FBI_Code', 'Crime']"
+138,"[""Crime"", ""CommunityArea""]","['FBI_Code', 'Crime', 'Community_Area']"
+139,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'the', 'Crime', 'Community_Area']"
+140,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+141,"[""Crime"", ""CommunityArea""]","['FBI_Code', 'Crime']"
+142,"[""CommunityArea""]",['Community_Area']
+143,"[""CommunityArea""]",['Community_Area']
+144,"[""CommunityArea""]",['Community_Area']
+145,"[""District""]",['District']
+146,"[""District"", ""Crime""]",['District']
+147,"[""IUCR""]",['IUCR']
+148,"[""Crime"", ""IUCR""]",['IUCR']
+149,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+150,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+151,"[""Neighborhood"", ""CommunityArea""]","['Neighborhood', 'Community_Area']"
+152,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+153,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+154,"[""Crime"", ""District""]","['FBI_Code', 'Crime']"
+155,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+156,"[""CommunityArea"", ""Crime""]","['FBI_Code', 'Crime', 'Community_Area']"
+157,"[""CommunityArea"", ""Crime"", ""FBICode""]","['FBI_Code', 'Crime', 'Community_Area']"
+158,"[""Crime"", ""District""]","['Crime', 'District']"
+159,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+160,"[""CommunityArea""]",['Ward']
+161,"[""Crime""]",['Crime']
+162,"[""FBICode""]",['FBI_Code']
+163,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime', 'Community_Area']"
+164,"[""Crime"", ""District""]","['Crime', 'District']"
+165,"[""CommunityArea"", ""Neighborhood""]","['Neighborhood', 'Community_Area']"
+166,"[""Crime"", ""Neighborhood""]","['Neighborhood', 'Crime', 'Community_Area']"
+167,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+168,"[""District"", ""Crime""]","['Crime', 'District']"
+169,"[""Neighborhood"", ""Crime""]","['Neighborhood', 'Crime', 'Community_Area']"
+170,"[""Ward""]",['Ward']
+171,"[""Ward""]",['Ward']
+172,"[""IUCR"", ""Crime""]",['IUCR']
+173,"[""IUCR"", ""Crime""]",['IUCR']
+174,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+175,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+176,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime']"
+177,"[""Ward"", ""Crime""]","['Ward', 'Crime']"
+178,"[""Crime"", ""Ward""]","['Ward', 'Crime']"
+179,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+180,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"
+181,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+182,"[""Crime"", ""FBICode""]","['FBI_Code', 'Crime']"
+183,"[""Crime"", ""District""]","['Crime', 'District']"
+184,"[""Crime"", ""District""]","['Crime', 'District']"
+185,"[""District"", ""Crime""]","['Crime', 'District']"
+186,"[""CommunityArea"", ""Crime"", ""Ward""]","['Ward', 'Crime']"
+187,"[""Crime"", ""IUCR""]","['Crime', 'IUCR']"

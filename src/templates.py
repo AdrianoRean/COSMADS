@@ -76,6 +76,49 @@ All tools share the following useful informations:
     - The result of a call is a pandas dataframe, so you may order, project and group the result if needed.
 """
 
+TEMPLATE_WITH_DOCUMENT_TOOLS_VIEW = """
+You are a proficient python developer is able to code a python function that solves a natural language query.
+
+You are given the query under study.
+Query:
+======
+{query}
+======
+
+Your goal is to determine which of the following tools should be used to generate a valid Python function that correctly generates the data specified in the queries:
+======
+{data_services}
+======
+{DATA_SERVICE_SECTION}
+    
+You have been provided also some evidence to help you in your task.
+======
+{evidence}
+======
+notes:
+- Evidence may be missing
+- The evidence may be referring to other programming languages, like SQL or Java. You have only to suggest Python advices.
+- The evidence is always useful, but be careful in using it as it is.
+
+You have been provided some samples from the data_services to help you in your task.
+======
+{data_samples}
+======
+The data samples have the following structure:
+[{{ "table_name" : <table_name>, "table_data_samples" : <table_data_samples> }}, ... , {{ "table_name" : <table_name>, "table_data_samples" : <table_data_samples> }}]
+notes:
+- the table_data_samples are pandas dataframes converted to string.
+
+Guidelines:
+- Make sure to generate a correct and concise response.
+- Write down just a list of the tools you would use.
+- The list should have a format like this: ["tool1_module", "tool2_module", ...].
+- Before and after the dictionary, always put a newline character and a triple backtick (```).
+- Do not add any other information between the dictionary and the triple backtick (```).
+
+Answer:
+"""
+
 TEMPLATE_WITH_DOCUMENT_TOOLS = """
 You are a proficient python developer is able to code a python function that solves a natural language query.
 

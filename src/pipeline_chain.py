@@ -26,11 +26,14 @@ class CustomOutputParser(BaseOutputParser):
 class PipelineGeneratorAgent:
     """The agent that designs the pipeline."""
 
-    def __init__(self, enterprise, model, mode = "standard"):
+    def __init__(self, enterprise, model, mode = "standard", additional_mode = None):
         """Initialize the agent."""
         # define the prompt
         if mode == "check_ground_truth":
-            prompt_template = TEMPLATE_WITH_DOCUMENT_TOOLS
+            if additional_mode != "with_view":
+                prompt_template = TEMPLATE_WITH_DOCUMENT_TOOLS
+            else:
+                prompt_template = TEMPLATE_WITH_DOCUMENT_TOOLS_VIEW
         elif mode == "wo_pipeline_view":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE_BUT_VIEW
         elif mode == "wo_pipeline":

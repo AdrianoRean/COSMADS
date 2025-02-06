@@ -65,7 +65,7 @@ class LLMAgent:
         self.similarity_treshold = similarity_treshold
         self.verbose = verbose
         
-        self.generator = PipelineGeneratorAgent(enterprise, model, mode=pipeline_mode)
+        self.generator = PipelineGeneratorAgent(enterprise, model, mode=pipeline_mode, additional_mode = dataservice_mode)
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
@@ -76,6 +76,13 @@ class LLMAgent:
         else:
             self.ds_directory = f"data_service_bird/{database}"
             self.ds_directory_import = f"data_service_bird.{database}"
+            
+        self.db_info_file_location = "data_service_bird_automatic/train_databases/train_tables.json"
+        self.db_info_file = json.load(open(self.db_info_file_location))
+        self.db_all_tables = [db["table_names"] for db in self.db_info_file if db["db_id"] == database][0]
+        
+        if self.verbose:
+            print(f"Tables from json file are: {self.db_all_tables}")
             
         if self.verbose:
             print(f"Content of directory: {os.listdir(self.ds_directory)}")
@@ -231,6 +238,7 @@ class LLMAgent:
                 print(f"Services to process: {data_service_to_process}")
         else:
             data_service_to_process = data_services_all
+            tables = self.db_all_tables
         for data_service in data_service_to_process:
             with open(f"{self.ds_directory}/{data_service}.py", mode="r") as f:
                 content = f.read()
@@ -445,23 +453,35 @@ if __name__ == "__main__":
             RunnableLambda(lambda x: {
                 "query": x["query"],
                 "evidence": x["evidence"],
-                "ground_truth": x["ground_truth"]
+                "sql": x["sql"]
                 }
+            )
+            | RunnableLambda(
+                lambda x : {
+                    "query": x["query"],
+                    "sql": x["sql"],
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
+                    "data_services": self.get_data_services()
+                } 
             )
             | RunnableLambda( 
                 lambda x : {
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
-                    "data_services": self.get_data_services()[1],
-                    "data_services_list": self.get_data_services(sql = x["ground_truth"])[2],
+                    "evidence": x["evidence"],
+                    "tables": x["data_services"][0],
+                    "data_services": x["data_services"][1],
+                    "ground_truth": self.get_data_services(sql = x["sql"])[0],
                     "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
             )
-            | generator_chain_output
+            | RunnableBranch(
+                (lambda x: self.dataservice_mode == "with_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["tables"]}, x, generator_chain_output)),
+                lambda x: self.run_chain(x, generator_chain_output)
+            )
             | RunnableLambda(
                 lambda x: {
                     "output" : x['tools'][1].strip(),
-                    "ground_truth": x['inputs']['data_services_list']
+                    "ground_truth": x['inputs']['ground_truth']
                 }
             )
         )
