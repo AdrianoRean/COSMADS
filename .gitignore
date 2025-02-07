@@ -133,7 +133,10 @@ secret.txt
 .DS_Store
 
 #Database stuff (too heavy)
-src/data_service_bird_automatic/
+src/data_service_bird_automatic/*
+!src/data_service_bird_automatic/utilities.py
+
+src/evaluation/*.csv
 
 # temporary files
 intermediate_results.json

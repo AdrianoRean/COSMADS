@@ -25,7 +25,8 @@ INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
 def get_queries(database):
     all_queries = json.load(open(f"queries/train.json"))
-    return [query for query in all_queries if query["db_id"] == database]
+    list_queries = [query for query in all_queries if query["db_id"] == database]
+    return list_queries[:5]
 
 def extract_tables(sql_query):
     # Regular expressions to capture tables in FROM and JOIN clauses
@@ -65,6 +66,7 @@ class LLMAgent:
         self.similarity_treshold = similarity_treshold
         self.verbose = verbose
         
+        ## in qusto caso, data service mode viene usato per scegliere se al selector gli do la view del db o no
         self.generator = PipelineGeneratorAgent(enterprise, model, mode=pipeline_mode, additional_mode = dataservice_mode)
         self.runner = PipelineRunner()
 
@@ -368,15 +370,16 @@ if __name__ == "__main__":
                 }
             )
             | RunnableBranch( 
-                (lambda x: self.dataservice_mode == "ground_truth", lambda x : {
+                (lambda x: self.dataservice_mode == "ground_truth", lambda x : {  ## mette solo quelli che sono nel ground truth (SQL)
                     "query": x["query"],
                     "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services(sql = x["ground_truth"])
-                }), lambda x : {
+                }), lambda x : { ## li mette tutti
                     "query": x["query"],
                     "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
                     "data_services": self.get_data_services()
-                }   
+                }  
+                ### ulteriore branch per prendere i risultati del selecor
             )
             | RunnableLambda( 
                 lambda x: {

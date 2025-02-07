@@ -29,7 +29,7 @@ class PipelineGeneratorAgent:
     def __init__(self, enterprise, model, mode = "standard", additional_mode = None):
         """Initialize the agent."""
         # define the prompt
-        if mode == "check_ground_truth":
+        if mode == "check_ground_truth":    # se sto usando il selector
             if additional_mode != "with_view":
                 prompt_template = TEMPLATE_WITH_DOCUMENT_TOOLS
             else:

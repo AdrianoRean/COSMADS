@@ -229,12 +229,26 @@ class DataServiceGenerator:
                     table_parameters = table_parameters[:-2]          
             #Signaling primary keys
             primary_key_text = ""
-            primary_keys = [i for i in database_primary_keys if i >= table[2] and i < index]
-            if primary_keys != []:
-                primary_key = database_columns[primary_keys[0]][1]
-                primary_key_text = f"The attribute {primary_key} is unique.\n"
-            else:
-                primary_key_text = "No attribute is unique.\n"
+            for i in database_primary_keys:
+                if type(i) == int:
+                    if i >= table[2] and i < index:
+                        primary_key = database_columns[i][1]
+                        primary_key_text = f"The attribute {primary_key} is unique.\n"
+                    else:
+                        primary_key_text = "No attribute is unique.\n"
+                else:
+                    for j in i:
+                        if j >= table[2] and j < index:
+                            primary_key = database_columns[j][1]
+                            primary_key_text = f"The attribute {primary_key} is unique.\n"
+                        else:
+                            primary_key_text = "No attribute is unique.\n"
+            # primary_keys = [i for i in database_primary_keys if i >= table[2] and i < index]
+            # if primary_keys != []:
+            #     primary_key = database_columns[primary_keys[0]][1]
+            #     primary_key_text = f"The attribute {primary_key} is unique.\n"
+            # else:
+            #     primary_key_text = "No attribute is unique.\n"
             
             #Signaling foreign keys
             foreign_key_text = ""

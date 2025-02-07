@@ -16,6 +16,7 @@ from judge import Judge
 
 def run_evaluation_ground_truth(database, enterprise, mode, model, queries, automatic, verbose = False):
     llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", dataservice_mode=mode, automatic=automatic, database=database, verbose=verbose)
+    ## modalità check ground truth significa che sto usando il selector, devo anche mettere get_chain_truth (la catena giusta)
     llm_chain = llm.get_chain_truth()
     
     num_queries = len(queries)
@@ -46,12 +47,12 @@ def run_evaluation_ground_truth(database, enterprise, mode, model, queries, auto
             time.sleep(0.2)
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
     safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
     
 def evaluate_ground_truth(database, enterprise, model, mode):
     metrics_res = []
     safe_model = str(model.replace("-", "_"))
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv")
+    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv")
 
     for index, line in eval_results.iterrows():
         ground_truth = ast.literal_eval(line["ground_truth"])
@@ -73,8 +74,8 @@ def evaluate_ground_truth(database, enterprise, model, mode):
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
     averages = average_results(metrics_res, "ground_truth_check")
-    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_check_ground_truth_{mode}_{database}_{enterprise}_{safe_model}.csv", sep=',', index=False)
+    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
     print("Detailed metrics are:")
     print(metrics_res)
     print("Summarized metrics are:")
@@ -124,7 +125,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "pipeline", "output", "output_json"])
     safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(f"evaluation/evaluation_results_{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}.csv", sep=',', index=False)
+    res_df.to_csv(f"evaluation/evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv", sep=',', index=False)
 
 def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = False):
     df1 = db.call(sql)
@@ -188,8 +189,8 @@ def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = Fals
 def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path):
     df_results = pd.DataFrame(results, columns=columns)
     averages = average_results(df_results, averaging_mode)
-    df_results.to_csv(f"evaluation/metrics_results_{averaging_mode}_{partial_file_path}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_{averaging_mode}_{partial_file_path}.csv", sep=',', index=False)
+    df_results.to_csv(f"evaluation/metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
+    averages.to_csv(f"evaluation/summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     print(f"Detailed {averaging_mode} metrics are:")
     print(df_results)
     print(f"Summarized {averaging_mode} metrics are:")
@@ -205,8 +206,8 @@ def check_all_zeros(list):
 def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False):
     
     safe_model = str(model.replace("-", "_"))
-    partial_file_path = f"{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}"
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_{partial_file_path}.csv")
+    partial_file_path = f"{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}"
+    eval_results = pd.read_csv(f"evaluation/evaluation_results__{partial_file_path}.csv")
     
     if valentine:
         db = GetDataFromDatabase()
@@ -291,38 +292,47 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
 
 if __name__ == "__main__":
     
+    ## modalità di esecuzione
     enterprise="Mistral"
     model = "mistral-large-latest"
-    database="chicago_crime"
+    database="human_resources"
     print(f"Model: {model}, Database: {database}")
     
-    generation = False
-    force_generation = False
+    ## generazione data service
+    generation = True  # True se voglio che vengano generati
+    force_generation = False    # False (se sono già presenti non li rigenera), True (li rigenera)
     print(f"Generation: {generation}, Forcing regeneration: {force_generation}")
     
+    ## quali data services sono utilizzati (lasciare a True perchè utilizziamo quelli generati automaticamente)
     automatic = True
     print(f"Data Services are generated: {automatic}")
     
+    ## per bert similarity (quanto voglio che siano simili gli embeddings per farglieli cambiare)
     similarity_treshold = 0.9
     print(f"Bert similarity treshold: {similarity_treshold}")
     
-    verbose = False
+    ## per la stampa in output
+    verbose = True
     print(f"Verbose: {verbose}")
     
-    only_metrics = False
-    valentine = True
-    llm = False
-    unified = False
+    ## per la valutazione
+    only_metrics = False    # se è true, allora runno solo evaluation (metrics) sia per il selector che per la pipeline, se è false runno tutto (rigenero anche i risultati)
+    valentine = True    # se le metriche devono essere valutate su valentine
+    llm = True # se le metriche devono essere valutate su llm judge
+    unified = False # misto tra i due
+    execution_accuracy = True # ATTUALMENTE NON IMPLEMENTATO (set(generato)==set(ground_truth))
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Unified metrics: {unified}")
 
-    ground_truth_check = True
-    ground_truth_check_mode = "no_view" # "no_view"
+    ## evaluation sul selector
+    ground_truth_check = False  # per fare l'evaluation sul selector
+    ground_truth_check_mode = "no_view" # "no_view" non gli passo la view, "with_view" gli passo la view
     print(f"Data service selection evaluation: {ground_truth_check}, Data service selection mode: {ground_truth_check_mode}")
     
-    pipeline_check = False
-    pipeline_mode = "wo_pipeline_view" # "wo_pipeline"
-    evidence_mode = "standard_evidence"
-    dataservice_mode = "ground_truth"
+    ## evaluation sul pipeline
+    pipeline_check = True
+    pipeline_mode = "wo_pipeline_view" # "wo_pipeline_view" non gli passo la pipeline ma gli passo la view, "wo_pipeline" non gli passo la pipeline e neanche la view (NON TOCCARE!)
+    evidence_mode = "standard_evidence" # "standard_evidence" gli passo ciò che sta in bird, "added_evidence" DA IGNORARE
+    dataservice_mode = "tutti"   # "ground_truth" gli passo il ground truth (da SQL), l'altro non ha nome ma significa che gli passo tutti i data services
     print(f"Pipeline evaluation: {pipeline_check}, Pipeline mode: {pipeline_mode}, Evidence mode: {evidence_mode}, Data service mode: {dataservice_mode}")
     
     queries = get_queries(database)
@@ -341,7 +351,7 @@ if __name__ == "__main__":
             dataservice_generator.create_data_services(database_info)
 
     if ground_truth_check:
-        print("Performing ground truth check")
+        print("Performing ground truth check")  # evaluation sul selector!!!!
         if not only_metrics:
             run_evaluation_ground_truth(database, enterprise, ground_truth_check_mode, model, queries, automatic=automatic, verbose = verbose)
         evaluate_ground_truth(database, enterprise, model, ground_truth_check_mode)
