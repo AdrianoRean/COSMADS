@@ -5,6 +5,7 @@ import os
 import re
 import time
 import pandas as pd
+from pathlib import Path
 
 from data_service_bird.database import GetDataFromDatabase
 from result_averager import average_results
@@ -15,6 +16,9 @@ from evaluation.match_similarity import match_similarity
 from judge import Judge
 
 def run_evaluation_ground_truth(database, enterprise, mode, model, queries, automatic, verbose = False):
+    result_dir = Path(__file__).parent / "evaluation" / database / enterprise
+    result_dir.mkdir(parents=True, exist_ok=True)
+
     llm = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="check_ground_truth", dataservice_mode=mode, automatic=automatic, database=database, verbose=verbose)
     ## modalità check ground truth significa che sto usando il selector, devo anche mettere get_chain_truth (la catena giusta)
     llm_chain = llm.get_chain_truth()
@@ -47,12 +51,15 @@ def run_evaluation_ground_truth(database, enterprise, mode, model, queries, auto
             time.sleep(0.2)
     res_df = pd.DataFrame(res_eval, columns=["index", "tools_prediction", "ground_truth"])
     safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(f"evaluation/evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
+    res_df.to_csv(result_dir / f"evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
     
 def evaluate_ground_truth(database, enterprise, model, mode):
+    result_dir = Path(__file__).parent / "evaluation" / database / enterprise
+    result_dir.mkdir(parents=True, exist_ok=True)
+
     metrics_res = []
     safe_model = str(model.replace("-", "_"))
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv")
+    eval_results = pd.read_csv(result_dir / f"evaluation_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv")
 
     for index, line in eval_results.iterrows():
         ground_truth = ast.literal_eval(line["ground_truth"])
@@ -74,8 +81,8 @@ def evaluate_ground_truth(database, enterprise, model, mode):
     
     metrics_res = pd.DataFrame(metrics_res, columns=["index", "accuracy", "recall"])
     averages = average_results(metrics_res, "ground_truth_check")
-    metrics_res.to_csv(f"evaluation/detailed_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
+    metrics_res.to_csv(result_dir / f"detailed_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
+    averages.to_csv(result_dir / f"summarized_results_check_ground_truth__{mode}__{database}__{enterprise}__{safe_model}.csv", sep=',', index=False)
     print("Detailed metrics are:")
     print(metrics_res)
     print("Summarized metrics are:")
@@ -83,6 +90,9 @@ def evaluate_ground_truth(database, enterprise, model, mode):
         
 
 def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False):
+    result_dir = Path(__file__).parent / "evaluation" / database / enterprise
+    result_dir.mkdir(parents=True, exist_ok=True)
+
     llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain()
     
@@ -125,7 +135,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "pipeline", "output", "output_json"])
     safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(f"evaluation/evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv", sep=',', index=False)
+    res_df.to_csv(result_dir / f"evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv", sep=',', index=False)
 
 def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = False):
     df1 = db.call(sql)
@@ -186,11 +196,11 @@ def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = Fals
         
     return [index, precision, recall, acc_cell, acc_row]
 
-def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path):
+def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path, result_dir):
     df_results = pd.DataFrame(results, columns=columns)
     averages = average_results(df_results, averaging_mode)
-    df_results.to_csv(f"evaluation/metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
-    averages.to_csv(f"evaluation/summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
+    df_results.to_csv(result_dir / f"metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
+    averages.to_csv(result_dir / f"summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     print(f"Detailed {averaging_mode} metrics are:")
     print(df_results)
     print(f"Summarized {averaging_mode} metrics are:")
@@ -204,10 +214,13 @@ def check_all_zeros(list):
     return True
 
 def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False):
-    
+    # create the result dir folder
+    result_dir = Path(__file__).parent / "evaluation" / database / enterprise
+    result_dir.mkdir(parents=True, exist_ok=True)
+
     safe_model = str(model.replace("-", "_"))
     partial_file_path = f"{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}"
-    eval_results = pd.read_csv(f"evaluation/evaluation_results__{partial_file_path}.csv")
+    eval_results = pd.read_csv(result_dir / f"evaluation_results__{partial_file_path}.csv")
     
     if valentine:
         db = GetDataFromDatabase()
@@ -223,7 +236,7 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         judge = Judge(enterprise, model, mode="verdict")
         verdict_res = []
 
-    #eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
+    #eval_results = pd.read_csv(result_dir / f"evaluation_results_{mode}.csv")
     num_queries = len(queries)
     
     if valentine or llm:
@@ -254,20 +267,20 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         
     if valentine:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
-        metrics_res = averaging_saving_print_results(metrics_res, columns, "valentine", partial_file_path)
+        metrics_res = averaging_saving_print_results(metrics_res, columns, "valentine", partial_file_path, result_dir)
     
     if llm:
         columns = ["index", "verdict"]
-        verdict_res = averaging_saving_print_results(verdict_res, columns, "llm", partial_file_path)
+        verdict_res = averaging_saving_print_results(verdict_res, columns, "llm", partial_file_path, result_dir)
     
     if unified:
         print("Unifying valentin and llm results.\n    Ignoring MISLEADING results and setting metrics to 1 if TRUE")
         if not valentine:
             print("Reading past valentine results")
-            metrics_res = pd.read_csv(f"evaluation/metrics_results_valentine_{partial_file_path}.csv")
+            metrics_res = pd.read_csv(result_dir / f"metrics_results_valentine_{partial_file_path}.csv")
         if not llm:
             print("Reading past llm results")
-            verdict_res = pd.read_csv(f"evaluation/metrics_results_llm_{partial_file_path}.csv")
+            verdict_res = pd.read_csv(result_dir / f"metrics_results_llm_{partial_file_path}.csv")
         unified_metric_res = []
         for index in range(num_queries):
             verdict = verdict_res.iloc[index]["verdict"]
