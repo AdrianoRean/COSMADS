@@ -21,8 +21,8 @@ DATA_SERVICE_EXAMPLE = """
         Each data entry has the following attributes: ssn, lastname, firstname, hiredate, salary, gender, performance, positionID, locationID.
         The attribute "ssn" (which stands for social security number) is unique for each employee.
         The attribute "hiredate" has format "mm-dd-yy".
-        The attriute "salary" is saved as strings and start with the prefix "US$" and contains "," to separate thousand. To be parsed as number, it is needed to eliminate those elements.
-        The attriute "gender" is saved as either "M" or "F".
+        The attribute "salary" is saved as strings and start with the prefix "US$" and contains "," (comma) to separate thousand. To be parsed as number, the prefix and the comma should be removed.
+        The attribute "gender" is saved as either "M" or "F".
         The attributes "positionID" and "locationID" are foreign keys to the position and location collections respectively.\"\"\",
         
         "usage_example": \"\"\"
@@ -44,8 +44,8 @@ DATA_SERVICE_EXAMPLE = """
 
 PROMPT_LLM_DESCRIPTION_GLOBAL = """
 You are a proficient SQL and Python programmer. 
-You are given in exam the SQL database "{database_name}" with some samples for each of its table.
-Your goal is, for each table, to create a brief descrition, a detailed description and an example of a Python class which wraps a SQL selector operator on that specific table.
+You are given in exam a relational table called {table_name} from the SQL database "{database_name}" with some sample records.
+Your goal is to create a brief descrition, a detailed description and an example of a Python class which wraps a SQL selector operator on that specific table.
 
 Here an example of such wrapper:
 ======
@@ -53,11 +53,15 @@ Here an example of such wrapper:
 ======
 {DATA_SERVICE_SECTION}
     
-Here there is the list of tables of the database with their details:
+Here the table for which you have to create the wrapper, with its details:
 ======
-{database_table_list}
+{table_description}
 ======
-Each element of the list has the following structure:
+And here are the list of tables referenced through foreign keys from the {table_name} table (NULL if none):
+{foreign_key_tables}
+======
+
+Both {table_name} and the foreign key tables have the following structure:
 {{
     "function_name" : <function_name>,
     "table_name": <table_name>,
@@ -71,7 +75,7 @@ Each element of the list has the following structure:
 The "table_foreign_keys" is a list where each element is a triplet with the following structure: [<table_column>, <referenced_column>, <referenced_table>]
 The "table_data_samples" is pandas dataframe converted to string.
 
-The output should be a JSON list where each of the element represent a table and has the following structure:
+The output should be a JSON representing the {table_name} table and has the following structure:
 {{
     "table_name": <table_name>,
     "brief_description" : <brief_description>,
@@ -139,9 +143,9 @@ class GetDataFrom{function_name}:
         return df
 """
     
-def get_sample_data(database_location, table):
+def get_sample_data(database_location, table, limit=3):
     connection = sqlite3.connect(database_location)
-    query = f"SELECT * FROM {table} LIMIT 10"
+    query = f"SELECT * FROM {table} LIMIT {limit}"
     df = pd.read_sql_query(query, connection)
     connection.close()
     return df
@@ -207,7 +211,7 @@ class DataServiceGenerator:
                 table_start = index
         tables_pair.append([id, database_table_names[id], table_start, index])
         
-        #print(f"[DEBUG] Table pairs {tables_pair}")
+        # print(f"[DEBUG] Table pairs {tables_pair}")
         
         for table in tables_pair:
             #print(f"------------------ \n Table {table}")
@@ -279,8 +283,8 @@ class DataServiceGenerator:
                 "table_data_samples" : data_samples,
                 "table_parameters_list" : call_parameters_list
             })
-            
-        #print(database_table_list)
+        #import pprint
+        #pprint.pprint(database_table_list)
         #print("\n\n\n ----------------- \n\n\n")
             
         #Get LLM description
