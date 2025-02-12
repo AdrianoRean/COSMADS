@@ -15,6 +15,9 @@ from model import getModel
 # langchain.verbose = True
 # langchain.debug = True
 
+# TODO Jerin: use camelcase for the function name and edit the DATA_SERVICE_EXAMPLE accordingly
+# in DATA_SERVICE_EXAMPLE specify how the getdata... is formatted (not camelcase)
+
 databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
 
 DATA_SERVICE_EXAMPLE = """
@@ -32,7 +35,7 @@ DATA_SERVICE_EXAMPLE = """
         "usage_example": \"\"\"
         - If I want to obtain all the information from the employee with ssn 123 I can write:
         employeessn = ('123', "EQUAL")
-        employees = GetDataFromEmployee()
+        employees = GetDataFromemployee() 
         employees.open_connection()
         employee_df = employees.call(employeessn=employeessn)
         # assuming the result is a pandas dataframe
@@ -342,11 +345,11 @@ class DataServiceGenerator:
             chain_result = chain.invoke((database_name, table_name, table_description, foreign_key_tables_description, DATA_SERVICE_EXAMPLE))["output"]
             # parse the chain result
             chain_result = ast.literal_eval(chain_result)
-            print(chain_result)
+            chain_result_list.append(chain_result)
+            #print(chain_result)
 
-        raise ValueError("Stop here")    
-        result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
-        result = ast.literal_eval(result)
+        # result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
+        # result = ast.literal_eval(result)
         
         safe_model = self.model.replace("-", "_")
         dir_location = f"data_service_bird_automatic/train_databases/{database_name}/data_services/{self.enterprise}/{safe_model}"
@@ -355,7 +358,7 @@ class DataServiceGenerator:
         
         for index, table in enumerate(database_table_list):
             file_location = dir_location + f"/{table['function_name']}.py"
-            output = result[index]
+            output = chain_result_list[index]
             
             filled_template = DATA_SERVICE_BIRD_TEMPLATE.format(
                 function_name = table["function_name"],
