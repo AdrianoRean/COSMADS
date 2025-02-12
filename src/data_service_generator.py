@@ -58,7 +58,7 @@ Here the table for which you have to create the wrapper, with its details:
 {table_description}
 ======
 And here are the list of tables referenced through foreign keys from the {table_name} table (NULL if none):
-{foreign_key_tables}
+{foreign_key_tables_description}
 ======
 
 Both {table_name} and the foreign key tables have the following structure:
@@ -297,14 +297,51 @@ class DataServiceGenerator:
             RunnableLambda( 
                     lambda x: {
                         "database_name": x[0],
-                        "database_table_list": x[1],
-                        "data_service_example": x[2],
+                        "table_name": x[1],
+                        "table_description": x[2],
+                        "foreign_key_tables_description": x[3],
+                        "data_service_example" : x[4],
                         "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                     }
                 )
                 | generator_chain_output
         )
-        
+
+        chain_result_list = []
+        for table in database_table_list:
+            table_name = table["table_name"]
+            # get the foreign keys
+            table_foreign_keys = table["table_foreign_keys"]
+            foreign_key_tables_description = "NULL"
+            if table_foreign_keys != []:
+                # get the foreign key tables
+                foreign_key_tables = []
+                for table_foreign_key_entry in table_foreign_keys:
+                    foreign_key_table_name = table_foreign_key_entry[2]
+                    foreign_key_tables.append(foreign_key_table_name)
+                
+                # get the entry in the database for the foreign key tables
+                foreign_key_tables_description = []
+                for foreign_key_table_name in foreign_key_tables:
+                    for tbl in database_table_list:
+                        if tbl["table_name"] == foreign_key_table_name:
+                            foreign_key_tables_description.append(tbl)
+                            break
+                
+                # convert the foreign key tables to an indented JSON string
+                foreign_key_tables_description = json.dumps(foreign_key_tables_description, indent=4)
+
+            # get the table description for the current table
+            table_description = json.dumps(table, indent=4)
+
+            # invoke the chain
+            chain_result = chain.invoke((database_name, table_name, table_description, foreign_key_tables_description, DATA_SERVICE_EXAMPLE))["output"]
+            # parse the chain result
+            chain_result = ast.literal_eval(chain_result)
+            print(chain_result)
+            raise ValueError("Stop here")
+
+        # raise ValueError("Stop here")    
         result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
         result = ast.literal_eval(result)
         
