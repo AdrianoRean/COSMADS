@@ -11,6 +11,10 @@ import sqlite3
 from templates import DATA_SERVICE_SECTION
 from model import getModel
 
+# import langchain
+# langchain.verbose = True
+# langchain.debug = True
+
 databases_description_location = "data_service_bird_automatic/train_databases/train_tables.json"
 
 DATA_SERVICE_EXAMPLE = """
@@ -61,7 +65,7 @@ And here are the list of tables referenced through foreign keys from the {table_
 {foreign_key_tables_description}
 ======
 
-Both {table_name} and the foreign key tables have the following structure:
+Both the table {table_name} and the foreign key tables have the following structure:
 {{
     "function_name" : <function_name>,
     "table_name": <table_name>,
@@ -339,9 +343,8 @@ class DataServiceGenerator:
             # parse the chain result
             chain_result = ast.literal_eval(chain_result)
             print(chain_result)
-            raise ValueError("Stop here")
 
-        # raise ValueError("Stop here")    
+        raise ValueError("Stop here")    
         result = chain.invoke((database_name, database_table_list, DATA_SERVICE_EXAMPLE))["output"]
         result = ast.literal_eval(result)
         
