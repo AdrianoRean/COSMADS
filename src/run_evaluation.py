@@ -89,11 +89,11 @@ def evaluate_ground_truth(database, enterprise, model, mode):
     print(averages)
         
 
-def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False):
+def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False, data_service_gen_enterprise="Openai", data_service_gen_model="gpt-4o"):
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
 
-    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose)
+    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose, data_service_gen_enterprise=data_service_gen_enterprise, data_service_gen_model=data_service_gen_model)
     llm_chain = llm.get_chain()
     
     num_queries = len(queries)
@@ -310,10 +310,14 @@ if __name__ == "__main__":
     model = "mistral-large-latest"
     database="human_resources"
     print(f"Model: {model}, Database: {database}")
+
+    ## enterprise model pair to be used to generate data services
+    data_service_gen_enterprise = "Openai"
+    data_service_gen_model = "gpt-4o"
     
     ## generazione data service
     generation = True  # True se voglio che vengano generati
-    force_generation = False    # False (se sono già presenti non li rigenera), True (li rigenera)
+    force_generation = True    # False (se sono già presenti non li rigenera), True (li rigenera)
     print(f"Generation: {generation}, Forcing regeneration: {force_generation}")
     
     ## quali data services sono utilizzati (lasciare a True perchè utilizziamo quelli generati automaticamente)
@@ -352,15 +356,15 @@ if __name__ == "__main__":
     print(f"Got {len(queries)} queries")
     
     if generation:
-        safe_model = str(model.replace("-", "_"))
-        exist = os.path.exists(f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{safe_model}/")
+        data_service_gen_safe_model = str(data_service_gen_model.replace("-", "_"))
+        exist = os.path.exists(f"data_service_bird_automatic/train_databases/{database}/data_services/{data_service_gen_enterprise}/{data_service_gen_safe_model}/")
         if not exist or (exist and force_generation):
             print("Generating Data services")
             databases = None
             with open(databases_description_location) as f:
                 databases = json.load(f)
             database_info = [db for db in databases if db["db_id"] == database][0]
-            dataservice_generator = DataServiceGenerator(enterprise, model)
+            dataservice_generator = DataServiceGenerator(enterprise=data_service_gen_enterprise, model=data_service_gen_model)
             dataservice_generator.create_data_services(database_info)
 
     if ground_truth_check:
@@ -377,7 +381,18 @@ if __name__ == "__main__":
             file.truncate()
         
         if not only_metrics:
-            run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode=dataservice_mode, automatic=automatic, similarity_treshold=similarity_treshold, verbose=verbose)
+            run_evaluation(database, 
+                           queries, 
+                           enterprise, 
+                           model, 
+                           pipeline_mode, 
+                           evidence_mode, 
+                           dataservice_mode=dataservice_mode, 
+                           automatic=automatic, 
+                           similarity_treshold=similarity_treshold, 
+                           verbose=verbose,
+                           data_service_gen_enterprise=data_service_gen_enterprise,
+                           data_service_gen_model=data_service_gen_model)
         evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified)
     
     

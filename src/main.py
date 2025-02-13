@@ -49,7 +49,7 @@ def extract_tables(sql_query):
     return all_tables
 
 class LLMAgent:
-    def __init__(self, enterprise, model, pipeline_mode = "standard", evidence_mode = "standard_evidence", dataservice_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False):
+    def __init__(self, enterprise, model, pipeline_mode = "standard", evidence_mode = "standard_evidence", dataservice_mode = None, similarity_treshold = 0.8, automatic=False, database="human_resources", verbose = False, data_service_gen_enterprise = "Openai", data_service_gen_model = "gpt-4o"):
         print(f"Mode is: {pipeline_mode}")
         self.pipeline_mode = pipeline_mode
         self.evidence_mode = evidence_mode
@@ -69,10 +69,10 @@ class LLMAgent:
         self.runner = PipelineRunner()
 
         #self.ds_directory = "data_services"
-        safe_model = str(model.replace("-", "_"))
+        safe_model = str(data_service_gen_model.replace("-", "_"))
         if automatic:
-            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{enterprise}/{safe_model}"
-            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{enterprise}.{safe_model}"
+            self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{data_service_gen_enterprise}/{safe_model}"
+            self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{data_service_gen_enterprise}.{safe_model}"
         else:
             self.ds_directory = f"data_service_bird/{database}"
             self.ds_directory_import = f"data_service_bird.{database}"
