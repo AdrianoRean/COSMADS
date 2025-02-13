@@ -68,7 +68,7 @@ where:
     - <module> is the module where the callable python class is defined. It is useful to get a sense of which physical or software component the callable python class is related to.
 
 All tools share the following useful informations:
-    - You may select data trough any combination of this attributes. They are all optional.
+    - You may select data through any combination of this attributes. They are all optional.
     - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
     - If all attributes are left undeclared, it returns all the available data.
     - You cannot pass a list as value for the attributes.
