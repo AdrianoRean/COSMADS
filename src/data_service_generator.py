@@ -32,7 +32,9 @@ DATA_SERVICE_EXAMPLE = """
         "usage_example": \"\"\"
         - If I want to obtain all the information from the employee with ssn 123 I can write:
         employeessn = ('123', "EQUAL")
-        employees = GetDataFromemployee()   # The function name always follows the pattern GetDataFrom + module (in this case "employee"). Please keep the same capitalization as the module name.
+        # The function name to retrieve the data always follows the pattern GetDataFrom + module, where module is the value of the module field further down (in this case 'employee'). 
+        # Please keep the same capitalization as the value in the module field (in this case lowercase)
+        employees = GetDataFromemployee()   
         employees.open_connection()
         employee_df = employees.call(employeessn=employeessn)
         # assuming the result is a pandas dataframe
