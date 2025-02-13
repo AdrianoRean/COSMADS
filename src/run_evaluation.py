@@ -137,6 +137,49 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
     safe_model = str(model.replace("-", "_"))
     res_df.to_csv(result_dir / f"evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv", sep=',', index=False)
 
+
+def compute_execution_accuracy(index, sql, db, res, verbose = False):
+    execution_accuracy = 0
+    # get the ground truth table
+    ground_truth_sql_table = db.call(sql)
+    # parse the result table
+    if type(res["output_json"].values[0]) != str:
+        if verbose:
+            print("Empty pipeline result, probably failed execution. Not performing any match.")
+        return [index, execution_accuracy]
+    output_json = res["output_json"].values[0]
+    output_json = output_json.replace('\\xa0', '')
+    output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+
+    if output_json == "":
+        if verbose:
+            print("Empty pipeline result, probably failed execution. Not performing any match.")
+        return [index, execution_accuracy]
+    
+    try:
+        output_res = json.loads(output_json)
+        output_table = pd.DataFrame(output_res)
+
+        if output_table.shape != ground_truth_sql_table.shape:
+            if verbose:
+                print("Different shapes of the two tables")
+            return [index, execution_accuracy]
+        # sort the columns alphabetically for comparison
+        output_table = output_table[sorted(output_table.columns)]
+        ground_truth_sql_table = ground_truth_sql_table[sorted(ground_truth_sql_table.columns)]
+        # convert both tables to list of tuples
+        output_table = [tuple(x) for x in output_table.to_numpy()]
+        ground_truth_sql_table = [tuple(x) for x in ground_truth_sql_table.to_numpy()]
+        if set(output_table) == set(ground_truth_sql_table):
+            execution_accuracy = 1
+
+    except Exception as e:
+        print(f"Exception while load json: {e}")
+    return [index, execution_accuracy]
+
+
+    
+
 def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = False):
     df1 = db.call(sql)
     #Check if pipeline completely failed like query 35 eval_26-11-24
@@ -198,13 +241,15 @@ def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = Fals
 
 def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path, result_dir):
     df_results = pd.DataFrame(results, columns=columns)
-    averages = average_results(df_results, averaging_mode)
+    if averaging_mode != "execution_accuracy":
+        averages = average_results(df_results, averaging_mode)
+        averages.to_csv(result_dir / f"summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     df_results.to_csv(result_dir / f"metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
-    averages.to_csv(result_dir / f"summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     print(f"Detailed {averaging_mode} metrics are:")
     print(df_results)
-    print(f"Summarized {averaging_mode} metrics are:")
-    print(averages)
+    if averaging_mode != "execution_accuracy":
+        print(f"Summarized {averaging_mode} metrics are:")
+        print(averages)
     return df_results
 
 def check_all_zeros(list):
@@ -213,7 +258,7 @@ def check_all_zeros(list):
             return False
     return True
 
-def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False):
+def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False, execution_accuracy=True):
     # create the result dir folder
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
@@ -222,19 +267,23 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     partial_file_path = f"{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}"
     eval_results = pd.read_csv(result_dir / f"evaluation_results__{partial_file_path}.csv")
     
-    if valentine:
+    if valentine or execution_accuracy:
         db = GetDataFromDatabase()
         if automatic:
             db.open_connection(f"data_service_bird_automatic/train_databases/{database}/{database}.sqlite")
         else:
             db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
-            
+    
+    if valentine:
         agent = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="wo_pipeline")
         metrics_res = []
         
     if llm:
         judge = Judge(enterprise, model, mode="verdict")
         verdict_res = []
+
+    if execution_accuracy:
+        execution_accuracy_res = []
 
     #eval_results = pd.read_csv(result_dir / f"evaluation_results_{mode}.csv")
     num_queries = len(queries)
@@ -264,6 +313,9 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                 print(f"Verdict is: {verdict}")
                 if enterprise == "Mistral":
                     time.sleep(0.3)
+            
+            if execution_accuracy:
+                execution_accuracy_res.append(compute_execution_accuracy(index, sql, db, res, verbose))
         
     if valentine:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
@@ -272,6 +324,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     if llm:
         columns = ["index", "verdict"]
         verdict_res = averaging_saving_print_results(verdict_res, columns, "llm", partial_file_path, result_dir)
+
+    if execution_accuracy:
+        columns = ["index", "execution_accuracy"]
+        execution_accuracy_res = averaging_saving_print_results(execution_accuracy_res, columns, "execution_accuracy", partial_file_path, result_dir)
     
     if unified:
         print("Unifying valentin and llm results.\n    Ignoring MISLEADING results and setting metrics to 1 if TRUE")
@@ -317,7 +373,7 @@ if __name__ == "__main__":
     
     ## generazione data service
     generation = True  # True se voglio che vengano generati
-    force_generation = True    # False (se sono già presenti non li rigenera), True (li rigenera)
+    force_generation = False    # False (se sono già presenti non li rigenera), True (li rigenera)
     print(f"Generation: {generation}, Forcing regeneration: {force_generation}")
     
     ## quali data services sono utilizzati (lasciare a True perchè utilizziamo quelli generati automaticamente)
@@ -393,6 +449,6 @@ if __name__ == "__main__":
                            verbose=verbose,
                            data_service_gen_enterprise=data_service_gen_enterprise,
                            data_service_gen_model=data_service_gen_model)
-        evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified)
+        evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified, execution_accuracy=execution_accuracy)
     
     
