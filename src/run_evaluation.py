@@ -95,6 +95,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
     # skip if there are files in the directory
     if len(list(result_dir.glob("*.csv"))) > 0:
         print(f"Results already present, skipping running evaluation with {enterprise} on {database}")
+        return
 
     llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose, data_service_gen_enterprise=data_service_gen_enterprise, data_service_gen_model=data_service_gen_model)
     llm_chain = llm.get_chain()
@@ -266,10 +267,11 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
 
-    # skip if there are files in the directory
-    if len(list(result_dir.glob("*.csv"))) > 0:
-        print(f"Results already present, skipping computing metrics of {enterprise} on {database}")
+    # skip if there are files in the directory that start with "metrics_results" or "summarized_results"
+    if len(list(result_dir.glob("metrics_results*.csv"))) > 0 or len(list(result_dir.glob("summarized_results*.csv"))) > 0:
+        print(f"Results already present, skipping computing metrics with {enterprise} on {database}")
         return
+
 
     safe_model = str(model.replace("-", "_"))
     partial_file_path = f"{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}"
