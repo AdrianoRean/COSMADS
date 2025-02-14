@@ -2,10 +2,10 @@ import ast
 import json
 import math
 import os
-import re
 import time
 import pandas as pd
 from pathlib import Path
+from argparse import ArgumentParser
 
 from data_service_bird.database import GetDataFromDatabase
 from result_averager import average_results
@@ -368,14 +368,34 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     return
 
 if __name__ == "__main__":
+    # create the parser and add the arguments
+    parser = ArgumentParser()
+    parser.add_argument('--database', type=str, default="human_resources")
+    parser.add_argument('--model', type=str, choices=["openai", "mistral", "anthropic", "deepseek"], default="mistral")
     
-    ## modalità di esecuzione
-    enterprise="Mistral"
-    model = "mistral-large-latest"
-    database="human_resources"
+    # parse the arguments
+    args = parser.parse_args()
+
+    # get enterprise and model
+    parsed_model = args.model
+    if parsed_model == "openai":
+        enterprise = "Openai"
+        model = "gpt-4o"
+    elif parsed_model == "mistral":
+        enterprise = "Mistral"
+        model = "mistral-large-latest"
+    elif parsed_model == "anthropic":
+        enterprise = "Anthropic"
+        model = "claude-3-5-sonnet-latest"
+    elif parsed_model == "deepseek":
+        enterprise = "Deepseek"
+        model = "deepseek-chat"
+
+    # get the database
+    database= args.database
     print(f"Model: {model}, Database: {database}")
 
-    ## enterprise model pair to be used to generate data services
+    ## enterprise model pair to be used to generate data services only (not used to generate the pipeline)
     data_service_gen_enterprise = "Openai"
     data_service_gen_model = "gpt-4o"
     
