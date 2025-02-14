@@ -24,7 +24,7 @@ INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 def get_queries(database):
     all_queries = json.load(open(f"queries/train.json"))
     list_queries = [query for query in all_queries if query["db_id"] == database]
-    return list_queries[:5]
+    return list_queries
 
 def extract_tables(sql_query):
     # Regular expressions to capture tables in FROM and JOIN clauses
