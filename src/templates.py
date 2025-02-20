@@ -12,6 +12,42 @@ JUDGE_EXPLAIN = """- Explain in an extensive way why the python function yield o
 - Before and after the answer, always put a newline character and a triple backtick (```).
 - VERY IMPORTANT: Do not put any triple backtick (```) aside the ones starting and closing the answer."""
 
+JUDGE_PROMPT_NO_SQL = """
+You are a proficient Python and SQL programmer. Your job is to judge if the following python function is returning a correct response to a natural language query.
+
+Natural language query:
+======
+{query}
+======
+
+Here's a view of result given by the python function.
+View:
+======
+{view}
+======
+
+Here's the python function to judge.
+Function:
+======
+{pipeline}
+======
+VERY IMPORTANT NOTES:
+- The snippet of code provided do not show the whole context of the original code. So, assume that the imports and unknown fuctions work properly.
+- When analyzing the python code, focus only on the high level logic.
+
+Guidelines:
+- Don't be biased towards negative answers. Be a fair judge.
+- In case you are undecided due to the python code snippet insufficient context, base your answer of what you understood. 
+- Don't say they are not equivalent just beacuse you don't understand.  
+- If the function answer the query correctly, answer CORRECT.
+- If the fucntion do not answer the query, answer NOT-CORRECT.
+- Write down just with one of the special words mentioned beforehand. Choose the most appropriate one.
+- Before and after the answer, always put a newline character and a triple backtick (```).
+- Do not add any other information between the answer and the triple backtick (```).
+
+Answer:
+"""
+
 JUDGE_PROMPT = """
 You are a proficient Python and SQL programmer. Your job is to judge if the following python function is leading to equivalent results of a SQL query.
 
@@ -69,7 +105,7 @@ where:
 
 All tools share the following useful informations:
     - You may select data through any combination of this attributes. They are all optional.
-    - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL".
+    - For each attribute, you must specify which kind of operator you want to apply. You may specify: "EQUAL", "GREATER", "GREATER OR EQUAL", "MINOR", "MINOR OR EQUAL", "LIKE".
     - If all attributes are left undeclared, it returns all the available data.
     - You cannot pass a list as value for the attributes.
     - Sometimes data may have missing values.
