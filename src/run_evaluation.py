@@ -372,8 +372,8 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
 if __name__ == "__main__":
     # create the parser and add the arguments
     parser = ArgumentParser()
-    parser.add_argument('--database', type=str, default="human_resources")
-    parser.add_argument('--model', type=str, choices=["openai", "mistral", "anthropic", "deepseek"], default="mistral")
+    parser.add_argument('--database', type=str, default="chicago_crime")
+    parser.add_argument('--model', type=str, choices=["openai", "mistral", "anthropic", "deepseek"], default="openai")
     
     # parse the arguments
     args = parser.parse_args()
@@ -415,15 +415,15 @@ if __name__ == "__main__":
     print(f"Bert similarity treshold: {similarity_treshold}")
     
     ## per la stampa in output
-    verbose = True
+    verbose = False
     print(f"Verbose: {verbose}")
     
     ## per la valutazione
     only_metrics = False    # se è true, allora runno solo evaluation (metrics) sia per il selector che per la pipeline, se è false runno tutto (rigenero anche i risultati)
     valentine = True    # se le metriche devono essere valutate su valentine
-    llm = True # se le metriche devono essere valutate su llm judge
+    llm = False # se le metriche devono essere valutate su llm judge
     unified = False # misto tra i due
-    execution_accuracy = True 
+    execution_accuracy = False 
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Unified metrics: {unified}")
 
     ## evaluation sul selector

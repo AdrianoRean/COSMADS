@@ -9,7 +9,7 @@ import os
 import json
 import pandas as pd
 from main import get_queries
-from templates import JUDGE_PROMPT, JUDGE_VERDICT, JUDGE_EXPLAIN
+from templates import JUDGE_PROMPT, JUDGE_VERDICT, JUDGE_EXPLAIN, JUDGE_PROMPT_NO_SQL
 from model import getModel
 
 class CustomOutputParser(BaseOutputParser):
@@ -27,9 +27,12 @@ class CustomOutputParser(BaseOutputParser):
         return verdict
 
 class ChainGeneratorAgent:
-    def __init__(self, enterprise, model):
+    def __init__(self, enterprise, model, mode="verdict_no_SQL"):
         """Initialize the agent."""
-        prompt_template = JUDGE_PROMPT
+        if mode == "verdict_no_SQL":
+            prompt_template = JUDGE_PROMPT_NO_SQL        
+        else:
+            prompt_template = JUDGE_PROMPT
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
         # define the LLM
         self.model = model
@@ -51,37 +54,54 @@ class Judge:
             self.judge_mode_prompt = JUDGE_VERDICT
         elif mode == "explain":
             self.judge_mode_prompt = JUDGE_EXPLAIN
+        elif mode == "verdict_no_SQL":
+            self.judge_mode_prompt = None
         
         self.generator_chain_output = {
             "output": ChainGeneratorAgent(self.enterprise, self.model).get_chain(),
             "inputs": RunnablePassthrough()
             }
         
-    def judge(self, pipeline, sql, query):
-        chain = (
-            RunnableLambda( 
-                    lambda x: {
-                        "pipeline": x[0],
-                        "sql": x[1],
-                        "query": x[2],
-                        "judge_mode_prompt" : self.judge_mode_prompt
-                    }
-                )
-                | self.generator_chain_output
-        )
-        
-        verdict = chain.invoke((pipeline, sql, query))["output"].strip()
-        if self.mode == "verdict" and verdict not in ["EQUIVALENT", "NOT-EQUIVALENT", "SQL-WRONG"]:
-            print("Verdict failed: ")
-            print(verdict)
-            verdict = "FAILED"
+    def judge(self, pipeline, sql= None, query = None, view=None):
+        if self.judge_mode_prompt != None:
+            chain = (
+                RunnableLambda( 
+                        lambda x: {
+                            "pipeline": x[0],
+                            "sql": x[1],
+                            "query": x[2],
+                            "judge_mode_prompt" : self.judge_mode_prompt
+                        }
+                    )
+                    | self.generator_chain_output
+            )
+        else:
+            chain = (
+                RunnableLambda( 
+                        lambda x: {
+                            "pipeline": x[0],
+                            "view": x[1],
+                            "query": x[3]
+                        }
+                    )
+                    | self.generator_chain_output
+            )
+            
+        if self.mode != "verdict_no_sql":
+            verdict = chain.invoke((pipeline, sql, query))["output"].strip()
+            if self.mode == "verdict" and verdict not in ["EQUIVALENT", "NOT-EQUIVALENT", "SQL-WRONG"]:
+                print("Verdict failed: ")
+                print(verdict)
+                verdict = "FAILED"
+        else:
+            verdict = chain.invoke((pipeline, query, view))["output"].strip()
         
         return verdict
     
 if __name__ == "__main__":
     
-    enterprise="Mistral"
-    model = "mistral-large-latest"
+    enterprise="Openai"
+    model = "gpt-4o"
     database="chicago_crime"
     print(f"Model: {model}, Database: {database}")
     
@@ -95,9 +115,9 @@ if __name__ == "__main__":
     
     safe_model = str(model.replace("-", "_"))
     partial_file_path = f"{database}_{enterprise}_{safe_model}_{pipeline_mode}_{evidence_mode}_{dataservice_mode}"
-    eval_results = pd.read_csv(f"evaluation/evaluation_results_{partial_file_path}.csv")
+    eval_results = pd.read_csv(f"evaluation/{database}/{enterprise}/evaluation_results_{partial_file_path}.csv")
     
-    judge = Judge(enterprise, model, mode="explain")
+    judge = Judge(enterprise, model, mode="verdict_no_sql")
     verdict_res = []
 
     #eval_results = pd.read_csv(f"evaluation/evaluation_results_{mode}.csv")
@@ -110,13 +130,31 @@ if __name__ == "__main__":
         
         sql = query["SQL"]
         res = eval_results[(eval_results["index"] == index)]
+        output = res["output_json"]
+        
+        #Check if pipeline completely failed like query 35 eval_26-11-24
+        if type(res["output_json"].values[0]) != str:
+            output_json = ""
+        else:
+            output_json = res["output_json"].values[0]
+            output_json = output_json.replace('\\xa0', '')
+            output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+            
+        if output_json == "":
+            continue
+        else:
+            try:
+                output_res = json.loads(output_json)[:10]
+            except Exception as e:
+                print("Exception while load json")
+                print(e)
         
         try:
-            result = judge.judge(res["pipeline"], sql, question)
+            result = judge.judge(res["pipeline"], sql, question, output_res)
         except:
             print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
             time.sleep(2)
-            result = judge.judge(res["pipeline"], sql, question)
+            result = judge.judge(res["pipeline"], sql, question, output_res)
             
         print("Explanation and result:")
         print(result)
@@ -127,4 +165,4 @@ if __name__ == "__main__":
             time.sleep(0.2)
             
     verdict_res = pd.DataFrame(verdict_res, columns=["index", "Explaination and result"])
-    verdict_res.to_csv(f"evaluation/metrics_results_explanation_{partial_file_path}.csv", sep=',', index=False)
+    verdict_res.to_csv(f"evaluation/{database}/{enterprise}/metrics_results_explanation_{partial_file_path}.csv", sep=',', index=False)

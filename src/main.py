@@ -344,7 +344,7 @@ if __name__ == "__main__":
         if second_mode != "added_evidence":
             return query_evidence
         else:
-            further_evidence = "Salaries may be strings needing to be parsed."
+            further_evidence = "Use service Community_Area to find community area data. Do not assume any data, it may differ from the one of you knowlodge."
             new_evidence =  query_evidence + "\n" + further_evidence
             if self.verbose:
                 print(f"Added evidence: {new_evidence}")
@@ -497,8 +497,8 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     database="chicago_crime"
-    enterprise = "Mistral"
-    model = "mistral-large-latest"
+    enterprise = "Openai"
+    model = "gpt-4o"
     mode = "wo_pipeline_view"
     dataservice_mode = "ground_truth"
     
@@ -509,14 +509,14 @@ if __name__ == "__main__":
             queries = json.load(f)
             query = queries[q]["query"]
     else:
-        q = 2
+        q = 16
         queries = get_queries(database)
         query = queries[q]["question"]
         
     sql = queries[q]["SQL"]
     
     
-    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode=dataservice_mode, similarity_treshold=0.9, automatic=True, database=database, verbose=True)
+    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode=dataservice_mode, evidence_mode="standard_evidence", similarity_treshold=0.9, automatic=True, database=database, verbose=True)
     
     input_file = {
         "query" : query,
