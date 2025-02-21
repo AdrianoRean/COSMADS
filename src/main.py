@@ -14,6 +14,7 @@ from templates import DATA_SERVICE_SECTION
 
 # append the path to the parent directory to the system path
 import sys
+import random
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from pipeline_chain import PipelineGeneratorAgent
@@ -21,10 +22,14 @@ from runner_chain import PipelineRunner
 
 INTERMEDIATE_RESULTS_FILEPATH = Path(__file__).parent / "temp_pipeline.py"
 
-def get_queries(database):
+def get_queries(database, top_k=25):
     all_queries = json.load(open(f"queries/train.json"))
     list_queries = [query for query in all_queries if query["db_id"] == database]
-    return list_queries
+    # shuffle the list of queries with a fixed seed 
+    random.seed(42)
+    random.shuffle(list_queries)
+    # return the top k queries
+    return list_queries[:top_k]
 
 def extract_tables(sql_query):
     # Regular expressions to capture tables in FROM and JOIN clauses
