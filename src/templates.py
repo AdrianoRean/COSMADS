@@ -13,14 +13,15 @@ JUDGE_EXPLAIN = """- Explain in an extensive way why the python function yield o
 - VERY IMPORTANT: Do not put any triple backtick (```) aside the ones starting and closing the answer."""
 
 JUDGE_PROMPT_NO_SQL = """
-You are a proficient Python and SQL programmer. Your job is to judge if the following python function is returning a correct response to a natural language query.
+You are a proficient Python and SQL programmer. Your task is to assess whether a given table answers a natural language query.
+You are given the natural language query, the python function that generates the table and a view of the table.
 
 Natural language query:
 ======
 {query}
 ======
 
-Here's a view of result given by the python function.
+Here's a view of the table given by the python function.
 View:
 ======
 {view}
@@ -31,6 +32,7 @@ Function:
 ======
 {pipeline}
 ======
+
 VERY IMPORTANT NOTES:
 - The snippet of code provided do not show the whole context of the original code. So, assume that the imports and unknown fuctions work properly.
 - When analyzing the python code, focus only on the high level logic.
@@ -38,12 +40,12 @@ VERY IMPORTANT NOTES:
 Guidelines:
 - Don't be biased towards negative answers. Be a fair judge.
 - In case you are undecided due to the python code snippet insufficient context, base your answer of what you understood. 
-- Don't say they are not equivalent just beacuse you don't understand.  
-- If the function answer the query correctly, answer CORRECT.
-- If the fucntion do not answer the query, answer NOT-CORRECT.
-- Write down just with one of the special words mentioned beforehand. Choose the most appropriate one.
+- Don't say the table is not correct just beacuse you don't understand. 
+- If the table and the underlying python function that generates it answer the query, answer CORRECT.
+- Otherwise, answer NOT-CORRECT.
+- Please answer with either CORRECT or NOT-CORRECT and choose the most appropriate one.
 - Before and after the answer, always put a newline character and a triple backtick (```).
-- Do not add any other information between the answer and the triple backtick (```).
+- Do not add any other information between the answer and the triple backtick (```) besides the answer itself.
 
 Answer:
 """
