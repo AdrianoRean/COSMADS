@@ -10,9 +10,13 @@ def getModel(enterprise, model):
     llm = None
     if enterprise == "Openai":
         from langchain_openai import ChatOpenAI
-        llm = ChatOpenAI(model=model,
-                            api_key=key,
-                            temperature=0.0)
+        if model != "o3-mini":
+            llm = ChatOpenAI(model=model,
+                                api_key=key,
+                                temperature=0.0)
+        else:
+            llm = ChatOpenAI(model="gpt-3.5-turbo",
+                                api_key=key)
     elif enterprise == "Mistral":
         from langchain_mistralai import ChatMistralAI
         llm = ChatMistralAI(model=model,
