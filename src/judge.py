@@ -54,8 +54,10 @@ class Judge:
             self.judge_mode_prompt = JUDGE_VERDICT
         elif mode == "explain":
             self.judge_mode_prompt = JUDGE_EXPLAIN
-        elif mode == "verdict_no_SQL":
+        elif mode == "verdict_no_sql":
             self.judge_mode_prompt = None
+        else:
+            raise ValueError("Invalid mode")
         
         self.generator_chain_output = {
             "output": ChainGeneratorAgent(self.enterprise, self.model).get_chain(),
@@ -81,7 +83,7 @@ class Judge:
                         lambda x: {
                             "pipeline": x[0],
                             "view": x[1],
-                            "query": x[3]
+                            "query": x[2]
                         }
                     )
                     | self.generator_chain_output
@@ -164,5 +166,5 @@ if __name__ == "__main__":
         if enterprise == "Mistral":
             time.sleep(0.2)
             
-    verdict_res = pd.DataFrame(verdict_res, columns=["index", "Explaination and result"])
-    verdict_res.to_csv(f"evaluation/{database}/{enterprise}/metrics_results_explanation_{partial_file_path}.csv", sep=',', index=False)
+    # verdict_res = pd.DataFrame(verdict_res, columns=["index", "Explaination and result"])
+    # verdict_res.to_csv(f"evaluation/{database}/{enterprise}/metrics_results_explanation_{partial_file_path}.csv", sep=',', index=False)
