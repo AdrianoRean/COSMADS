@@ -15,6 +15,10 @@ from main import LLMAgent, get_queries
 from evaluation.match_similarity import match_similarity
 from judge import Judge
 
+
+PIPELINE_GENERATION_DELAY_SEC = 5 
+PIPELINE_GENERATION_RETRY_DELAY_SEC = 10
+
 def run_evaluation_ground_truth(database, enterprise, mode, model, queries, automatic, verbose = False):
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
@@ -41,8 +45,8 @@ def run_evaluation_ground_truth(database, enterprise, mode, model, queries, auto
             res = llm_chain.invoke(input_file)
         except Exception as e:
             print(f"Error in query {index}: {e}")
-            print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
-            time.sleep(2)
+            print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+            time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
             res = llm_chain.invoke(input_file)
             
         res_eval.append([index, res["output"], res["ground_truth"]])
@@ -118,10 +122,12 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
         try:
             try:
                 res = llm_chain.invoke(input_file)
+                # sleep for a few seconds to avoid exceeding the LLM rate
+                time.sleep(PIPELINE_GENERATION_DELAY_SEC)
             except Exception as e:
                 print(f"Error in query {index}: {e}")
-                print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
-                time.sleep(2)
+                print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
                 res = llm_chain.invoke(input_file)
 
             data_services = res['data_services']
@@ -303,6 +309,7 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
 
     #eval_results = pd.read_csv(result_dir / f"evaluation_results_{mode}.csv")
     num_queries = len(queries)
+
     
     if valentine or llm or judge_table_result or execution_accuracy:
         for index, query in enumerate(queries):
@@ -322,8 +329,8 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                     verdict_res.append([index, verdict])
                 except Exception as e:
                     print(f"Error in query {index}: {e}")
-                    print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
-                    time.sleep(2)
+                    print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                    time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
                     verdict = judge.judge(res["pipeline"], sql, question)
                     verdict_res.append([index, verdict])
                     
@@ -365,8 +372,8 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                     verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, question=question, view=output_res)
                 except Exception as e:
                     print(f"Error in query {index}: {e}")
-                    print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
-                    time.sleep(2)
+                    print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                    time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
                     verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, query=question, view=output_res)
 
                 table_verdict_res.append([index, verdict])
