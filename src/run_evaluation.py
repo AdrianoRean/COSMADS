@@ -39,7 +39,8 @@ def run_evaluation_ground_truth(database, enterprise, mode, model, queries, auto
         
         try:
             res = llm_chain.invoke(input_file)
-        except:
+        except Exception as e:
+            print(f"Error in query {index}: {e}")
             print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
             time.sleep(2)
             res = llm_chain.invoke(input_file)
@@ -117,7 +118,8 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
         try:
             try:
                 res = llm_chain.invoke(input_file)
-            except:
+            except Exception as e:
+                print(f"Error in query {index}: {e}")
                 print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
                 time.sleep(2)
                 res = llm_chain.invoke(input_file)
@@ -245,13 +247,13 @@ def metrics_valentine(index, sql, db, res, fullname_split, agent, verbose = Fals
 
 def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path, result_dir):
     df_results = pd.DataFrame(results, columns=columns)
-    if averaging_mode != "execution_accuracy":
+    if averaging_mode not in ["execution_accuracy", "table_verdict"]:
         averages = average_results(df_results, averaging_mode)
         averages.to_csv(result_dir / f"summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     df_results.to_csv(result_dir / f"metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     print(f"Detailed {averaging_mode} metrics are:")
     print(df_results)
-    if averaging_mode != "execution_accuracy":
+    if averaging_mode not in ["execution_accuracy", "table_verdict"]:
         print(f"Summarized {averaging_mode} metrics are:")
         print(averages)
     return df_results
@@ -262,7 +264,7 @@ def check_all_zeros(list):
             return False
     return True
 
-def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False, execution_accuracy=True):
+def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, llm = False, unified = False, fullname_split=False, execution_accuracy=True, judge_table_result=True):
     # create the result dir folder
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
@@ -295,10 +297,14 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     if execution_accuracy:
         execution_accuracy_res = []
 
+    if judge_table_result:
+        judge_table = Judge(enterprise, model, mode="verdict_no_sql")
+        table_verdict_res = []
+
     #eval_results = pd.read_csv(result_dir / f"evaluation_results_{mode}.csv")
     num_queries = len(queries)
     
-    if valentine or llm:
+    if valentine or llm or judge_table_result or execution_accuracy:
         for index, query in enumerate(queries):
             
             question = query["question"]
@@ -314,7 +320,8 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                 try:
                     verdict = judge.judge(res["pipeline"], sql, question)
                     verdict_res.append([index, verdict])
-                except:
+                except Exception as e:
+                    print(f"Error in query {index}: {e}")
                     print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
                     time.sleep(2)
                     verdict = judge.judge(res["pipeline"], sql, question)
@@ -326,7 +333,45 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
             
             if execution_accuracy:
                 execution_accuracy_res.append(compute_execution_accuracy(index, sql, db, res, verbose))
-        
+            
+            if judge_table_result:
+                verdict = "NON-CORRECT"
+                # parse the result table
+                output = res["output_json"]
+                #Check if pipeline completely failed like query 35 eval_26-11-24
+                if type(res["output_json"].values[0]) != str:
+                    output_json = ""
+                else:
+                    output_json = res["output_json"].values[0]
+                    output_json = output_json.replace('\\xa0', '')
+                    output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+                    
+                if output_json == "":
+                    if verbose:
+                        print("Empty pipeline result, probably failed execution. Not performing any match.")
+                    table_verdict_res.append([index, verdict])
+                    continue
+                else:
+                    try:
+                        # truncate the output to 5 rows
+                        num_of_entries = 5
+                        output_res = json.loads(output_json)[:num_of_entries]
+                    except Exception as e:
+                        print(e)
+                        print("Exception while load json")
+                        table_verdict_res.append([index, verdict])
+                        continue
+                try:
+                    verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, question=question, view=output_res)
+                except Exception as e:
+                    print(f"Error in query {index}: {e}")
+                    print("Probably LLM rate exceeded. Waiting 2 seconds and retrying.")
+                    time.sleep(2)
+                    verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, query=question, view=output_res)
+
+                table_verdict_res.append([index, verdict])
+
+
     if valentine:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
         metrics_res = averaging_saving_print_results(metrics_res, columns, "valentine", partial_file_path, result_dir)
@@ -338,6 +383,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     if execution_accuracy:
         columns = ["index", "execution_accuracy"]
         execution_accuracy_res = averaging_saving_print_results(execution_accuracy_res, columns, "execution_accuracy", partial_file_path, result_dir)
+    
+    if judge_table_result:
+        columns = ["index", "verdict"]
+        table_verdict_res = averaging_saving_print_results(table_verdict_res, columns, "table_verdict", partial_file_path, result_dir)
     
     if unified:
         print("Unifying valentin and llm results.\n    Ignoring MISLEADING results and setting metrics to 1 if TRUE")
@@ -415,16 +464,17 @@ if __name__ == "__main__":
     print(f"Bert similarity treshold: {similarity_treshold}")
     
     ## per la stampa in output
-    verbose = False
+    verbose = True
     print(f"Verbose: {verbose}")
     
     ## per la valutazione
     only_metrics = False    # se è true, allora runno solo evaluation (metrics) sia per il selector che per la pipeline, se è false runno tutto (rigenero anche i risultati)
     valentine = True    # se le metriche devono essere valutate su valentine
-    llm = False # se le metriche devono essere valutate su llm judge
+    llm = True # se le metriche devono essere valutate su llm judge
     unified = False # misto tra i due
-    execution_accuracy = False 
-    print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Unified metrics: {unified}")
+    execution_accuracy = True 
+    judge_table_result = False
+    print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Judge table result: {judge_table_result}, Unified metrics: {unified}")
 
     ## evaluation sul selector
     ground_truth_check = False  # per fare l'evaluation sul selector
@@ -479,6 +529,6 @@ if __name__ == "__main__":
                            verbose=verbose,
                            data_service_gen_enterprise=data_service_gen_enterprise,
                            data_service_gen_model=data_service_gen_model)
-        evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified, execution_accuracy=execution_accuracy)
+        evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified, execution_accuracy=execution_accuracy, judge_table_result=judge_table_result)
     
     
