@@ -27,9 +27,9 @@ class CustomOutputParser(BaseOutputParser):
         return verdict
 
 class ChainGeneratorAgent:
-    def __init__(self, enterprise, model, mode="verdict_no_SQL"):
+    def __init__(self, enterprise, model, mode="verdict_no_sql"):
         """Initialize the agent."""
-        if mode == "verdict_no_SQL":
+        if mode == "verdict_no_sql":
             prompt_template = JUDGE_PROMPT_NO_SQL        
         else:
             prompt_template = JUDGE_PROMPT
@@ -60,7 +60,7 @@ class Judge:
             raise ValueError("Invalid mode")
         
         self.generator_chain_output = {
-            "output": ChainGeneratorAgent(self.enterprise, self.model).get_chain(),
+            "output": ChainGeneratorAgent(self.enterprise, self.model, mode).get_chain(),
             "inputs": RunnablePassthrough()
             }
         
