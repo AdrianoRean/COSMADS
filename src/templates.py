@@ -21,7 +21,7 @@ Natural language query:
 {query}
 ======
 
-Here's a view of the table given by the python function.
+Here's a view of the table produced by the python function and formatted as a JSON list.
 View:
 ======
 {view}
