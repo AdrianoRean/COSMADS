@@ -149,3 +149,12 @@ history
 todo.md
 
 *old_res
+
+# ignore .out files
+*.out
+
+# ignore the evaluation folder and older versions of it
+src/evaluation/*
+src/evaluation_first_25/*
+src/evaluation_original/*
+src/evaluation_test_like

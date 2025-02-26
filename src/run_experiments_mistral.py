@@ -19,7 +19,7 @@ if __name__ == '__main__':
         "image_and_language",
         "movielens",
         "chicago_crime",
-        "simpson_episodes"
+        "simpson_episodes",
         "car_retails",
         "video_games",
         "retails",
