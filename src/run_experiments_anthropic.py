@@ -1,6 +1,7 @@
 import os
 
 if __name__ == '__main__':
+
     databases = [
         "craftbeer",
         "trains",
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     #     # "anthropic"
     #     #"deepseek",
     # ]
-    model = "openai"
+    model = "anthropic"
 
     for database in databases:
         print(f"Running experiments for database {database} and model {model}")

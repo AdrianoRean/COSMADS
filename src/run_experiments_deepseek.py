@@ -46,7 +46,7 @@ if __name__ == '__main__':
     #     # "anthropic"
     #     #"deepseek",
     # ]
-    model = "openai"
+    model = "deepseek"
 
     for database in databases:
         print(f"Running experiments for database {database} and model {model}")
