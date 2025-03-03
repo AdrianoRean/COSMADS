@@ -449,6 +449,11 @@ if __name__ == "__main__":
         enterprise = "Deepseek"
         model = "deepseek-chat"
 
+    # if model is deepseek, then overwrite the delays to be 30 seconds
+    if parsed_model == "deepseek":
+        PIPELINE_GENERATION_DELAY_SEC = 30
+        PIPELINE_GENERATION_RETRY_DELAY_SEC = 30
+
     # get the database
     database= args.database
     print(f"Model: {model}, Database: {database}")
