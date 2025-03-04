@@ -8,6 +8,7 @@ class GetFrameFromCamera2:
     refresh_rate = 1
     last_execution_time = 0
     last_value = None
+    call_parameters_list = ['camera2_id']
     description = {
         "brief_description": "Data service that, given the id of a camera2, provides a frame captured from that camera2.",
         "detailed_description": 
@@ -55,6 +56,7 @@ class GetFrameFromCamera2:
 class DetectErrorsInCardboardStackUsingCamera2:
     seed = 0
     delay = 0.05
+    call_parameters_list = ['camera2_id', 'frame']
     description = {
         "brief_description": "Data service that, given a frame captured from a specific camera2 and the identifier of that camera2, detects whether the frame contains a stack of cardboards with errors.",
         "detailed_description":

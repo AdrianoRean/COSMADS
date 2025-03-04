@@ -3,6 +3,7 @@ import random
 
 class GetSerialCamera1IdFromDiecutterId:
     seed = 1
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the serial of the camera1 installed.",
         "detailed_description": 
@@ -33,6 +34,7 @@ class GetSerialCamera1IdFromDiecutterId:
 
 class GetSerialCamera2IdFromDiecutterId:
     seed = 2
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the serial of the camera1 installed.",
         "detailed_description": 
@@ -63,6 +65,7 @@ class GetSerialCamera2IdFromDiecutterId:
 
 class GetDiecuttersIdOfFactory:
     seed = 0
+    call_parameters_list = []
     description = {
         "brief_description": "Data service that provides the list of id of the diecutters installed in the factory.",
         "detailed_description":
@@ -94,6 +97,7 @@ class GetDiecuttersIdOfFactory:
 
 class GetDiecutterChipIdFromDiecutterId:
     seed = 0
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the chip embedded into that diecutter.",
         "detailed_description": 
@@ -125,6 +129,7 @@ class GetDiecutterChipIdFromDiecutterId:
 
 class GetCamera1IdFromDiecutterId:
     seed = 0
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the camera1 used to capture the frames of the cardboard cutouts produced by that diecutter.",
         "detailed_description": 
@@ -156,6 +161,7 @@ class GetCamera1IdFromDiecutterId:
 
 class GetCamera2IdFromDiecutterId:
     seed = 0
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the camera2 used to capture the frames of the cardboard cutouts produced by that diecutter.",
         "detailed_description": 
@@ -187,6 +193,7 @@ class GetCamera2IdFromDiecutterId:
 
 class GetCurrentSessionIdFromDiecutterId:
     seed = 0
+    call_parameters_list = ['diecutter_id']
     description = {
         "brief_description": "Data service that, given the id of a diecutter, provides the current session id of that diecutter.",
         "detailed_description": 

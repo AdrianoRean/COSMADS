@@ -8,6 +8,7 @@ class GetCurrentDataFromChip:
     refresh_rate = 1
     last_execution_time = 0
     last_value = None
+    call_parameters_list = ['chip_id']
     description = {
         "brief_description": "Data service that, given a chip id of a chip embedded into a diecutter, provides the current speed, temperature and number of rotations measured by that chip.",
         "detailed_description": 
