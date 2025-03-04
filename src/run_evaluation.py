@@ -97,9 +97,13 @@ def evaluate_ground_truth(database, enterprise, model, mode):
 def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False, data_service_gen_enterprise="Openai", data_service_gen_model="gpt-4o"):
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
-    # skip if there are files in the directory
-    if len(list(result_dir.glob("*.csv"))) > 0:
-        print(f"Results already present, skipping running evaluation with {enterprise} on {database}")
+    safe_model = str(model.replace("-", "_"))
+    result_filepath = result_dir / f"evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    print(f"Result file path: {result_filepath}")
+
+    # skip if the file already exists
+    if result_filepath.exists():
+        print(f"Results already present, skipping generating the pipeline with {enterprise} on {database}")
         return
 
     llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose, data_service_gen_enterprise=data_service_gen_enterprise, data_service_gen_model=data_service_gen_model)
@@ -133,21 +137,16 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
             data_services = res['data_services']
             pipeline =  res["pipeline"]
             output = res["output"]
-            
             output_json = json.loads(open("result.json", "r").read())
-
             res_elem = [index, question, sql, data_services, pipeline, output, output_json]
         except Exception as e:
             print(f"Error in query {index}: {e}")
             res_elem = [index, question, sql, None, None, None, None]
         res_eval.append(res_elem)
         
-        if enterprise == "Mistral":
-            time.sleep(0.2)
 
     res_df = pd.DataFrame(res_eval, columns=["index", "question", "sql", "data_services", "pipeline", "output", "output_json"])
-    safe_model = str(model.replace("-", "_"))
-    res_df.to_csv(result_dir / f"evaluation_results__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv", sep=',', index=False)
+    res_df.to_csv(result_filepath, sep=',', index=False)
 
 
 def compute_execution_accuracy(index, sql, db, res, verbose = False):
@@ -274,14 +273,33 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     # create the result dir folder
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
+    safe_model = str(model.replace("-", "_"))
 
-    # skip if there are files in the directory that start with "metrics_results" or "summarized_results"
-    if len(list(result_dir.glob("metrics_results*.csv"))) > 0 or len(list(result_dir.glob("summarized_results*.csv"))) > 0:
+
+    # flag to check if the result files are present
+    valentine_result_filepath = result_dir / f"metrics_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    valentine_summarized_result_filepath = result_dir / f"summarized_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_valentine_result_present = valentine_result_filepath.exists() and valentine_summarized_result_filepath.exists()
+
+    llm_result_filepath = result_dir / f"metrics_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    llm_summarized_result_filepath = result_dir / f"summarized_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_llm_result_present = llm_result_filepath.exists() and llm_summarized_result_filepath.exists()
+
+    execution_accuracy_result_filepath = result_dir / f"metrics_results__execution_accuracy__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_execution_accuracy_result_present = execution_accuracy_result_filepath.exists()
+
+    judge_table_result_filepath = result_dir / f"metrics_results__table_verdict__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_judge_table_result_present = judge_table_result_filepath.exists()
+
+    # if all the results are present, then return
+    if is_valentine_result_present and \
+        is_llm_result_present and \
+            is_execution_accuracy_result_present and \
+                is_judge_table_result_present:
         print(f"Results already present, skipping computing metrics with {enterprise} on {database}")
         return
 
 
-    safe_model = str(model.replace("-", "_"))
     partial_file_path = f"{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}"
     eval_results = pd.read_csv(result_dir / f"evaluation_results__{partial_file_path}.csv")
     
@@ -292,106 +310,103 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         else:
             db.open_connection(f"data_service_bird/{database}/{database}.sqlite")
     
-    if valentine:
+    if valentine and not is_valentine_result_present:
         agent = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="wo_pipeline")
         metrics_res = []
         
-    if llm:
+    if llm and not is_llm_result_present:
         judge = Judge(enterprise, model, mode="verdict")
         verdict_res = []
 
-    if execution_accuracy:
+    if execution_accuracy and not is_execution_accuracy_result_present:
         execution_accuracy_res = []
 
-    if judge_table_result:
+    if judge_table_result and not is_judge_table_result_present:
         judge_table = Judge(enterprise, model, mode="verdict_no_sql")
         table_verdict_res = []
 
     #eval_results = pd.read_csv(result_dir / f"evaluation_results_{mode}.csv")
     num_queries = len(queries)
 
-    
-    if valentine or llm or judge_table_result or execution_accuracy:
-        for index, query in enumerate(queries):
-            
-            question = query["question"]
-            print(f"Index {index} of {num_queries}, Question: {question}")
-            
-            res = eval_results[(eval_results["index"] == index)]
-            sql = query["SQL"]
-            
-            if valentine:    
-                metrics_res.append(metrics_valentine(index, sql, db, res, fullname_split, agent, verbose))
-            
-            if llm:
+    for index, query in enumerate(queries):
+        question = query["question"]
+        print(f"Index {index} of {num_queries}, Question: {question}")
+        
+        res = eval_results[(eval_results["index"] == index)]
+        sql = query["SQL"]
+        
+        if valentine and not is_valentine_result_present:   
+            metrics_res.append(metrics_valentine(index, sql, db, res, fullname_split, agent, verbose))
+        
+        if llm and not is_llm_result_present:
+            try:
+                verdict = judge.judge(res["pipeline"], sql, question)
+                verdict_res.append([index, verdict])
+            except Exception as e:
+                print(f"Error in query {index}: {e}")
+                print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
+                verdict = judge.judge(res["pipeline"], sql, question)
+                verdict_res.append([index, verdict])
+                
+            print(f"Verdict is: {verdict}")
+            if enterprise == "Mistral":
+                time.sleep(0.3)
+        
+        if execution_accuracy and not is_execution_accuracy_result_present:
+            execution_accuracy_res.append(compute_execution_accuracy(index, sql, db, res, verbose))
+        
+        if judge_table_result and not is_judge_table_result_present:
+            verdict = "NON-CORRECT"
+            # parse the result table
+            output = res["output_json"]
+            #Check if pipeline completely failed like query 35 eval_26-11-24
+            if type(res["output_json"].values[0]) != str:
+                output_json = ""
+            else:
+                output_json = res["output_json"].values[0]
+                output_json = output_json.replace('\\xa0', '')
+                output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
+                
+            if output_json == "":
+                if verbose:
+                    print("Empty pipeline result, probably failed execution. Not performing any match.")
+                table_verdict_res.append([index, verdict])
+                continue
+            else:
                 try:
-                    verdict = judge.judge(res["pipeline"], sql, question)
-                    verdict_res.append([index, verdict])
+                    # truncate the output to 5 rows
+                    num_of_entries = 5
+                    output_res = json.loads(output_json)[:num_of_entries]
                 except Exception as e:
-                    print(f"Error in query {index}: {e}")
-                    print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
-                    time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
-                    verdict = judge.judge(res["pipeline"], sql, question)
-                    verdict_res.append([index, verdict])
-                    
-                print(f"Verdict is: {verdict}")
-                if enterprise == "Mistral":
-                    time.sleep(0.3)
-            
-            if execution_accuracy:
-                execution_accuracy_res.append(compute_execution_accuracy(index, sql, db, res, verbose))
-            
-            if judge_table_result:
-                verdict = "NON-CORRECT"
-                # parse the result table
-                output = res["output_json"]
-                #Check if pipeline completely failed like query 35 eval_26-11-24
-                if type(res["output_json"].values[0]) != str:
-                    output_json = ""
-                else:
-                    output_json = res["output_json"].values[0]
-                    output_json = output_json.replace('\\xa0', '')
-                    output_json = output_json.replace("'", "\"").replace("None", "null").replace("nan", "\"nan\"").replace("True", "true").replace("False", "false").replace("\"\"", "\"")
-                    
-                if output_json == "":
-                    if verbose:
-                        print("Empty pipeline result, probably failed execution. Not performing any match.")
+                    print(e)
+                    print("Exception while load json")
                     table_verdict_res.append([index, verdict])
                     continue
-                else:
-                    try:
-                        # truncate the output to 5 rows
-                        num_of_entries = 5
-                        output_res = json.loads(output_json)[:num_of_entries]
-                    except Exception as e:
-                        print(e)
-                        print("Exception while load json")
-                        table_verdict_res.append([index, verdict])
-                        continue
-                try:
-                    verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, question=question, view=output_res)
-                except Exception as e:
-                    print(f"Error in query {index}: {e}")
-                    print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
-                    time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
-                    verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, query=question, view=output_res)
+            try:
+                verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, question=question, view=output_res)
+            except Exception as e:
+                print(f"Error in query {index}: {e}")
+                print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
+                verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, query=question, view=output_res)
 
-                table_verdict_res.append([index, verdict])
+            table_verdict_res.append([index, verdict])
 
 
-    if valentine:
+    if valentine and not is_valentine_result_present:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
         metrics_res = averaging_saving_print_results(metrics_res, columns, "valentine", partial_file_path, result_dir)
     
-    if llm:
+    if llm and not is_llm_result_present:
         columns = ["index", "verdict"]
         verdict_res = averaging_saving_print_results(verdict_res, columns, "llm", partial_file_path, result_dir)
 
-    if execution_accuracy:
+    if execution_accuracy and not is_execution_accuracy_result_present:
         columns = ["index", "execution_accuracy"]
         execution_accuracy_res = averaging_saving_print_results(execution_accuracy_res, columns, "execution_accuracy", partial_file_path, result_dir)
     
-    if judge_table_result:
+    if judge_table_result and not is_judge_table_result_present:
         columns = ["index", "verdict"]
         table_verdict_res = averaging_saving_print_results(table_verdict_res, columns, "table_verdict", partial_file_path, result_dir)
     
