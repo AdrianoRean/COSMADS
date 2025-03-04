@@ -33,8 +33,8 @@ def get_queries(database, top_k=25):
 
 def extract_tables(sql_query):
     # Regular expressions to capture tables in FROM and JOIN clauses
-    from_pattern = re.compile(r'FROM\s+([^\s,]+(?:\s*,\s*[^\s,]+)*)', re.IGNORECASE)
-    join_pattern = re.compile(r'JOIN\s+([^\s]+)', re.IGNORECASE)
+    from_pattern = re.compile(r'FROM\s+(?!\()\s*([^\s,(]+(?:\s*,\s*[^\s,(]+)*)', re.IGNORECASE)
+    join_pattern = re.compile(r'JOIN\s+(?!\()\s*([^\s(]+)', re.IGNORECASE)
     
     # Extract tables from FROM clause, including comma-separated lists
     from_matches = from_pattern.findall(sql_query)
@@ -79,21 +79,27 @@ class LLMAgent:
             self.ds_directory = f"data_service_bird_automatic/train_databases/{database}/data_services/{data_service_gen_enterprise}/{safe_model}"
             self.ds_directory_import = f"data_service_bird_automatic.train_databases.{database}.data_services.{data_service_gen_enterprise}.{safe_model}"
         else:
-            self.ds_directory = f"data_service_bird/{database}"
-            self.ds_directory_import = f"data_service_bird.{database}"
-            
-        self.db_info_file_location = "data_service_bird_automatic/train_databases/train_tables.json"
-        self.db_info_file = json.load(open(self.db_info_file_location))
-        self.db_all_tables = [db["table_names"] for db in self.db_info_file if db["db_id"] == database][0]
+            if self.database == "cardboard_production":
+                self.ds_directory = "data_services"
+                self.ds_directory_import = "data_services"
+            else:
+                self.ds_directory = f"data_service_bird/{database}"
+                self.ds_directory_import = f"data_service_bird.{database}"
         
-        if self.verbose:
+        if self.database != "cardboard_production":
+            self.db_info_file_location = "data_service_bird_automatic/train_databases/train_tables.json"
+            self.db_info_file = json.load(open(self.db_info_file_location))
+            self.db_all_tables = [db["table_names"] for db in self.db_info_file if db["db_id"] == database][0]
+        else:
+            data_services_all = os.listdir(self.ds_directory)
+            self.db_all_tables = [ds[:-3] for ds in data_services_all if ds[0:2] != "__"]
+        
+        if self.verbose and self.database != "cardboard_production":
             print(f"Tables from json file are: {self.db_all_tables}")
             
         if self.verbose:
             print(f"Content of directory: {os.listdir(self.ds_directory)}")
             
-        self.doc_directory = "documents"
-        self.current_production = "cardboard_production"
         self.sep: str = " - "
         
         self.bert_tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -206,24 +212,6 @@ class LLMAgent:
         return document_str
     
     def get_data_services(self, sql = None):
-        """ pipeline_text = self.get_example(res_search)[1]
-        data_services = ""
-        data_services_list = []
-        for line in pipeline_text.split("\n"):
-            if f"from {self.ds_directory}." in line:
-                module_ds = line.split(f"from {self.ds_directory}.")[1].split(" import ")[0]
-                name_ds = line.split(f"from {self.ds_directory}.")[1].split(" import ")[1]
-                with open(f"{self.ds_directory}/{module_ds}.py", mode="r") as f:
-                    content = f.read()
-                    tree = ast.parse(content)
-                    class_obj = [node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == name_ds][0]
-                    body = class_obj.body
-                    description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
-                    description_value = description[0].value
-                    description_dict = ast.literal_eval(description_value)
-                    description_dict["class_name"] = name_ds
-                    data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
-                    data_services_list.append(description_dict)    # data services for saving pipeline """
         data_services_all = os.listdir(self.ds_directory)
         data_services_all = [ds[:-3] for ds in data_services_all if ds[0:2] != "__"]
         if self.verbose:
@@ -252,7 +240,9 @@ class LLMAgent:
                 for class_obj in class_objs:
                     name_ds = class_obj.name
                     body = class_obj.body
+                    print(f"Processing dataservice: {name_ds}")
                     call_parameters = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "call_parameters_list"]
+                    print(f"Call parameters: {call_parameters}")
                     call_parameters = call_parameters[0].value
                     call_parameters = ast.literal_eval(call_parameters)
                     description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
@@ -445,6 +435,101 @@ if __name__ == "__main__":
 
         # return the chain
         return chain
+
+    def get_chain_in_action(self) -> Runnable:
+        generator_chain = self.generator.get_chain()
+        runner_chain = self.runner.get_chain()
+        
+        generator_chain_output = {
+            "pipeline": generator_chain,
+            "inputs": RunnablePassthrough()
+        }
+
+        runner_chain_output = {
+            "output": runner_chain,
+            "inputs": RunnablePassthrough()
+        }
+
+        chain = (
+            RunnableLambda(lambda x: {
+                "query": x["query"],
+                "evidence": x["evidence"],
+                "ground_truth": x["ground_truth"],
+                }
+            )
+            | RunnableBranch( 
+                (lambda x: self.dataservice_mode == "ground_truth", lambda x : {  ## mette solo quelli che sono nel ground truth (SQL)
+                    "query": x["query"],
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
+                    "data_services": self.get_data_services(sql = x["ground_truth"])
+                }), lambda x : { ## li mette tutti
+                    "query": x["query"],
+                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
+                    "data_services": self.get_data_services()
+                }  
+                ### ulteriore branch per prendere i risultati del selecor
+            )
+            | RunnableLambda( 
+                lambda x: {
+                    "query": x["query"],
+                    "evidence": x["evidence"],
+                    "tables": x["data_services"][0],
+                    "data_services": x["data_services"][1],
+                    "data_services_list": x["data_services"][2],
+                    "data_services_list_names": x["data_services"][3],
+                    "call_parameters": x["data_services"][4],
+                    "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
+                }
+            )
+            | RunnableBranch(
+                (lambda x: self.pipeline_mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["tables"]}, x, generator_chain_output)),
+                lambda x: self.run_chain(x, generator_chain_output)
+            )
+            | RunnableLambda (
+                lambda x: {
+                    "query": x["inputs"]["query"],
+                    "evidence": x["inputs"]["evidence"],
+                    "data_services": x["inputs"]["data_services"],
+                    "data_services_list": x["inputs"]["data_services_list"],
+                    "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
+                }
+            )
+            | RunnableParallel(
+                gen = RunnableLambda(lambda x: {
+                    "query": x["query"],
+                    "evidence": x["evidence"],
+                    "data_services": x["data_services"],
+                    "pipeline": x["pipeline"]
+                }),
+                exe = RunnableLambda(lambda x:
+                    self.save_intermediate_result_to_json(x["pipeline"], x["data_services_list"])
+                )
+            )
+            | RunnableLambda(lambda x: {
+                "inputs": x,
+                "pipeline_filepath": str(INTERMEDIATE_RESULTS_FILEPATH)
+            })
+            | RunnableParallel(
+                inputs = RunnableLambda(lambda x: {
+                    "query": x["inputs"]["gen"]["query"],
+                    "evidence": x["inputs"]["gen"]["evidence"],
+                    "data_services": x["inputs"]["gen"]["data_services"],
+                    "pipeline": x["inputs"]["gen"]["pipeline"],
+                }),
+                output = runner_chain_output
+            )
+            | RunnableLambda(lambda x: {
+                "query": x["inputs"]["query"],
+                "evidence": x["inputs"]["evidence"],
+                "data_services": x["inputs"]["data_services"],
+                "pipeline": x["inputs"]["pipeline"],
+                "output": x["output"]["output"],
+            })
+            
+        )
+
+        # return the chain
+        return chain
     
     def get_chain_truth(self) -> Runnable:
         
@@ -493,6 +578,9 @@ if __name__ == "__main__":
         )
         
         return chain
+
+
+
 
 
 if __name__ == "__main__":
