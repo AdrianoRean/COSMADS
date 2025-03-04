@@ -240,9 +240,7 @@ class LLMAgent:
                 for class_obj in class_objs:
                     name_ds = class_obj.name
                     body = class_obj.body
-                    print(f"Processing dataservice: {name_ds}")
                     call_parameters = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "call_parameters_list"]
-                    print(f"Call parameters: {call_parameters}")
                     call_parameters = call_parameters[0].value
                     call_parameters = ast.literal_eval(call_parameters)
                     description = [node for node in body if isinstance(node, ast.Assign) and node.targets[0].id == "description"]
@@ -457,17 +455,12 @@ if __name__ == "__main__":
                 "ground_truth": x["ground_truth"],
                 }
             )
-            | RunnableBranch( 
-                (lambda x: self.dataservice_mode == "ground_truth", lambda x : {  ## mette solo quelli che sono nel ground truth (SQL)
+            | RunnableLambda(
+                lambda x : { ## mette tutti i dataservices
                     "query": x["query"],
-                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
-                    "data_services": self.get_data_services(sql = x["ground_truth"])
-                }), lambda x : { ## li mette tutti
-                    "query": x["query"],
-                    "evidence": self.add_evidence(self.evidence_mode, self.database, x["evidence"]),
+                    "evidence": x["evidence"],
                     "data_services": self.get_data_services()
                 }  
-                ### ulteriore branch per prendere i risultati del selecor
             )
             | RunnableLambda( 
                 lambda x: {
@@ -481,8 +474,7 @@ if __name__ == "__main__":
                     "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
                 }
             )
-            | RunnableBranch(
-                (lambda x: self.pipeline_mode == "wo_pipeline_view", lambda x: self.chain_view({"db_id" : self.database, "tables" : x["tables"]}, x, generator_chain_output)),
+            | RunnableLambda(
                 lambda x: self.run_chain(x, generator_chain_output)
             )
             | RunnableLambda (
@@ -491,7 +483,7 @@ if __name__ == "__main__":
                     "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
                     "data_services_list": x["inputs"]["data_services_list"],
-                    "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
+                    "pipeline": self.correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"], similarity_treshold=self.similarity_treshold)
                 }
             )
             | RunnableParallel(
@@ -525,7 +517,6 @@ if __name__ == "__main__":
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
-            
         )
 
         # return the chain
@@ -584,41 +575,72 @@ if __name__ == "__main__":
 
 
 if __name__ == "__main__":
-    database="chicago_crime"
-    enterprise = "Openai"
-    model = "gpt-4o"
-    mode = "wo_pipeline_view"
-    dataservice_mode = "ground_truth"
-    
-    test_mode = "bird" # test or bird
-    if test_mode == "test":
-        q = "q5"
-        with open("queries/queries_pipelines_human_resources.json", "r") as f:
+    if False:
+        database="chicago_crime"
+        enterprise = "Openai"
+        model = "gpt-4o"
+        mode = "wo_pipeline_view"
+        dataservice_mode = "ground_truth"
+        
+        test_mode = "bird" # test or bird
+        if test_mode == "test":
+            q = "q5"
+            with open("queries/queries_pipelines_human_resources.json", "r") as f:
+                queries = json.load(f)
+                query = queries[q]["query"]
+        else:
+            q = 16
+            queries = get_queries(database)
+            query = queries[q]["question"]
+            
+        sql = queries[q]["SQL"]
+        
+        
+        llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode=dataservice_mode, evidence_mode="standard_evidence", similarity_treshold=0.9, automatic=True, database=database, verbose=True)
+        
+        input_file = {
+            "query" : query,
+            "evidence" : queries[q]["evidence"],
+            "ground_truth" : sql
+        }
+        
+        print(f"Natural language query is: {query}")
+        if sql != "":
+            print(f"SQL query is: {sql}")
+            
+        if mode == "check_ground_truth":
+            result = llm.get_chain_truth().invoke(input_file)
+        else:
+            result = llm.get_chain().invoke(input_file)
+        
+        print(result["output"])
+    else:
+        enterprise = "Openai"
+        model = "gpt-4o"
+        mode = "wo_pipeline"
+        dataservice_mode = "tutti"
+
+        # open the file with the queries
+        with open("evaluation/rephrased_queries.json", "r") as f:
             queries = json.load(f)
-            query = queries[q]["query"]
-    else:
-        q = 16
-        queries = get_queries(database)
-        query = queries[q]["question"]
+
+        llm = LLMAgent(enterprise=enterprise, 
+                       model= model, 
+                       pipeline_mode=mode, 
+                       dataservice_mode=dataservice_mode, 
+                       evidence_mode="standard_evidence", 
+                       similarity_treshold=0.9, 
+                       automatic=False, 
+                       database="cardboard_production", 
+                       verbose=True)
         
-    sql = queries[q]["SQL"]
-    
-    
-    llm = LLMAgent(enterprise=enterprise, model= model, pipeline_mode=mode, dataservice_mode=dataservice_mode, evidence_mode="standard_evidence", similarity_treshold=0.9, automatic=True, database=database, verbose=True)
-    
-    input_file = {
-        "query" : query,
-        "evidence" : queries[q]["evidence"],
-        "ground_truth" : sql
-    }
-    
-    print(f"Natural language query is: {query}")
-    if sql != "":
-        print(f"SQL query is: {sql}")
-        
-    if mode == "check_ground_truth":
-        result = llm.get_chain_truth().invoke(input_file)
-    else:
-        result = llm.get_chain().invoke(input_file)
-    
-    print(result["output"])
+        queries = queries["q4"]
+        for query in queries:
+            input_file = {
+                "query" : query,
+                "evidence" : "",
+                "ground_truth" : ""
+            }
+            print(f"Natural language query is: {query}")
+            result = llm.get_chain().invoke(input_file)
+            print("--------------------------------------------------")
