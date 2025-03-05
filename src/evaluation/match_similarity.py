@@ -63,8 +63,9 @@ def match_similarity(df1, df2):
     def compute_matrix_similarity(table1, table2):
         matrix1 = table1.to_numpy()
         matrix2 = table2.to_numpy()
+        max_matrix_size = max(matrix1.size, matrix2.size)
         try:
-            exact_similarity = np.sum(matrix1 == matrix2) / matrix1.size
+            exact_similarity = np.sum(matrix1 == matrix2) / max_matrix_size
         except:
             exact_similarity = 0
         return exact_similarity
