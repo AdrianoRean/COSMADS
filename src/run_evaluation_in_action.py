@@ -393,12 +393,12 @@ if __name__ == "__main__":
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Judge table result: {judge_table_result}, Unified metrics: {unified}")
     
     ## evaluation sulla pipeline
-    pipeline_mode = "wo_pipeline" # "wo_pipeline_view" non gli passo la pipeline ma gli passo la view, "wo_pipeline" non gli passo la pipeline e neanche la view (NON TOCCARE!)
+    pipeline_mode = "in_action" # "wo_pipeline_view" non gli passo la pipeline ma gli passo la view, "wo_pipeline" non gli passo la pipeline e neanche la view (NON TOCCARE!)
     evidence_mode = "standard_evidence" # "standard_evidence" gli passo ciò che sta in bird, "added_evidence" DA IGNORARE
     dataservice_mode = "tutti"   # "ground_truth" gli passo il ground truth (da SQL), l'altro non ha nome ma significa che gli passo tutti i data services
     print(f"Pipeline mode: {pipeline_mode}, Evidence mode: {evidence_mode}, Data service mode: {dataservice_mode}")
     
-    queries = parse_in_action_queries(database)
+    queries = parse_in_action_queries()
     print(f"Got {len(queries)} queries")
         
     print("Performing pipeline check")
@@ -418,6 +418,6 @@ if __name__ == "__main__":
                         automatic=automatic, 
                         similarity_treshold=similarity_treshold, 
                         verbose=verbose)
-    evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, llm=llm, unified=unified, execution_accuracy=execution_accuracy, judge_table_result=judge_table_result)
+    evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, unified=unified, execution_accuracy=execution_accuracy, judge_table_result=judge_table_result)
     
     
