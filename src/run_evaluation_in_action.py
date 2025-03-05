@@ -49,7 +49,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
         print(f"Results already present, skipping generating the pipeline with {enterprise} on {database}")
         return
 
-    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose, data_service_gen_enterprise=data_service_gen_enterprise, data_service_gen_model=data_service_gen_model)
+    llm = LLMAgent(enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = dataservice_mode, similarity_treshold=similarity_treshold, automatic=automatic, database=database, verbose=verbose)
     llm_chain = llm.get_chain_in_action()
     
     num_queries = len(queries)
