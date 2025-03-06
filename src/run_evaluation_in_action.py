@@ -346,6 +346,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
 
 
 if __name__ == "__main__":
+    # import langchain
+    # langchain.verbose = True
+    # langchain.debug = True
+
     # create the parser and add the arguments
     parser = ArgumentParser()
     parser.add_argument('--model', type=str, choices=["openai", "mistral", "anthropic", "deepseek"], default="openai")
