@@ -10,15 +10,15 @@ class GetFrameFromCamera2:
     last_value = None
     call_parameters_list = ['camera2_id']
     description = {
+        "name": "GetFrameFromCamera2",
         "brief_description": "Data service that, given the id of a camera2, provides a frame captured from that camera2.",
         "detailed_description": 
         """Data service that, given the id of a camera2, provides a frame captured from that camera2.
         Recall that a camera2 is a camera device that points downwards to a conveyor belt of a specific production line that trasports stack of cutout cardboards produced by a specific diecutter.
         The data service takes a single parameter, namely the id of the camera2 (an integer) and returns a frame captured from that camera2 as a numpy matrix.
-        The matrix is a 2D array having a shape of (1080, 1920, 3) where 1080 is the height, 1920 is the width and 3 is the number of channels (RGB).
-
-        Example usage:
-        - If the id of the camera2 is 123, then the data service would be called as follows:
+        The matrix is a 2D array having a shape of (1080, 1920, 3) where 1080 is the height, 1920 is the width and 3 is the number of channels (RGB).""",
+        "usage_example":
+        """If the id of the camera2 is 123, then the data service would be called as follows:
         camera2_id = 123
         frame = GetFrameFromCamera2.call(camera2_id=123)
         # assuming the frame is a numpy matrix
@@ -38,7 +38,7 @@ class GetFrameFromCamera2:
         current_execution_time = time.time()
         # check if the refresh rate has passed or if it is the first time the function is called
         if GetFrameFromCamera2.last_value is None or current_execution_time - GetFrameFromCamera2.last_execution_time >= GetFrameFromCamera2.refresh_rate:
-            # set the random seed
+            # set the random seed
             np.random.seed(GetFrameFromCamera2.seed+camera2_id)
             # generate a random frame
             frame = np.random.rand(1080, 1920, 3)
@@ -58,15 +58,15 @@ class DetectErrorsInCardboardStackUsingCamera2:
     delay = 0.05
     call_parameters_list = ['camera2_id', 'frame']
     description = {
+        "name": "DetectErrorsInCardboardStackUsingCamera2",
         "brief_description": "Data service that, given a frame captured from a specific camera2 and the identifier of that camera2, detects whether the frame contains a stack of cardboards with errors.",
         "detailed_description":
         """Data service that, given a frame captured from a specific camera2 and the identifier of that camera2, detects whether the frame contains a stack of cardboards with errors.
         Recall that a camera2 is a camera device that points downwards to a conveyor belt of a specific production line that trasports stack of cutout cardboards produced by a specific diecutter.
         It takes two parameters, the id of the camera2 to use and the frame captured from that camera2 that contains a stack of cardboards.
-        It returns a boolean value, True if the frame contains a stack of cardboards with errors, False otherwise.
-
-        Example usage:
-        - If frame is a variable containing the frame captured from the camera2 with id 123, then the data service would be called as follows:
+        It returns a boolean value, True if the frame contains a stack of cardboards with errors, False otherwise.""",
+        "usage_example":
+        """If frame is a variable containing the frame captured from the camera2 with id 123, then the data service would be called as follows:
         camera2_id = 123
         contains_errors, error_type = DetectErrorsInCardboardStack.call(camera2_id=123, frame=frame)
 
@@ -78,7 +78,7 @@ class DetectErrorsInCardboardStackUsingCamera2:
     }
 
     def call(camera2_id: int, frame: np.matrix) -> bool:
-        # set the random seed
+        # set the random seed
         np.random.seed(DetectErrorsInCardboardStackUsingCamera2.seed+camera2_id)
         # detect if the frame contains a cardboard
         has_errors =  bool(np.random.choice([True, False]))
@@ -86,7 +86,7 @@ class DetectErrorsInCardboardStackUsingCamera2:
             error_type = 0
         else:
             error_type = int(np.random.choice([1,2]))
-        # add a small delay to simulate the time it takes to detect the cardboard
+        # add a small delay to simulate the time it takes to detect the cardboard
         time.sleep(DetectErrorsInCardboardStackUsingCamera2.delay)
         # update the seed
         DetectErrorsInCardboardStackUsingCamera2.seed += 1
