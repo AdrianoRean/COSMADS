@@ -16,7 +16,7 @@ def average_results(df = pd.DataFrame(), mode = "valentine"):
         elif mode == "llm":
             df = pd.DataFrame(data=[[],[]], columns=["index", "verdict"])
         else:
-            df = pd.DataFrame(data=[[],[]], columns=["accuracy", "recall"])
+            df = pd.DataFrame(data=[[],[],[]], columns=["accuracy", "precision", "recall"])
     
 
     # Calculating the average for the last three columns
@@ -27,7 +27,7 @@ def average_results(df = pd.DataFrame(), mode = "valentine"):
         averages = df.groupby(["verdict"]).count()
         averages.apply({lambda x: x/num_of_verdict})
     else:
-        averages = df[["accuracy", "recall"]].mean()
+        averages = df[["accuracy", "precision", "recall"]].mean()
     
     return averages
     
