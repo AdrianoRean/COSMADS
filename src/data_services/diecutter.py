@@ -5,7 +5,7 @@ class GetCurrentDataFromChip:
     seed = 0
     delay = 0.05
     cumulative_rotations = 0
-    refresh_rate = 1
+    refresh_rate = 0
     last_execution_time = 0
     last_value = None
     call_parameters_list = ['chip_id']
@@ -38,7 +38,7 @@ class GetCurrentDataFromChip:
 
     def call(chip_id: int) -> dict:
         # add a small delay to simulate the time it takes to get the data from the chip
-        time.sleep(GetCurrentDataFromChip.delay)
+        #time.sleep(GetCurrentDataFromChip.delay)
         current_execution_time = time.time()
         # check if the refresh rate has passed or if it is the first time the function is called
         if GetCurrentDataFromChip.last_value is None or current_execution_time - GetCurrentDataFromChip.last_execution_time >= GetCurrentDataFromChip.refresh_rate:
