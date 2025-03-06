@@ -10,15 +10,15 @@ class GetFrameFromCamera1:
     last_value = None
     call_parameters_list = ['camera1_id']
     description = {
+        "name": "GetFrameFromCamera1",
         "brief_description": "Data service that, given the id of a camera1, provides a frame captured from that camera1.",
         "detailed_description": 
         """Data service that, given the id of a camera1, provides a frame captured from that camera1.
         In general instances of camera1 point downwards to a conveyor belt of a specific production line that trasports single cutout cardboards produced by a specific diecutter.
         The data service takes a single parameter, namely the id of the camera1 (an integer) and returns a frame captured from that camera1 as a numpy matrix.
-        The matrix is a 2D array having a shape of (1080, 1920, 3) where 1080 is the height, 1920 is the width and 3 is the number of channels (RGB).
-
-        Example usage:
-        - If the id of the camera1 is 123, then the data service would be called as follows:
+        The matrix is a 2D array having a shape of (1080, 1920, 3) where 1080 is the height, 1920 is the width and 3 is the number of channels (RGB).""",
+        "usage_example":
+        """If the id of the camera1 is 123, then the data service would be called as follows:
         camera1_id = 123
         frame = GetFrameFromCamera1.call(camera1_id=123)
         # assuming the frame is a numpy matrix
@@ -57,16 +57,16 @@ class DetectErrorsInCardboardUsingCamera1:
     delay = 0.05
     call_parameters_list = ['camera1_id', 'frame']
     description = {
+        "name": "DetectErrorsInCardboardUsingCamera1",
         "brief_description": "Data service that, given a frame captured from a specific camera1 and the identifier of that camera1, detects whether the frame contains a cardboard with errors and provide the type of error.",
         "detailed_description":
         """Data service that, given a frame captured from a specific camera1 and the identifier of that camera1, detects whether the frame contains a cardboard with errors.
         Recall that a camera1 is a camera device that points downwards to a conveyor belt of a specific production line that trasports single cutout cardboards produced by a specific diecutter.
         It takes two parameters, the id of the camera1 to use and the frame captured from that camera1.
         It returns a boolean value, True if the frame contains a cardboard with errors, False otherwise.
-        Also it returns a integer value, 0 if the frame does not contain errors, 1 if the errors are of type hole and 2 if the errors are of type fold. 
-
-        Example usage:
-        - If frame is a variable containing the frame captured from the camera1 with id 123, then the data service would be called as follows:
+        Also it returns a integer value, 0 if the frame does not contain errors, 1 if the errors are of type hole and 2 if the errors are of type fold.""",
+        "usage_example":
+        """If frame is a variable containing the frame captured from the camera1 with id 123, then the data service would be called as follows:
         camera1_id = 123
         contains_errors, type_errors = DetectErrorsInCardboardUsingCamera1.call(camera1_id=123, frame=frame)
 
