@@ -10,16 +10,16 @@ class GetCurrentDataFromChip:
     last_value = None
     call_parameters_list = ['chip_id']
     description = {
+        "name": "GetCurrentDataFromChip",
         "brief_description": "Data service that, given a chip id of a chip embedded into a diecutter, provides the current speed, temperature and number of rotations measured by that chip.",
         "detailed_description": 
         """Data service that, given a chip id of a chip embedded into a diecutter, provides the current speed, temperature and number of rotations measured by that chip.
         In general each diecutter has exactly one chip embedded into it, and each chip is uniquely identified by an integer id. 
         This means that the chip id has a one-to-one correspondence with the id of the diecutter, but those two ids may not be the same.
         This data service takes a single parameter, namely the id of the chip (an integer) and returns a single dictionary containing the current speed, temperature and number of rotations of the diecutter it is attached to.
-        The keys of the dictionary are "speed", "temperature" and "rotations". 
-        
-        Example usage:
-        - If the id of the chip is 123, then the data service would be called as follows:
+        The keys of the dictionary are "speed", "temperature" and "rotations".""",
+        "usage_example":
+        """If the id of the chip is 123, then the data service would be called as follows:
         chip_id = 123
         current_data = GetCurrentData.call(chip_id=123)
         # get the current speed, temperature and number of rotations
