@@ -10,7 +10,7 @@ import re
 from transformers import BertTokenizer, BertModel
 import torch
 from sklearn.metrics.pairwise import cosine_similarity
-from templates import DATA_SERVICE_SECTION
+from templates import DATA_SERVICE_SECTION, IN_ACTION_DATA_SERVICE_SECTION
 
 # append the path to the parent directory to the system path
 import sys
@@ -250,8 +250,11 @@ class LLMAgent:
                     data_services += self.convert_data_service_to_document(description_dict)   # data services for prompt
                     call_parameters_list.extend(call_parameters)
                     data_services_list.append(description_dict)    # data services for saving pipeline
-                
-        return tables, data_services, data_services_list, data_service_to_process, call_parameters_list
+        #print(data_services)
+        # convert new data service list to an indented json string
+        new_data_services = json.dumps(data_services_list, indent=4)
+        #return tables, data_services, data_services_list, data_service_to_process, call_parameters_list
+        return tables, new_data_services, data_services_list, data_service_to_process, call_parameters_list
     
     def convert_data_service_to_document(self, data_service_doc: dict) -> str:
         document = data_service_doc
@@ -471,7 +474,7 @@ if __name__ == "__main__":
                     "data_services_list": x["data_services"][2],
                     "data_services_list_names": x["data_services"][3],
                     "call_parameters": x["data_services"][4],
-                    "DATA_SERVICE_SECTION" : DATA_SERVICE_SECTION
+                    "DATA_SERVICE_SECTION" : IN_ACTION_DATA_SERVICE_SECTION
                 }
             )
             | RunnableLambda(
