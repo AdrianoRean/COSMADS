@@ -38,6 +38,8 @@ class PipelineGeneratorAgent:
             prompt_template = TEMPLATE_WITHOUT_PIPELINE_BUT_VIEW
         elif mode == "wo_pipeline":
             prompt_template = TEMPLATE_WITHOUT_PIPELINE
+        elif mode == "in_action":
+            prompt_template = TEMPLATE_IN_ACTION
         else:
             raise ValueError(f"Mode {mode} is not recognized.")
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
