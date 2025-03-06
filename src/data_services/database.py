@@ -5,14 +5,14 @@ class GetSerialCamera1IdFromDiecutterId:
     seed = 1
     call_parameters_list = ['diecutter_id']
     description = {
+        "name": "GetSerialCamera1IdFromDiecutterId",
         "brief_description": "Data service that, given the id of a diecutter, provides the serial of the camera1 installed.",
         "detailed_description": 
         """Data service that, given the id of a diecutter, provides the serial of the camera1 installed.
         The data service relies on the management database of the cardboard factory to provide the camera1 serial.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the serial of the camera1.
-
-        Example usage:
-        - If the id of the diecutter is 123, then the data service would be called as follows:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the serial of the camera1.""",
+        "usage_example":
+        """If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         serial_camera1 = GetSerialCamera1IdFromDiecutterId.call(diecutter_id=123)
         # assuming the serial is 4561245
@@ -36,14 +36,14 @@ class GetSerialCamera2IdFromDiecutterId:
     seed = 2
     call_parameters_list = ['diecutter_id']
     description = {
-        "brief_description": "Data service that, given the id of a diecutter, provides the serial of the camera1 installed.",
+        "name": "GetSerialCamera2IdFromDiecutterId",
+        "brief_description": "Data service that, given the id of a diecutter, provides the serial of the camera2 installed.",
         "detailed_description": 
-        """Data service that, given the id of a diecutter, provides the serial of the camera1 installed.
+        """Data service that, given the id of a diecutter, provides the serial of the camera2 installed.
         The data service relies on the management database of the cardboard factory to provide the camera2 serial.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the serial of the camera2.
-
-        Example usage:
-        - If the id of the diecutter is 123, then the data service would be called as follows:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the serial of the camera2.""",
+        "usage_example":
+        """If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         serial_camera2 = GetSerialCamera2IdFromDiecutterId.call(diecutter_id=123)
         # assuming the serial is 4561245
@@ -67,12 +67,14 @@ class GetDiecuttersIdOfFactory:
     seed = 0
     call_parameters_list = []
     description = {
+        "name": "GetDiecuttersIdOfFactory",
         "brief_description": "Data service that provides the list of id of the diecutters installed in the factory.",
         "detailed_description":
         """Data service that provides the id of the diecutter installed in the factory.
         The data service relies on the management database of the cardboard factory to provide the list of diecutter id.
-        The data service takes no parameter and returns a list of integers, which are the id of the diecutters installed in the factory.
-
+        The data service takes no parameter and returns a list of integers, which are the id of the diecutters installed in the factory.""",
+        "usage_example":
+        """
         Example usage:
         - The data service would be called as follows:
         diecutters_id = GetDiecuttersIdOfFactory.call()
@@ -99,13 +101,14 @@ class GetDiecutterChipIdFromDiecutterId:
     seed = 0
     call_parameters_list = ['diecutter_id']
     description = {
+        "name": "GetDiecutterChipIdFromDiecutterId",
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the chip embedded into that diecutter.",
         "detailed_description": 
         """Data service that, given the id of a diecutter, provides the id of the chip embedded into that diecutter.
         The data service relies on the management database of the cardboard factory to provide the chip id.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the chip id of the diecutter.
-
-        Example usage:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the chip id of the diecutter.""",
+        "usage_example":
+        """
         - If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         chip_id = GetDiecutterChipIdFromDiecutterId.call(diecutter_id=123)
@@ -131,14 +134,14 @@ class GetCamera1IdFromDiecutterId:
     seed = 0
     call_parameters_list = ['diecutter_id']
     description = {
+        "name": "GetCamera1IdFromDiecutterId",
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the camera1 used to capture the frames of the cardboard cutouts produced by that diecutter.",
         "detailed_description": 
         """Data service that, given the id of a diecutter, provides the id of the camera1 used to capture the frames of the cardboard cutouts produced by that diecutter.
         The data service relies on the management database of the cardboard factory to provide the camera1 id.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the id of the camera1 used to capture the frames of the cardboard cutouts produced by that diecutter.
-
-        Example usage:
-        - If the id of the diecutter is 123, then the data service would be called as follows:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the id of the camera1 used to capture the frames of the cardboard cutouts produced by that diecutter.""",
+        "usage_example":
+        """If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         camera1_id = GetCamera1IdFromDiecutterId.call(diecutter_id=123)
         # assuming the camera1 id is 456
@@ -163,14 +166,14 @@ class GetCamera2IdFromDiecutterId:
     seed = 0
     call_parameters_list = ['diecutter_id']
     description = {
+        "name": "GetCamera2IdFromDiecutterId",
         "brief_description": "Data service that, given the id of a diecutter, provides the id of the camera2 used to capture the frames of the cardboard cutouts produced by that diecutter.",
         "detailed_description": 
         """Data service that, given the id of a diecutter, provides the id of the camera2 used to capture the frames of the cardboard cutouts produced by that diecutter.
         The data service relies on the management database of the cardboard factory to provide the camera2 id.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the id of the camera2 used to capture the frames of the cardboard cutouts produced by that diecutter.
-
-        Example usage:
-        - If the id of the diecutter is 123, then the data service would be called as follows:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the id of the camera2 used to capture the frames of the cardboard cutouts produced by that diecutter.""",
+        "usage_example":
+        """If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         camera2_id = GetCamera2IdFromDiecutterId.call(diecutter_id=123)
         # assuming the camera2 id is 456
@@ -195,14 +198,14 @@ class GetCurrentSessionIdFromDiecutterId:
     seed = 0
     call_parameters_list = ['diecutter_id']
     description = {
+        "name": "GetCurrentSessionIdFromDiecutterId",
         "brief_description": "Data service that, given the id of a diecutter, provides the current session id of that diecutter.",
         "detailed_description": 
         """Data service that, given the id of a diecutter, provides the current session id of that diecutter.
         The data service relies on the management database of the cardboard factory to provide the session id.
-        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the current session id of the diecutter.
-
-        Example usage:
-        - If the id of the diecutter is 123, then the data service would be called as follows:
+        The data service takes a single parameter, namely the id of the diecutter (an integer) and returns a single integer, which is the current session id of the diecutter.""",
+        "usage_example":
+        """If the id of the diecutter is 123, then the data service would be called as follows:
         diecutter_id = 123
         session_id = GetCurrentSessionIdFromDiecutterId.call(diecutter_id=123)
         # assuming the session id is 456
