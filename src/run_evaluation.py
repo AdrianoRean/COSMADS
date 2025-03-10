@@ -280,10 +280,12 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     valentine_result_filepath = result_dir / f"metrics_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     valentine_summarized_result_filepath = result_dir / f"summarized_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_valentine_result_present = valentine_result_filepath.exists() and valentine_summarized_result_filepath.exists()
+    is_valentine_result_present = False
 
     llm_result_filepath = result_dir / f"metrics_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     llm_summarized_result_filepath = result_dir / f"summarized_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_llm_result_present = llm_result_filepath.exists() and llm_summarized_result_filepath.exists()
+    is_llm_result_present = False
 
     execution_accuracy_result_filepath = result_dir / f"metrics_results__execution_accuracy__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_execution_accuracy_result_present = execution_accuracy_result_filepath.exists()
@@ -315,7 +317,7 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         metrics_res = []
         
     if llm and not is_llm_result_present:
-        judge = Judge(enterprise, model, mode="verdict")
+        judge = Judge("Openai", "gpt-4o", mode="updated_verdict")
         verdict_res = []
 
     if execution_accuracy and not is_execution_accuracy_result_present:
@@ -340,7 +342,8 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         
         if llm and not is_llm_result_present:
             try:
-                verdict = judge.judge(res["pipeline"], sql, question)
+                pipeline_code = res["pipeline"].values[0]
+                verdict = judge.judge(pipeline_code, sql, question)
                 verdict_res.append([index, verdict])
             except Exception as e:
                 print(f"Error in query {index}: {e}")
@@ -441,6 +444,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     return
 
 if __name__ == "__main__":
+    # import langchain
+    # langchain.verbose = True
+    # langchain.debug = True
+
     # create the parser and add the arguments
     parser = ArgumentParser()
     parser.add_argument('--database', type=str, default="chicago_crime")
@@ -463,11 +470,6 @@ if __name__ == "__main__":
     elif parsed_model == "deepseek":
         enterprise = "Deepseek"
         model = "deepseek-chat"
-
-    # if model is deepseek, then overwrite the delays to be 30 seconds
-    if parsed_model == "deepseek":
-        PIPELINE_GENERATION_DELAY_SEC = 30
-        PIPELINE_GENERATION_RETRY_DELAY_SEC = 30
 
     # get the database
     database= args.database
