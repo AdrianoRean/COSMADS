@@ -431,7 +431,6 @@ if __name__ == "__main__":
                 "pipeline": x["inputs"]["pipeline"],
                 "output": x["output"]["output"],
             })
-            
         )
 
         # return the chain
@@ -486,7 +485,7 @@ if __name__ == "__main__":
                     "evidence": x["inputs"]["evidence"],
                     "data_services": x["inputs"]["data_services"],
                     "data_services_list": x["inputs"]["data_services_list"],
-                    "pipeline": self.correct_obvious_word_mistake(x["pipeline"][1].strip()[len("python"):].strip(), x["inputs"]["call_parameters"], similarity_treshold=self.similarity_treshold)
+                    "pipeline": x["pipeline"][1].strip()[len("python"):].strip()
                 }
             )
             | RunnableParallel(
