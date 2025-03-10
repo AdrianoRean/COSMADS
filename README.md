@@ -16,7 +16,7 @@ This repository contains code for replicating the experiments in *"Data Service 
 Please download the *complete* repository, which includes the data and the experiments results from [Zenodo](https://doi.org/10.5281/zenodo.14999773) and extract the files:
 
 ```bash
-unzip Archive.zip
+unzip icws-248.zip
 cd icws-248
 ```
 
