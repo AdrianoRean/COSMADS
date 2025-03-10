@@ -5,6 +5,19 @@ JUDGE_VERDICT = """- If the python function and the SQL query do not yield equiv
 - Before and after the answer, always put a newline character and a triple backtick (```).
 - Do not add any other information between the answer and the triple backtick (```)."""
 
+UPDATED_JUDGE_VERDICT = """- If the python function and the SQL query do not yield equivalent results, answer "NOT-EQUIVALENT".
+- If the python function and the SQL query return logically equivalent results, answer "EQUIVALENT".
+- Write down just with one of the special words mentioned beforehand. Choose the most appropriate one.
+- Before and after the answer, always put a newline character and a triple backtick (```).
+- Do not add any other information between the answer and the triple backtick (```)."""
+
+
+JUDGE_VERDICT_IN_ACTION= """- If the two python functions do not yield equivalent results, answer "NOT-EQUIVALENT".
+- If the two python functions return logically equivalent results, answer "EQUIVALENT".
+- Write down just with one of the special words mentioned beforehand. Choose the most appropriate one.
+- Before and after the answer, always put a newline character and a triple backtick (```).
+- Do not add any other information between the answer and the triple backtick (```)."""
+
 JUDGE_EXPLAIN = """- Explain in an extensive way why the python function yield or do not yield equivalent results than the SQL query.
 - Start your explanation by stating either EQUIVALENT, NOT-EQUIVALENT or SQL-WRONG and a newline character.
 - Very rarely, the SQL query may not match the intent of the natural language query. In those cases, remember to start your answer with "SQL-WRONG" instead of "EQUIVALENT" or "NOT-EQUIVALENT".
@@ -80,6 +93,77 @@ Guidelines:
 - In case you are undecided due to the python code snippet insufficient context, base your answer of what you understood. 
 - Don't say they are not equivalent just beacuse you don't understand.  
 - Remember that results may still be considered equivalent as long as they both contain the same information in a different number of columns (such as a normalized vs not-normalized table) or if the python function return a superset of information of the SQL query.
+{judge_mode_prompt}
+
+Answer:
+"""
+
+
+UPDATED_JUDGE_PROMPT = """
+You are a proficient Python and SQL programmer. Your job is to judge if the following python function is leading to equivalent results of a SQL query.
+
+You are also provided with a natural language question which correspond to the intent of both the function and the query.
+Question:
+======
+{query}
+======
+
+Here's the python function to judge.
+Function:
+======
+{pipeline}
+======
+VERY IMPORTANT NOTES:
+- The snippet of code provided do not show the whole context of the original code. So, assume that the imports and unknown fuctions work properly.
+- When analyzing the python code, focus only on the high level logic.
+- Don't assume the function ins't equivalent to the SQL only because it hasn't been fully provided.
+
+Here's the SQL query to use as baseline:
+Query:
+======
+{sql}
+======
+
+Guidelines:
+- Be a fair judge.
+- In case you are undecided due to the python code snippet insufficient context, base your answer of what you understood. 
+- If the Function section is empty, answer "NOT-EQUIVALENT".
+- Remember that results may still be considered equivalent as long as they both contain the same information in a different number of columns (such as a normalized vs not-normalized table) or if the python function return a superset of information of the SQL query.
+{judge_mode_prompt}
+
+Answer:
+"""
+
+JUDGE_PROMPT_IN_ACTION = """
+You are a proficient Python programmer. Your job is to judge if the following two python functions are producing equivalent results, specifically equivalent structured data, despite differences in terms of column order, column names, or other minor differences (e.g. columns that are merged or split).
+
+You are also provided with a natural language question which the two functions are supposed to answer.
+Question:
+======
+{query}
+======
+
+I will now show you the two python functions to judge. The first one is the reference function and the second one is the function to be judged.
+
+Reference function:
+======
+{sql}
+======
+
+Function to be judged:
+======
+{pipeline}
+======
+
+VERY IMPORTANT NOTES:
+- The snippet of code provided for the two functions do not show the whole context of the original code. So, assume that the imports and unknown fuctions work properly.
+- When analyzing the two python codes, focus only on the high level logic.
+
+Guidelines:
+- Be a fair judge.
+- In case you are undecided due to the python code snippet insufficient context, base your answer of what you understood.
+- If the Function to be judged section is empty, answer "NOT-EQUIVALENT".
+- Remember that results may still be considered equivalent as long as they both contain the same information in a different number of columns (such as a normalized vs not-normalized table) or if the python function to be judged returns a superset of information of the reference function.
 {judge_mode_prompt}
 
 Answer:
