@@ -14,6 +14,7 @@ from data_service_generator import DataServiceGenerator, databases_description_l
 from main import LLMAgent
 from evaluation.match_similarity import match_similarity
 from judge import Judge
+from codebleu import calc_codebleu
 
 
 PIPELINE_GENERATION_DELAY_SEC = 2 
@@ -192,13 +193,13 @@ def metrics_valentine(index, sql, res, fullname_split, agent, verbose = False):
 
 def averaging_saving_print_results(results, columns, averaging_mode, partial_file_path, result_dir):
     df_results = pd.DataFrame(results, columns=columns)
-    if averaging_mode not in ["execution_accuracy", "table_verdict"]:
+    if averaging_mode not in ["execution_accuracy", "table_verdict", "codebleu"]:
         averages = average_results(df_results, averaging_mode)
         averages.to_csv(result_dir / f"summarized_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     df_results.to_csv(result_dir / f"metrics_results__{averaging_mode}__{partial_file_path}.csv", sep=',', index=False)
     print(f"Detailed {averaging_mode} metrics are:")
     print(df_results)
-    if averaging_mode not in ["execution_accuracy", "table_verdict"]:
+    if averaging_mode not in ["execution_accuracy", "table_verdict", "codebleu"]:
         print(f"Summarized {averaging_mode} metrics are:")
         print(averages)
     return df_results
@@ -209,17 +210,20 @@ def check_all_zeros(list):
             return False
     return True
 
-def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, unified = False, fullname_split=False, execution_accuracy=True, judge_table_result=True):
+def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, unified = False, fullname_split=False, execution_accuracy=True, judge_table_result=True, code_bleu=True):
     # create the result dir folder
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
     safe_model = str(model.replace("-", "_"))
 
-
     # flag to check if the result files are present
     valentine_result_filepath = result_dir / f"metrics_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     valentine_summarized_result_filepath = result_dir / f"summarized_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_valentine_result_present = valentine_result_filepath.exists() and valentine_summarized_result_filepath.exists()
+
+    llm_result_filepath = result_dir / f"metrics_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    llm_summarized_result_filepath = result_dir / f"summarized_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_llm_result_present = llm_result_filepath.exists() and llm_summarized_result_filepath.exists()
 
     execution_accuracy_result_filepath = result_dir / f"metrics_results__execution_accuracy__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_execution_accuracy_result_present = execution_accuracy_result_filepath.exists()
@@ -227,10 +231,16 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     judge_table_result_filepath = result_dir / f"metrics_results__table_verdict__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     is_judge_table_result_present = judge_table_result_filepath.exists()
 
+    code_bleu_result_filepath = result_dir / f"metrics_results__codebleu__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
+    is_code_bleu_result_present = code_bleu_result_filepath.exists()
+
+
     # if all the results are present, then return
     if is_valentine_result_present and \
-        is_execution_accuracy_result_present and \
-            is_judge_table_result_present:
+        is_llm_result_present and \
+            is_execution_accuracy_result_present and \
+                is_judge_table_result_present and \
+                    is_code_bleu_result_present:
         print(f"Results already present, skipping computing metrics with {enterprise} on {database}")
         return
 
@@ -239,8 +249,12 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     eval_results = pd.read_csv(result_dir / f"evaluation_results__{partial_file_path}.csv")
     
     if valentine and not is_valentine_result_present:
-        agent = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="wo_pipeline")
+        agent = LLMAgent(enterprise=enterprise, model=model, pipeline_mode="in_action")
         metrics_res = []
+
+    if llm and not is_llm_result_present:
+        judge = Judge("Openai", "gpt-4o", mode="in_action")
+        verdict_res = []
 
     if execution_accuracy and not is_execution_accuracy_result_present:
         execution_accuracy_res = []
@@ -248,6 +262,9 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     if judge_table_result and not is_judge_table_result_present:
         judge_table = Judge(enterprise, model, mode="verdict_no_sql")
         table_verdict_res = []
+
+    if code_bleu and not is_code_bleu_result_present:
+        code_bleu_res = []
 
     num_queries = len(queries)
 
@@ -260,6 +277,22 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
         
         if valentine and not is_valentine_result_present:   
             metrics_res.append(metrics_valentine(index, sql, res, fullname_split, agent, verbose))
+
+        if llm and not is_llm_result_present:
+            try:
+                pipeline_code = res["pipeline"].values[0]
+                verdict = judge.judge(pipeline_code, sql, question)
+                verdict_res.append([index, verdict])
+            except Exception as e:
+                print(f"Error in query {index}: {e}")
+                print(f"Probably LLM rate exceeded. Waiting {PIPELINE_GENERATION_RETRY_DELAY_SEC} seconds and retrying.")
+                time.sleep(PIPELINE_GENERATION_RETRY_DELAY_SEC)
+                verdict = judge.judge(res["pipeline"], sql, question)
+                verdict_res.append([index, verdict])
+                
+            print(f"Verdict is: {verdict}")
+            if enterprise == "Mistral":
+                time.sleep(0.3)
         
         if execution_accuracy and not is_execution_accuracy_result_present:
             execution_accuracy_res.append(compute_execution_accuracy(index, sql, res, verbose))
@@ -300,11 +333,23 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
                 verdict = judge_table.judge(pipeline=res["pipeline"], sql=sql, query=question, view=output_res)
 
             table_verdict_res.append([index, verdict])
+        
+        if code_bleu and not is_code_bleu_result_present:
+            pipeline_code = res["pipeline"].values[0]
+            ground_truth_filepath = Path("ground_truth") / "in_action" / sql / "pipeline.py"
+            with open(ground_truth_filepath, "r") as f:
+                ground_truth_code = f.read()
+            code_bleu_score = calc_codebleu([ground_truth_code], [pipeline_code], lang="python", weights = (0.1, 0.1, 0.4, 0.4), tokenizer = None)
+            code_bleu_res.append([index, code_bleu_score])
 
 
     if valentine and not is_valentine_result_present:
         columns = ["index", "precision", "recall", "acc_cell", "acc_row"]
         metrics_res = averaging_saving_print_results(metrics_res, columns, "valentine", partial_file_path, result_dir)
+
+    if llm and not is_llm_result_present:
+        columns = ["index", "verdict"]
+        verdict_res = averaging_saving_print_results(verdict_res, columns, "llm", partial_file_path, result_dir)
 
     if execution_accuracy and not is_execution_accuracy_result_present:
         columns = ["index", "execution_accuracy"]
@@ -313,6 +358,10 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     if judge_table_result and not is_judge_table_result_present:
         columns = ["index", "verdict"]
         table_verdict_res = averaging_saving_print_results(table_verdict_res, columns, "table_verdict", partial_file_path, result_dir)
+
+    if code_bleu and not is_code_bleu_result_present:
+        columns = ["index", "code_bleu"]
+        code_bleu_res = averaging_saving_print_results(code_bleu_res, columns, "codebleu", partial_file_path, result_dir)
     
     if unified:
         print("Unifying valentin and llm results.\n    Ignoring MISLEADING results and setting metrics to 1 if TRUE")
