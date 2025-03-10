@@ -1,5 +1,5 @@
 # Data Service Composition in Cyber-Physical Systems Adopting LLMs
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14999773.svg)](https://doi.org/10.5281/zenodo.14999773)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15002973.svg)](https://doi.org/10.5281/zenodo.15002973)
 
 This repository contains code for replicating the experiments in *"Data Service Composition in Cyber-Physical Systems Adopting LLMs"*.
 
@@ -13,7 +13,7 @@ This repository contains code for replicating the experiments in *"Data Service 
 
 
 ## Getting Started
-Please download the *complete* repository, which includes the data and the experiments results from [Zenodo](https://doi.org/10.5281/zenodo.14999773) and extract the files:
+Please download the *complete* repository, which includes the data and the experiments results from [Zenodo](https://doi.org/10.5281/zenodo.15002973) and extract the files:
 
 ```bash
 unzip icws-248.zip
