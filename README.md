@@ -1,94 +1,71 @@
-# COSMADS: Composing SMArt Data Services through Large Language Models
-This repository contains code for replicating the experiments in *"Composing SMArt Data Services through Large Language Models"* paper.
+# Data Service Composition in Cyber-Physical Systems Adopting LLMs
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14999773.svg)](https://doi.org/10.5281/zenodo.14999773)
+
+This repository contains code for replicating the experiments in *"Data Service Composition in Cyber-Physical Systems Adopting LLMs"*.
 
 
 ## Prerequisites
 - [Miniconda](https://docs.conda.io/en/latest/miniconda.html)
 - [OpenAI API Key](https://platform.openai.com)
+- [Mistral API Key](https://console.mistral.ai)
+- [Anthropic API Key](https://console.anthropic.com)
+- [Deepseek API Key](https://platform.deepseek.com)
 
 
-## Setup
+## Getting Started
+Please download the *complete* repository, which includes the data and the experiments results from [Zenodo](https://doi.org/10.5281/zenodo.14999773) and extract the files:
+
+```bash
+unzip Archive.zip
+cd icws-248
+```
+
 - Create a virtual environment and install the dependencies
 ```bash
 conda create -n pyllm python=3.9
 conda activate pyllm
 pip install -r requirements.txt
 ```
-- Create a `.env` file in the root directory of the project and add the following line
+- Create a `.env` file in the `src` directory and add the following lines
 ```
 OPENAI_API_KEY=<YOUR_OPENAI_API_KEY>
+MISTRAL_API_KEY=<YOUR_MISTRAL_API_KEY>
+ANTHROPIC_API_KEY=<YOUR_ANTHROPIC_API_KEY>
+DEEPSEEK_API_KEY=<YOUR_DEEPSEEK_API_KEY>
 ```
 
-## Switch to Mistral
+### Generating the plots
+The code for generating the plots is located in the `experiments` folder. The folder contains the following 3 files:
+- `run_experiments_selector.py`: This script reproduces the plots related to the *DS Selector* in the quantitative setting.
+- `pipeline_gen_quantitative.py`: This script reproduces the plots related to the *LLM Agent* in the quantitative setting.
+- `pipeline_gen_in_action.py`: This script reproduces the plots related to the *LLM Agent* in the in action setting.
 
-You can switch to Mistral by installing requirements2.txt instead.
-Also, you need to decomment (and comment the GPT corresponding) lines in:
-- "from langchain_mistralai import ChatMistralAI" in data_service_generator
-- "from langchain_mistralai import ChatMistralAI" in pipeline_chain
-- "from langchain_mistralai import MistralAIEmbeddings" in pipeline_manager_db
-- "embedding_function = MistralAIEmbeddings( model="mistral-embed", api_key=key)" in pipeline_manager_db
-
-Also remember to change the "model" variable in the main function.
-
-## Usage
-
-- Define the query in the [`json`](src/queries_pipelines.json) file.\
-    As an example:
-    ```bash
-    "q5": {
-        "query": "Please provide a table for the upcoming 30 cardboard pieces processed by the diecutter with ID 7, detailing (i) how many cardboard pieces are defect-free and (ii) how many contain defects.",
-    }
-    ```
-
-- In the [main](src/main.py?plain=1#L293) file, specify the `<query_number>` to be executed.\
-    As an **example**:
-    ```bash
-    ...
-    if __name__ == "__main__":
-        q = "q5"
-        ...
-    ```
-
-- Run the LLM:
-    ```bash
-    cd src
-    python main.py
-    ```
-
-- The LLM will generate a `temp_pipeline.py` file with the Python pipeline leveraging the proper `data services` to generate the requested information. \
-Given the **Example**, the LLM will generate a schema as follows.
-    ```bash
-    +----+--------------------+---------------------+
-    |    |   no_defects_count |   with_errors_count |
-    |----+--------------------+---------------------|
-    |  0 |                 17 |                  13 |
-    +----+--------------------+---------------------+
-    ```
+The plots are saved in the `plots` folder in the `experiments` directory and are named after the corresponding figure number in the paper.
 
 
-## How to replicate the experiments
+## Experimental results
+The experimental results are stored in the `evaluation` folder. The folder contains a subfolder named after each database in the BIRD benchmark for the quantitative setting. The database name corresponding to the in action setting is `cardboard_production`. Each subfolder contains another subfolder named after each model used in the experiments. 
 
-To run the experiments, execute the following command:
+Each folder contains the following files:
+- For the *DS Selector*
+  - `evaluation_results_check_ground_truth__no_view__<database>__<enterprise>__<model_name>.csv`: This file contains the results for the *DS Selector* using a specific enterprise (i.e. OpenAI), a specific model (i.e. GPT-4o) on a specific database (e.g. `soccer_2016`).
+  - `detailed_results_check_ground_truth__no_view__<database>__<enterprise>__<model_name>.csv`: This file contains the evaluation metric results for the *DS Selector* using a specific enterprise, a specific model on a specific database.
+  - `summarized_results_check_ground_truth__no_view__<database>__<enterprise>__<model_name>.csv`: This file contains the summarized evaluation metric results for the *DS Selector* using a specific enterprise, a specific model, on a specific database.
+- For the *LLM Agent*
+  - `evaluation_results__<database>__<enterprise>__<model_name>__wo_pipeline_view__standard_evidence__tutti.csv`: This file contains the results for the *LLM Agent* using a specific enterprise, a specific model on a specific database, including the generated pipeline and the resulting output table.
+  - `metrics_results__valentine__<database>__<enterprise>__<model_name>__wo_pipeline_view__standard_evidence__tutti.csv`: This file contains the evaluation metric results for the *LLM Agent* using a specific enterprise, a specific model on a specific database.
+  - `summarized_results__valentine__<database>__<enterprise>__<model_name>__wo_pipeline_view__standard_evidence__tutti.csv`: This file contains the summarized evaluation metric results for the *LLM Agent* using a specific enterprise, a specific model, on a specific database.
+
+
+The scripts for reproducing the experiments are located in the `src` folder. The folder contains the following 3 files:
+- `run_experiments_selector.py`: This script runs the *DS Selector* on the subset of the BIRD benchmark with all the models and stores the results in the `evaluation` folder.
+- `pipeline_gen_quantitative.py`: This script runs the *LLM Agent* on the subset of the BIRD benchmark with all the models and stores the results in the `evaluation` folder.
+- `pipeline_gen_in_action.py`: This script runs the *LLM Agent* on the `cardboard_production` database (i.e. the placeholder database name for the in action setting) with all the models and stores the results in the `evaluation` folder.
+
+To reproduce the experiments, run the following commands:
 ```bash
 cd src
-python run_evaluation.py
+python run_experiments_selector.py
+python pipeline_gen_quantitative.py
+python pipeline_gen_in_action.py
 ```
-
-The script will create different `.csv` in [evaluation](src/evaluation/) folder containing the results of the run and computed metrics.
-
-
-### Experiments results
-
-[evaluation](src/evaluation/) folder contains the results of the experiments:
-- COSMADS:
-    - [evaluation results](src/evaluation/evaluation_results_standard.csv)
-    - [metrics](src/evaluation/metrics_results_standard.csv)
-- COSMADS (w/o similar pipelines):
-    - [evaluation results](src/evaluation/evaluation_results_wrong.csv)
-    - [metrics](src/evaluation/metrics_results_wrong.csv)
-- COSMADS (w/o pipelines):
-    - [evaluation results](src/evaluation/evaluation_results_wo_pipeline.csv)
-    - [metrics](src/evaluation/metrics_results_wo_pipeline.csv)
-- GitHub Copilot:
-    - [evaluation results](src/evaluation/evaluation_results_copilot.csv)
-    - [metrics](src/evaluation/metrics_results_copilot.csv)
