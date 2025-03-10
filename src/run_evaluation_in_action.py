@@ -38,7 +38,7 @@ def parse_in_action_queries():
     return parsed_queries
         
 
-def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False):
+def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode = None, automatic=False, similarity_treshold = 0.9, verbose=False, force_generation=False):
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
     safe_model = str(model.replace("-", "_"))
@@ -46,7 +46,7 @@ def run_evaluation(database, queries, enterprise, model, pipeline_mode, evidence
     print(f"Result file path: {result_filepath}")
 
     # skip if the file already exists
-    if result_filepath.exists():
+    if result_filepath.exists() and not force_generation:
         print(f"Results already present, skipping generating the pipeline with {enterprise} on {database}")
         return
 
@@ -210,7 +210,7 @@ def check_all_zeros(list):
             return False
     return True
 
-def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, unified = False, fullname_split=False, execution_accuracy=True, judge_table_result=True, code_bleu=True):
+def evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic, valentine = True, unified = False, fullname_split=False, execution_accuracy=True, judge_table_result=True, code_bleu=True, verbose = False, force_generation=False):
     # create the result dir folder
     result_dir = Path(__file__).parent / "evaluation" / database / enterprise
     result_dir.mkdir(parents=True, exist_ok=True)
@@ -219,7 +219,7 @@ def evaluate_results(database, queries, enterprise, model, pipeline_mode, eviden
     # flag to check if the result files are present
     valentine_result_filepath = result_dir / f"metrics_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     valentine_summarized_result_filepath = result_dir / f"summarized_results__valentine__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
-    is_valentine_result_present = valentine_result_filepath.exists() and valentine_summarized_result_filepath.exists()
+    is_valentine_result_present = valentine_result_filepath.exists() and valentine_summarized_result_filepath.exists() and not force_generation
 
     llm_result_filepath = result_dir / f"metrics_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
     llm_summarized_result_filepath = result_dir / f"summarized_results__llm__{database}__{enterprise}__{safe_model}__{pipeline_mode}__{evidence_mode}__{dataservice_mode}.csv"
@@ -439,9 +439,9 @@ if __name__ == "__main__":
     ## per la valutazione
     only_metrics = False    # se è true, allora runno solo evaluation (metrics) sia per il selector che per la pipeline, se è false runno tutto (rigenero anche i risultati)
     valentine = True    # se le metriche devono essere valutate su valentine
-    llm = True # se le metriche devono essere valutate su llm judge
+    llm = False # se le metriche devono essere valutate su llm judge
     unified = False # misto tra i due
-    execution_accuracy = True 
+    execution_accuracy = False 
     judge_table_result = False
     print(f"Only calculating metrics: {only_metrics}, Valentine metrics: {valentine}, Judge metrics: {llm}, Judge table result: {judge_table_result}, Unified metrics: {unified}")
     
@@ -470,7 +470,7 @@ if __name__ == "__main__":
                         dataservice_mode=dataservice_mode, 
                         automatic=automatic, 
                         similarity_treshold=similarity_treshold, 
-                        verbose=verbose)
-    evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, unified=unified, execution_accuracy=execution_accuracy, judge_table_result=judge_table_result)
+                        verbose=verbose, force_generation=True)
+    evaluate_results(database, queries, enterprise, model, pipeline_mode, evidence_mode, dataservice_mode, automatic=automatic, fullname_split=False, valentine=valentine, unified=unified, execution_accuracy=execution_accuracy, judge_table_result=judge_table_result, force_generation=True, code_bleu=False)
     
     
