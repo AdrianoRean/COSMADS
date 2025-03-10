@@ -9,7 +9,7 @@ import os
 import json
 import pandas as pd
 from main import get_queries
-from templates import JUDGE_PROMPT, JUDGE_VERDICT, JUDGE_EXPLAIN, JUDGE_PROMPT_NO_SQL
+from templates import JUDGE_PROMPT, JUDGE_VERDICT, JUDGE_EXPLAIN, JUDGE_PROMPT_NO_SQL, UPDATED_JUDGE_PROMPT, UPDATED_JUDGE_VERDICT, JUDGE_PROMPT_IN_ACTION, JUDGE_VERDICT_IN_ACTION
 from model import getModel
 
 class CustomOutputParser(BaseOutputParser):
@@ -30,7 +30,11 @@ class ChainGeneratorAgent:
     def __init__(self, enterprise, model, mode="verdict_no_sql"):
         """Initialize the agent."""
         if mode == "verdict_no_sql":
-            prompt_template = JUDGE_PROMPT_NO_SQL        
+            prompt_template = JUDGE_PROMPT_NO_SQL  
+        elif mode == "updated_verdict":
+            prompt_template = UPDATED_JUDGE_PROMPT
+        elif mode == "in_action":
+            prompt_template = JUDGE_PROMPT_IN_ACTION      
         else:
             prompt_template = JUDGE_PROMPT
         self.prompt = ChatPromptTemplate.from_template(prompt_template)
@@ -52,12 +56,18 @@ class Judge:
         self.mode = mode
         if mode == "verdict":
             self.judge_mode_prompt = JUDGE_VERDICT
+        elif mode == "updated_verdict":
+            self.judge_mode_prompt = UPDATED_JUDGE_VERDICT
         elif mode == "explain":
             self.judge_mode_prompt = JUDGE_EXPLAIN
         elif mode == "verdict_no_sql":
             self.judge_mode_prompt = None
+        elif mode == "in_action":
+            self.judge_mode_prompt = JUDGE_VERDICT_IN_ACTION
         else:
             raise ValueError("Invalid mode")
+        
+        print(f"Judge mode: {mode}")
         
         self.generator_chain_output = {
             "output": ChainGeneratorAgent(self.enterprise, self.model, mode).get_chain(),
