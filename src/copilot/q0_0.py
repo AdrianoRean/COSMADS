@@ -1,0 +1,25 @@
+import json
+from database import GetDiecuttersIdOfFactory, GetSerialCamera1IdFromDiecutterId, GetSerialCamera2IdFromDiecutterId
+
+# Fetch the list of all diecutters in the factory
+diecutters_id_list = GetDiecuttersIdOfFactory.call()
+
+# Initialize an empty list to store the data
+data = []
+
+# Iterate over each diecutter ID to fetch the serial numbers of camera 1 and camera 2
+for diecutter_id in diecutters_id_list:
+    serial_camera1 = GetSerialCamera1IdFromDiecutterId.call(diecutter_id)
+    serial_camera2 = GetSerialCamera2IdFromDiecutterId.call(diecutter_id)
+    # Append the data as a dictionary to the list
+    data.append({
+        "diecutter_id": diecutter_id,
+        "serial_camera1": serial_camera1,
+        "serial_camera2": serial_camera2
+    })
+
+# Write the data to a JSON file
+with open('diecutters_camera_serials.json', 'w') as f:
+    json.dump(data, f, indent=4)
+
+print("JSON file 'diecutters_camera_serials.json' has been created with the serial numbers of camera 1 and camera 2 for all diecutters.")

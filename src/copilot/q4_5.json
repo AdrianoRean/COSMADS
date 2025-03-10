@@ -1,0 +1,62 @@
+[
+    {
+        "has_errors": true,
+        "error_type": "Mechanical Failure",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Operator Error",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Mechanical Failure",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Mechanical Failure",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Material Defect",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Operator Error",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": true,
+        "error_type": "Mechanical Failure",
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "has_errors": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "operating_temperature": 0
+    }
+]

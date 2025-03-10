@@ -1,0 +1,7 @@
+@workspace 
+Given 
+    (i) a query in natural language that asks for tabular data and 
+    (ii) the available scripts in the workspace, 
+generate a python script that generates a json file containing the tabular data according to the query. 
+The generated json file should contain a list of dictionaries, where each dictionary represents a row in the table.
+Query: "<query>"

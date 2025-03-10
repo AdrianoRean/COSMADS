@@ -1,0 +1,52 @@
+[
+    {
+        "session_id": 47,
+        "interval_start": 1720463219.3654788,
+        "mean_speed": 5.7
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463230.0543313,
+        "mean_speed": 4.3
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463240.7790406,
+        "mean_speed": 6.1
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463251.4747958,
+        "mean_speed": 4.8
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463262.175349,
+        "mean_speed": 5.1
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463272.875676,
+        "mean_speed": 4.6
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463283.6032908,
+        "mean_speed": 4.2
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463294.308756,
+        "mean_speed": 3.8
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463305.0012984,
+        "mean_speed": 4.4
+    },
+    {
+        "session_id": 47,
+        "interval_start": 1720463315.6762414,
+        "mean_speed": 5.5
+    }
+]

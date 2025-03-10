@@ -1,0 +1,102 @@
+[
+    {
+        "stack_number": 1,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 2,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 3,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 4,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 5,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 6,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 7,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 8,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 9,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    },
+    {
+        "stack_number": 10,
+        "presence_of_errors": true,
+        "types_of_errors": [
+            "Type1",
+            "Type2"
+        ],
+        "operational_speed": 9,
+        "operating_temperature": 0
+    }
+]

@@ -1,0 +1,72 @@
+[
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": true,
+        "error_type": "Paper Jam",
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": true,
+        "error_type": "Ink Low",
+        "operating_speed": 9,
+        "present_temperature": 12
+    },
+    {
+        "session_id": 88,
+        "has_error": false,
+        "error_type": null,
+        "operating_speed": 9,
+        "present_temperature": 12
+    }
+]
