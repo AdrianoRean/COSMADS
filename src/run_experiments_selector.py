@@ -23,28 +23,22 @@ if __name__ == '__main__':
         "car_retails",
         "video_games",
         "retails",
-        #"address",
         "professional_basketball",
         "student_loan",
         "book_publishing_company",
         "olympics",
-        #"synthea",
-        #"talkingdata",
         "books",
         "public_review_platform",
         "movie_3",
         "movies_4",
         "soccer_2016",
-        #"hockey",
         "mondial_geo",
-        #"works_cycles"
     ],
-    databases = ["college_completion"]
 
     models = [
-        #"openai",
-        #"mistral",
-        #"anthropic",
+        "openai",
+        "mistral",
+        "anthropic",
         "deepseek"
     ]
 

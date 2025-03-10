@@ -114,7 +114,7 @@ fig.update_layout(legend=dict(
 
 fig.update_layout(barmode='group')
 
-plots_dir = root_dir / "plots"
+plots_dir = "plots"
 plots_dir.mkdir(exist_ok=True)
 fig.write_image(plots_dir / "Figure9.pdf")
 #fig.show()
