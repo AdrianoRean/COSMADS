@@ -1,7 +1,3 @@
-import sys
-
-sys.path.append("../../../")
-
 from data_services.diecutter import GetCurrentDataFromChip
 from data_services.database import GetDiecutterChipIdFromDiecutterId
 import time
